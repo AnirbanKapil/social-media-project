@@ -55,7 +55,9 @@ export default function Dashboard () {
         <div className="grid grid-cols-12 w-screen h-screen px-52">
             <div className="col-span-3 mt-10">
                <ul> 
-               {sideBarMenuItems.map((itm)=> <li className="flex justify-center" key={itm.title}>
+               {sideBarMenuItems.map((itm)=> <li className="flex justify-center cursor-pointer 
+                                                hover:bg-blue-400 hover:scale-120 transition-transform duration-300 w-fit rounded-lg" 
+                                                            key={itm.title}>
                                                    <div className="m-2">{itm.title}</div>
                                                    <div className="m-3">{itm.icon}</div>    
                                              </li>)}
