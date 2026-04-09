@@ -5,6 +5,7 @@ import { GoHash } from "react-icons/go";
 import { FaRegBell , FaRegEnvelope , FaRegBookmark , FaRegUser } from "react-icons/fa";
 import { LuCircleDollarSign } from "react-icons/lu";
 import { SlOptions } from "react-icons/sl";
+import { Feeds } from "@/app/src/components/feeds";
 
 
 interface SideBarButtons {
@@ -52,16 +53,20 @@ const sideBarMenuItems : SideBarButtons[] = [
 export default function Dashboard () {
     return (
         <div className="grid grid-cols-12 w-screen h-screen px-52">
-            <div className="col-span-3">
+            <div className="col-span-3 mt-10">
                <ul> 
                {sideBarMenuItems.map((itm)=> <li className="flex justify-center" key={itm.title}>
-                                                <div className="m-2">{itm.title}</div>
-                                                <div className="m-3">{itm.icon}</div> 
+                                                   <div className="m-2">{itm.title}</div>
+                                                   <div className="m-3">{itm.icon}</div>    
                                              </li>)}
                </ul>
             </div>
-            <div className="col-span-6 border-r border-l">Feeds</div>
-            <div className="col-span-3">Happening Now</div>
+            <div className="col-span-6 border-r border-l">
+                <div className="mt-10 ml-2">
+                     <Feeds />
+                </div>
+            </div>
+            <div className="col-span-3 mt-10">Happening Now</div>
         </div>
     )
 }
