@@ -58,8 +58,8 @@ export default function Dashboard () {
                {sideBarMenuItems.map((itm)=> <li className="flex justify-center cursor-pointer 
                                                 hover:bg-blue-400 hover:scale-120 transition-transform duration-300 w-fit rounded-lg" 
                                                             key={itm.title}>
-                                                   <div className="m-2">{itm.title}</div>
-                                                   <div className="m-3">{itm.icon}</div>    
+                                                   <div className="m-6 text-2xl">{itm.title}</div>
+                                                   <div className="m-7 text-2xl">{itm.icon}</div>    
                                              </li>)}
                </ul>
             </div>
