@@ -52,8 +52,8 @@ const sideBarMenuItems : SideBarButtons[] = [
 
 export default function Dashboard () {
     return (
-        <div className="grid grid-cols-12 w-screen h-screen px-52">
-            <div className="col-span-3 mt-10">
+        <div className="grid grid-cols-12 w-screen h-screen px-52 overflow-hidden">
+            <div className="col-span-3 mt-10 sticky top-0 h-screen">
                <ul> 
                {sideBarMenuItems.map((itm)=> <li className="flex justify-center cursor-pointer 
                                                 hover:bg-blue-400 hover:scale-120 transition-transform duration-300 w-fit rounded-lg" 
@@ -63,12 +63,18 @@ export default function Dashboard () {
                                              </li>)}
                </ul>
             </div>
-            <div className="col-span-6 border-r border-l">
+            <div className="col-span-6 border-r border-l border-gray-600 overflow-y-auto no-scrollbar">
                 <div className="mt-10 ml-2">
+                     <Feeds />
+                     <Feeds />
+                     <Feeds />
+                     <Feeds />
+                     <Feeds />
+                     <Feeds />
                      <Feeds />
                 </div>
             </div>
-            <div className="col-span-3 mt-10">Happening Now</div>
+            <div className="col-span-3 mt-10 sticky top-0 h-screen">Happening Now</div>
         </div>
     )
 }

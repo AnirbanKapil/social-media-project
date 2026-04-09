@@ -7,12 +7,12 @@ import { FaRegBookmark } from "react-icons/fa6";
 
 export function Feeds () {
     return(
-        <div className="grid grid-cols-12">
+        <div className="grid grid-cols-12 border-b border-gray-600">
             <div className="col-span-1">
                 <Image alt="DP image" src="https://avatars.githubusercontent.com/u/131807985?v=4" height={50} width={50} 
                     className="rounded-full p-1 pt-2"/>
             </div>
-            <div className="col-span-11 m-2">
+            <div className="col-span-11 m-2.5">
                 <h1 className="font-semibold">User001</h1>
                 <p>Coding in the AI era isn’t about writing every line — it’s about knowing what to ask, what to build, and how to think.
                    The future belongs to those who collaborate with machines, not compete with them. 🤖⚡ #AI #Coding #DeveloperMindset</p>
