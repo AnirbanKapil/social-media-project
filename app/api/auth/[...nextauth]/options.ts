@@ -8,19 +8,20 @@ export const authOptions : NextAuthOptions = {
     
     name: "Credentials",
     credentials: {
-      username: { label: "Email", type: "text", placeholder: "jsmith@mail.com" },
+      email: { label: "Email", type: "text", placeholder: "jsmith@mail.com" },
+      username: { label: "Name", type: "text", placeholder: "jsmith" },
       password: { label: "Password", type: "password",}
     },
-    async authorize(credentials, req) {
+    async authorize(credentials : any) : Promise<any> {
       
-      const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+      const user = { email : credentials.email , username : credentials.username  }
 
       if (user) {
         return user
       } else {
         return null
 
-        // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+     
       }
     }
   })
