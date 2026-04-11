@@ -64,7 +64,7 @@ export default function Dashboard () {
                </ul>
             </div>
             <div className="col-span-6 border-r border-l border-gray-600 overflow-y-auto no-scrollbar">
-                <div className="mt-10 ml-2">
+                <div className="mt-16 mb-10">
                      <Feeds />
                      <Feeds />
                      <Feeds />

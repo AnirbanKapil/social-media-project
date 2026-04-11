@@ -14,7 +14,19 @@ export const authOptions : NextAuthOptions = {
       password: { label: "Password", type: "password",}
     },
     async authorize(credentials : any) : Promise<any> {
-      if(!credentials) return null;
+      if(!credentials?.email || !credentials?.username || !credentials?.password){
+        throw new Error("All fields are required")
+      };
+      
+      const existingUser = await prisma.user.findUnique({
+        where : {
+          email : credentials.email
+        }
+      });
+      if(existingUser){
+        throw new Error("User already exist!")
+      }
+
       const user = await prisma.user.create({
         data : {
              email : credentials.email,
