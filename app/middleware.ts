@@ -1,23 +1,37 @@
 
-import { NextRequest, NextResponse } from "next/server";
+import withAuth from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
 
-export function middleware (request : NextRequest) {
-   const path = request.nextUrl.pathname;
+export default withAuth(
+    function middleware () {
+        return NextResponse.next()
+    },
+    {
+        callbacks : {
+            authorized : ({token,req}) => {
+                 const {pathname} = req.nextUrl;
+                 
+                //  auth related routes
+                 if(
+                    pathname.startsWith("/api/auth") ||
+                    pathname === "/signin"
+                ){
+                    return true
+                 }
 
-   const publicPath = ["/api/auth" , "/signup"];
-   const isPublic = publicPath.some((p)=> path.startsWith(p))
-   const token = request.cookies.get("token")?.value
-   if(isPublic && token){
-    return NextResponse.redirect(new URL("/dashboard",request.nextUrl))
-   }
-   if(!isPublic && !token){
-    return NextResponse.redirect(new URL("/api/auth/signin",request.nextUrl))
-   }
-   return NextResponse.next();
-}
+                //  public routes
+                if(pathname === "/" || pathname.startsWith("/api/videos")){
+                    return true
+                }
+
+                return !!token
+            }
+        }
+    }
+) 
 
 
 export const config = {
-    matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]
+    matcher : [ "/((?!_next/static|_next/image|favicon.ico|public/).*)",]
 }
