@@ -21,7 +21,7 @@ export default withAuth(
                  }
 
                 //  public routes
-                if(pathname === "/" || pathname.startsWith("/api/videos")){
+                if(pathname === "/"){
                     return true
                 }
 

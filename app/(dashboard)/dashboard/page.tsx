@@ -6,6 +6,7 @@ import { FaRegBell , FaRegEnvelope , FaRegBookmark , FaRegUser } from "react-ico
 import { LuCircleDollarSign } from "react-icons/lu";
 import { SlOptions } from "react-icons/sl";
 import { Feeds } from "@/app/src/components/feeds";
+import { NavBar } from "@/app/src/components/navbar";
 
 
 interface SideBarButtons {
@@ -52,6 +53,8 @@ const sideBarMenuItems : SideBarButtons[] = [
 
 export default function Dashboard () {
     return (
+    <div>
+        <NavBar />
         <div className="grid grid-cols-12 w-screen h-screen px-52 overflow-hidden">
             <div className="col-span-3 mt-10 sticky top-0 h-screen">
                <ul> 
@@ -76,5 +79,6 @@ export default function Dashboard () {
             </div>
             <div className="col-span-3 mt-10 sticky top-0 h-screen">Happening Now</div>
         </div>
+    </div>    
     )
 }
