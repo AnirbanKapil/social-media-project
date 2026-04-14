@@ -7,7 +7,10 @@ export default withAuth(
     function middleware () {
         return NextResponse.next()
     },
-    {
+      {
+        pages: {
+        signIn: "/src/pages/signup", // 👈 change redirect here
+        },
         callbacks : {
             authorized : ({token,req}) => {
                  const {pathname} = req.nextUrl;
@@ -15,7 +18,8 @@ export default withAuth(
                 //  auth related routes
                  if(
                     pathname.startsWith("/api/auth") ||
-                    pathname === "/signin"
+                    pathname === "/signin" ||
+                    pathname === "/src/pages/signup"
                 ){
                     return true
                  }
