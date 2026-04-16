@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card } from "../../components/card"
 import axios from "axios";
 import { useRouter } from "next/navigation"
-
+import Link from "next/link";
 
 
 
@@ -42,6 +42,10 @@ export default  function SignUp () {
                  <button className="border border-gray-300 rounded-lg mb-4 p-2 m-3" onClick={handleSubmit}>
                   SignUp
                   </button>
+                  <div>
+                    <p className="font-semibold">Already have an account ???</p> 
+                    <p className="mt-3">Visit  <Link className="mx-3 bg-blue-400 rounded-lg p-2" href="/api/auth/signin">SignIn Page</Link></p> 
+                  </div>
               </div>
             </Card>
         </div>
