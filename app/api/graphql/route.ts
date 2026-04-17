@@ -4,6 +4,19 @@ import prisma from "@/lib/prisma";
 
 
 
+const typeDefs = `#graphql
+  type Query {
+    sayHello: String
+  }
+`;
+
+const resolvers = {
+    Query : {
+      sayHello : () => "Hello from Apollo!!"
+    },
+  };
+
+// 3. Apollo Server
 const server = new ApolloServer({
   typeDefs,
   resolvers,
