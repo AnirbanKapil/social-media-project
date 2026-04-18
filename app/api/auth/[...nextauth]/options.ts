@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
+import NextAuth from "next-auth";
 
 
 export const authOptions : NextAuthOptions = {
@@ -70,3 +71,6 @@ session : {
     }, 
 }
 
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
