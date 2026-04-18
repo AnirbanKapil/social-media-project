@@ -5,6 +5,7 @@ import { Card } from "../../components/card"
 import axios from "axios";
 import { useRouter } from "next/navigation"
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 
 
@@ -41,6 +42,9 @@ export default  function SignUp () {
                  onChange={(e) => setUser({...user , password : e.target.value})}/> 
                  <button className="border border-gray-300 rounded-lg mb-4 p-2 m-3" onClick={handleSubmit}>
                   SignUp
+                  </button>
+                  <button className="bg-blue-500 p-2 m-2 cursor-pointer" onClick={() => signIn("google")}>
+                    Sign in with Google
                   </button>
                   <div>
                     <p className="font-semibold">Already have an account ???</p> 
