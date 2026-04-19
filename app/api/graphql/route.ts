@@ -2,22 +2,10 @@ import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { typeDefs, resolvers } from "@/graphql/schema";
 
 
 
-const typeDefs = `#graphql
-  type Query {
-    sayHello: String
-  }
-`;
-
-const resolvers = {
-    Query : {
-      sayHello : () => "Hello from Apollo!!"
-    },
-  };
-
-// 3. Apollo Server
 const server = new ApolloServer({
   typeDefs,
   resolvers,

@@ -1,5 +1,5 @@
 
-export const types = `#graphql
+export const userTypeDefs  = `#graphql
     
   type User {
      id: Int!
@@ -10,5 +10,13 @@ export const types = `#graphql
     profileImgUrl: String
     createdAt: String!
     updatedAt: String!
+  }
+  
+  type Query {
+    users: [User]
+  }
+
+  type Mutation {
+    createUser(name: String!, email: String!): User
   }
 `;
