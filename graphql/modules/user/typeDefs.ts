@@ -13,10 +13,17 @@ export const userTypeDefs  = `#graphql
   }
   
   type Query {
-    users: [User]
+    users: [User]!
+    user(id : Int!): User
   }
 
   type Mutation {
-    createUser(name: String!, email: String!): User
+     signup(
+      email: String!
+      username: String!
+      password: String!
+      firstName: String
+      lastName: String
+    ): User!
   }
 `;
