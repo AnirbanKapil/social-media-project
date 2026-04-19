@@ -25,5 +25,10 @@ export const userTypeDefs  = `#graphql
       firstName: String
       lastName: String
     ): User!
+
+     login(
+      email: String!
+      password: String!
+    ): String!
   }
 `;
