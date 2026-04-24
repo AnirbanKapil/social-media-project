@@ -2,7 +2,7 @@
 export const userTypeDefs  = `#graphql
     
   type User {
-     id: Int!
+    id: Int!
     email: String!
     username: String!
     firstName: String
