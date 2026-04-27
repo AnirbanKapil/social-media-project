@@ -63,7 +63,21 @@ callbacks : {
         session.user.id = token.id as string
       }
       return session;
-   }
+   },
+   async signIn({ user, account }) {
+    if (account?.provider === "google") {
+      await prisma.user.upsert({
+        where: { email: user.email! },
+        update: {},
+        create: {
+          email: user.email!,
+          username: user.name?.replace(/\s+/g, "") || "user",
+        },
+      });
+    }
+
+    return true;
+  },
 },
 session : {
         strategy : "jwt",

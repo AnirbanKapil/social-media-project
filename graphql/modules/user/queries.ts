@@ -7,10 +7,14 @@ export const userQueries = {
     return prisma.user.findMany();
   },
   currUser: async (_: any, __:any, { prisma, session }: any) => {
-  if (!session) throw new Error("Not logged in");
+  if (!session?.user?.email) throw new Error("Invalid session");
 
-  return prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email }
   });
+  if (!user) {
+  throw new Error("User not found in DB");
+  };
+  return user;
   }
 };
