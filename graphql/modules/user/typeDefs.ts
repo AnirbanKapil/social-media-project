@@ -14,21 +14,8 @@ export const userTypeDefs  = `#graphql
   
   type Query {
     users: [User]!
-    user(id : Int!): User
+    currUser: User
   }
 
-  type Mutation {
-     signup(
-      email: String!
-      username: String!
-      password: String!
-      firstName: String
-      lastName: String
-    ): User!
-
-     login(
-      email: String!
-      password: String!
-    ): String!
-  }
+  type Mutation {}
 `;
