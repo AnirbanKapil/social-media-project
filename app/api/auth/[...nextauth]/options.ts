@@ -34,6 +34,11 @@ export const authOptions : NextAuthOptions = {
         if(!user){
           throw new Error("User not found")
         }
+
+        if (!user.password) {
+           throw new Error("This account uses Google login");
+           }
+
         const isValid = await bcrypt.compare(credentials?.password,user?.password)
 
         if(!isValid){
@@ -68,10 +73,14 @@ callbacks : {
     if (account?.provider === "google") {
       await prisma.user.upsert({
         where: { email: user.email! },
-        update: {},
+        update: {
+          username: user.name?.replace(/\s+/g, "") || "user",
+          profileImgUrl: user.image,
+        },
         create: {
           email: user.email!,
           username: user.name?.replace(/\s+/g, "") || "user",
+          profileImgUrl: user.image,
         },
       });
     }
