@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Card } from "../../components/card"
+import { Card } from "../src/components/card"
 import axios from "axios";
 import { useRouter } from "next/navigation"
 import Link from "next/link";

@@ -9,7 +9,7 @@ export default withAuth(
     },
       {
         pages: {
-        signIn: "/src/pages/signup", 
+        signIn: "/signup", 
         },
         callbacks : {
             authorized : ({token,req}) => {
@@ -19,7 +19,7 @@ export default withAuth(
                  if(
                     pathname.startsWith("/api/auth") ||
                     pathname === "/signin" ||
-                    pathname === "/src/pages/signup" ||
+                    pathname === "/signup" ||
                     pathname.startsWith("/api/graphql")
                 ){
                     return true
