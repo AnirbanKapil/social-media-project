@@ -11,9 +11,15 @@ const config: CodegenConfig = {
   "!**/__tests__/**"
 ],
   generates: {
-    "lib/generated/": {
-      preset: "client",
-      plugins: []
+    "lib/generated.ts": {
+      plugins: [
+        "typescript",
+        "typescript-operations",
+        "typescript-react-query",
+      ],
+      config: {
+        fetcher: "graphql-request",
+      },
     }
   }
 };
