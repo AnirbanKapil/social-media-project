@@ -13,7 +13,12 @@ const config: CodegenConfig = {
   generates: {
     "lib/generated/": {
       preset: "client",
-      plugins: []
+      plugins: ["typescript",
+        "typescript-operations",
+        "typescript-react-query",],
+        config: {
+        fetcher: "graphql-request", 
+      },
     }
   }
 };
