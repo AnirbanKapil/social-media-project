@@ -20,23 +20,21 @@ export const authOptions : NextAuthOptions = {
       password: { label: "Password", type: "password",}
     },
     async authorize(credentials : any) : Promise<any> {
-      
-      if(!credentials.email || !credentials.password || !credentials.username){
-        throw new Error("All fields are required")
+      if(!credentials.email || !credentials.password){
+        throw new Error("Email and password are required")
       };
       try {
         const user = await prisma.user.findFirst({
           where : {
             email : credentials.email,
-            username : credentials.username
           }
         })
         if(!user){
-          throw new Error("User not found")
+          throw new Error("No user found with this email")
         }
 
         if (!user.password) {
-           throw new Error("This account uses Google login");
+           throw new Error("Please sign in with Google");
            }
 
         const isValid = await bcrypt.compare(credentials?.password,user?.password)
@@ -70,23 +68,43 @@ callbacks : {
       return session;
    },
    async signIn({ user, account }) {
-    if (account?.provider === "google") {
-      await prisma.user.upsert({
-        where: { email: user.email! },
-        update: {
-          username: user.name?.replace(/\s+/g, "") || "user",
-          profileImgUrl: user.image,
-        },
-        create: {
-          email: user.email!,
-          username: user.name?.replace(/\s+/g, "") || "user",
-          profileImgUrl: user.image,
-        },
-      });
-    }
+      if (account?.provider === "google") {
+      const existingUser = await prisma.user.findUnique({
+      where: { email: user.email! },
+       });
 
-    return true;
-  },
+      if (existingUser) {
+      await prisma.user.update({
+        where: { email: user.email! },
+        data: { profileImgUrl: user.image },
+      });
+      return true;
+      }
+
+    
+      let baseUsername = user.name?.replace(/\s+/g, "").toLowerCase() || "user";
+      let finalUsername = baseUsername;
+
+      const usernameExists = await prisma.user.findFirst({
+      where: { username: baseUsername },
+      });
+
+      if (usernameExists) {
+      const suffix = Math.random().toString(36).substring(2, 6);
+      finalUsername = `${baseUsername}_${suffix}`;
+      }
+
+      await prisma.user.create({
+      data: {
+        email: user.email!,
+        username: finalUsername,
+        profileImgUrl: user.image,
+      },
+    });
+  }
+  return true;
+},
+
 },
 session : {
         strategy : "jwt",

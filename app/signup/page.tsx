@@ -43,7 +43,7 @@ export default  function SignUp () {
                  <button className="border border-gray-300 rounded-lg mb-4 p-2 m-3" onClick={handleSubmit}>
                   SignUp
                   </button>
-                  <button className="bg-blue-500 p-2 m-2 cursor-pointer" onClick={() => signIn("google")}>
+                  <button className="bg-blue-500 p-2 m-2 cursor-pointer" type="button" onClick={() => signIn("google")}>
                     Sign in with Google
                   </button>
                   <div>
