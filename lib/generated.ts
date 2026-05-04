@@ -2,19 +2,22 @@
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-import { GraphQLClient } from 'graphql-request';
-import { RequestInit } from 'graphql-request/dist/types.dom';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useCustomFetcher } from './fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 
-function fetcher<TData, TVariables extends { [key: string]: any }>(client: GraphQLClient, query: string, variables?: TVariables, requestHeaders?: RequestInit['headers']) {
-  return async (): Promise<TData> => client.request({
-    document: query,
-    variables,
-    requestHeaders
-  });
-}
+          class TypedDocumentString<TResult, TVariables> extends String {
+            private __apiType?: TResult;
+            private __variables?: TVariables;
+            constructor(private value: string) {
+            super(value);
+            }
+            toString(): string {
+            return this.value;
+          }
+        }
+        
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -42,6 +45,11 @@ export type User = {
   username: Scalars['String']['output'];
 };
 
+export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCurrentUserQuery = { currUser: { id: number, email: string, username: string } | null };
+
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -53,6 +61,34 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMeQuery = { currUser: { id: number, email: string } | null };
 
 
+
+export const GetCurrentUserDocument = new TypedDocumentString(`
+    query GetCurrentUser {
+  currUser {
+    id
+    email
+    username
+  }
+}
+    `);
+
+export const useGetCurrentUserQuery = <
+      TData = GetCurrentUserQuery,
+      TError = unknown
+    >(
+      variables?: GetCurrentUserQueryVariables,
+      options?: Omit<UseQueryOptions<GetCurrentUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetCurrentUserQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetCurrentUserQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetCurrentUser'] : ['GetCurrentUser', variables],
+    queryFn: useCustomFetcher<GetCurrentUserQuery, GetCurrentUserQueryVariables>(GetCurrentUserDocument, variables),
+    ...options
+  }
+    )};
+
+useGetCurrentUserQuery.getKey = (variables?: GetCurrentUserQueryVariables) => variables === undefined ? ['GetCurrentUser'] : ['GetCurrentUser', variables];
 
 export const GetUsersDocument = new TypedDocumentString(`
     query GetUsers {
@@ -68,17 +104,19 @@ export const useGetUsersQuery = <
       TData = GetUsersQuery,
       TError = unknown
     >(
-      client: GraphQLClient,
       variables?: GetUsersQueryVariables,
-      options?: UseQueryOptions<GetUsersQuery, TError, TData>,
-      headers?: RequestInit['headers']
+      options?: Omit<UseQueryOptions<GetUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetUsersQuery, TError, TData>['queryKey'] }
     ) => {
     
     return useQuery<GetUsersQuery, TError, TData>(
-      variables === undefined ? ['GetUsers'] : ['GetUsers', variables],
-      fetcher<GetUsersQuery, GetUsersQueryVariables>(client, GetUsersDocument, variables, headers),
-      options
+      {
+    queryKey: variables === undefined ? ['GetUsers'] : ['GetUsers', variables],
+    queryFn: useCustomFetcher<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, variables),
+    ...options
+  }
     )};
+
+useGetUsersQuery.getKey = (variables?: GetUsersQueryVariables) => variables === undefined ? ['GetUsers'] : ['GetUsers', variables];
 
 export const GetMeDocument = new TypedDocumentString(`
     query GetMe {
@@ -93,14 +131,16 @@ export const useGetMeQuery = <
       TData = GetMeQuery,
       TError = unknown
     >(
-      client: GraphQLClient,
       variables?: GetMeQueryVariables,
-      options?: UseQueryOptions<GetMeQuery, TError, TData>,
-      headers?: RequestInit['headers']
+      options?: Omit<UseQueryOptions<GetMeQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMeQuery, TError, TData>['queryKey'] }
     ) => {
     
     return useQuery<GetMeQuery, TError, TData>(
-      variables === undefined ? ['GetMe'] : ['GetMe', variables],
-      fetcher<GetMeQuery, GetMeQueryVariables>(client, GetMeDocument, variables, headers),
-      options
+      {
+    queryKey: variables === undefined ? ['GetMe'] : ['GetMe', variables],
+    queryFn: useCustomFetcher<GetMeQuery, GetMeQueryVariables>(GetMeDocument, variables),
+    ...options
+  }
     )};
+
+useGetMeQuery.getKey = (variables?: GetMeQueryVariables) => variables === undefined ? ['GetMe'] : ['GetMe', variables];

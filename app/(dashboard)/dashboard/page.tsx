@@ -7,7 +7,7 @@ import { LuCircleDollarSign } from "react-icons/lu";
 import { SlOptions } from "react-icons/sl";
 import { Feeds } from "@/app/src/components/feeds";
 import { NavBar } from "@/app/src/components/navbar";
-
+import { WhatsHappening } from "@/app/src/components/whatsHappening";
 
 interface SideBarButtons {
     title : string,
@@ -77,7 +77,9 @@ export default function Dashboard () {
                      <Feeds />
                 </div>
             </div>
-            <div className="col-span-3 mt-10 sticky top-0 h-screen">Happening Now</div>
+            <div className="col-span-3 mt-10 sticky top-0 h-screen">
+                <WhatsHappening />
+            </div>
         </div>
     </div>    
     )

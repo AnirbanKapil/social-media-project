@@ -2,8 +2,8 @@
 import { gql } from "graphql-tag";
 
 export const GetUsersDocument = gql`
-  query GetUsers {
-    users {
+  query GetCurrentUser {
+    currUser {
       id
       email
       username

@@ -1,6 +1,7 @@
 
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
+
 const config: CodegenConfig = {
   overwrite: true,
   schema: "./graphql/**/*.ts",
@@ -16,10 +17,29 @@ const config: CodegenConfig = {
         "typescript",
         "typescript-operations",
         "typescript-react-query",
+        {
+          add: {
+          content: `
+          class TypedDocumentString<TResult, TVariables> extends String {
+            private __apiType?: TResult;
+            private __variables?: TVariables;
+            constructor(private value: string) {
+            super(value);
+            }
+            toString(): string {
+            return this.value;
+          }
+        }
+        `  
+        }
+        }
       ],
       config: {
-        fetcher: "graphql-request",
-      },
+           fetcher: './fetcher#useCustomFetcher',
+       reactQueryVersion: 5, 
+       exposeQueryKeys: true,
+       legacyMode: false,
+}
     }
   }
 };
