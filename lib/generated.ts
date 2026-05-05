@@ -53,7 +53,7 @@ export type GetCurrentUserQuery = { currUser: { id: number, email: string, usern
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { users: Array<{ id: number, email: string, username: string } | null> };
+export type GetUsersQuery = { users: Array<{ id: number, email: string, username: string, profileImgUrl: string | null } | null> };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -96,6 +96,7 @@ export const GetUsersDocument = new TypedDocumentString(`
     id
     email
     username
+    profileImgUrl
   }
 }
     `);

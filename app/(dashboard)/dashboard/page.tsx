@@ -8,6 +8,7 @@ import { SlOptions } from "react-icons/sl";
 import { Feeds } from "@/app/src/components/feeds";
 import { NavBar } from "@/app/src/components/navbar";
 import { WhatsHappening } from "@/app/src/components/whatsHappening";
+import { Publish } from "@/app/src/components/publish";
 
 interface SideBarButtons {
     title : string,
@@ -68,6 +69,7 @@ export default function Dashboard () {
             </div>
             <div className="col-span-6 border-r border-l border-gray-600 overflow-y-auto no-scrollbar">
                 <div className="mt-16 mb-10">
+                    <Publish />
                      <Feeds />
                      <Feeds />
                      <Feeds />

@@ -7,6 +7,7 @@ export const GetUsersDocument = gql`
       id
       email
       username
+      profileImgUrl
     }
   }
 `;

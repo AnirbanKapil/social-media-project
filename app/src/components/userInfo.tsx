@@ -2,6 +2,7 @@
 "use client";
 
 import { useGetCurrentUserQuery } from "@/lib/generated";
+import Image from "next/image";
 
 
 export default function UsersPage() {
@@ -22,6 +23,14 @@ export default function UsersPage() {
     <div className="text-slate-700">
       <h1>Welcome, {user?.username}</h1>
       <p>Email: {user?.email}</p>
+      {user?.profileImgUrl ? (
+          <Image
+           alt="profileImg"
+           src={user.profileImgUrl}
+           width={100}
+           height={100}
+  />
+) : null}
     </div>
   );
 }
