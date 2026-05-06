@@ -8,6 +8,7 @@ export function Publish () {
     const handleSelectImg = () => {
         const input = document.createElement("input");
         input.setAttribute("type","file");
+        input.setAttribute("accept","image/*")
         input.click();
     }
 
