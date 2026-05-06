@@ -11,6 +11,7 @@ export const userTypeDefs  = gql`
     profileImgUrl: String
     createdAt: String!
     updatedAt: String!
+    tweets: [Post]
   }
   
   type Query {
