@@ -27,4 +27,4 @@ const mutations = {
     }
 };
 
-export const resolvers = { mutations }
+export const postResolvers = { mutations }
