@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { postQueries } from "./queries";
 
 interface CreatePostPayload {
    content: string;
@@ -25,6 +26,7 @@ export const postResolvers= {
         
         return post;
      }
-   }
+   },
+   Query: postQueries
 };
 

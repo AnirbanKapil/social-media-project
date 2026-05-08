@@ -27,6 +27,29 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CreatePostData = {
+  content: Scalars['String']['input'];
+  imgURL?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createPost?: Maybe<Post>;
+};
+
+
+export type MutationCreatePostArgs = {
+  payload: CreatePostData;
+};
+
+export type Post = {
+  __typename?: 'Post';
+  author?: Maybe<User>;
+  content: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  imgURL?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   currUser?: Maybe<User>;
@@ -41,6 +64,7 @@ export type User = {
   id: Scalars['Int']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   profileImgUrl?: Maybe<Scalars['String']['output']>;
+  tweets?: Maybe<Array<Maybe<Post>>>;
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
 };

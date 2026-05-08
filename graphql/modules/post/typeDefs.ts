@@ -17,4 +17,8 @@ export const postTypeDefs = gql`
   type Mutation {
     createPost(payload: CreatePostData!): Post
   }
+
+  type Query {
+    getAllPosts: [Post]!
+  }
 `
