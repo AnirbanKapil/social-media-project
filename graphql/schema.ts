@@ -12,6 +12,3 @@ export const resolvers = [
   postModule.resolvers
 ];
 
-export const mutations = [
-  postModule.mutations,
-]

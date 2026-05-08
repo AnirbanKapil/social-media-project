@@ -13,4 +13,8 @@ export const postTypeDefs = gql`
     imgURL: String
     author: User 
   }
+
+  type Mutation {
+    createPost(payload: CreatePostData!): Post
+  }
 `

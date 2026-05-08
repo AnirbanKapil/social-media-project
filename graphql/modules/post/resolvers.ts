@@ -7,7 +7,8 @@ interface CreatePostPayload {
 
 
 
-const mutations = {
+export const postResolvers= {
+    Mutation: {
     createPost:async (parent:any, {payload}:{payload : CreatePostPayload}, ctx:any) => {
 
         if(!ctx.user){
@@ -20,11 +21,10 @@ const mutations = {
                 imgURL  : payload.imgURL,
                 author  : {connect :{ id: ctx.user.id }}
             }
-        })
-
+        });
+        
         return post;
-
-    }
+     }
+   }
 };
 
-export const postResolvers = { mutations }

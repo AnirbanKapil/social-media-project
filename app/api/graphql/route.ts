@@ -2,14 +2,13 @@ import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { typeDefs, resolvers, mutations } from "@/graphql/schema";
+import { typeDefs, resolvers, } from "@/graphql/schema";
 
 
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  mutations
 });
 
 // 4. Handler (Next.js App Router)
