@@ -53,6 +53,7 @@ export type Post = {
 export type Query = {
   __typename?: 'Query';
   currUser?: Maybe<User>;
+  getAllPosts: Array<Maybe<Post>>;
   users: Array<Maybe<User>>;
 };
 
@@ -68,6 +69,11 @@ export type User = {
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
 };
+
+export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllPostsQuery = { getAllPosts: Array<{ id: number, content: string, imgURL: string | null, author: { id: number, username: string, profileImgUrl: string | null } | null } | null> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -85,6 +91,39 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMeQuery = { currUser: { id: number, email: string } | null };
 
 
+
+export const GetAllPostsDocument = new TypedDocumentString(`
+    query GetAllPosts {
+  getAllPosts {
+    id
+    content
+    imgURL
+    author {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+    `);
+
+export const useGetAllPostsQuery = <
+      TData = GetAllPostsQuery,
+      TError = unknown
+    >(
+      variables?: GetAllPostsQueryVariables,
+      options?: Omit<UseQueryOptions<GetAllPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAllPostsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetAllPostsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetAllPosts'] : ['GetAllPosts', variables],
+    queryFn: useCustomFetcher<GetAllPostsQuery, GetAllPostsQueryVariables>(GetAllPostsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetAllPostsQuery.getKey = (variables?: GetAllPostsQueryVariables) => variables === undefined ? ['GetAllPosts'] : ['GetAllPosts', variables];
 
 export const GetCurrentUserDocument = new TypedDocumentString(`
     query GetCurrentUser {
