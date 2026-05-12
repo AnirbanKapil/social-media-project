@@ -70,10 +70,6 @@ export type User = {
   username: Scalars['String']['output'];
 };
 
-export type CreatePostPayload = {
-  content: string;
-  imgURL?: string | null | undefined;
-};
 
 export type CreatePostMutationVariables = Exact<{
   payload: CreatePostPayload;
