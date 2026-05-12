@@ -2,7 +2,7 @@
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
 import { useCustomFetcher } from './fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -27,7 +27,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type CreatePostData = {
+export type CreatePostPayload = {
   content: Scalars['String']['input'];
   imgURL?: InputMaybe<Scalars['String']['input']>;
 };
@@ -39,7 +39,7 @@ export type Mutation = {
 
 
 export type MutationCreatePostArgs = {
-  payload: CreatePostData;
+  payload: CreatePostPayload;
 };
 
 export type Post = {
@@ -70,6 +70,18 @@ export type User = {
   username: Scalars['String']['output'];
 };
 
+export type CreatePostPayload = {
+  content: string;
+  imgURL?: string | null | undefined;
+};
+
+export type CreatePostMutationVariables = Exact<{
+  payload: CreatePostPayload;
+}>;
+
+
+export type CreatePostMutation = { createPost: { id: number, content: string, imgURL: string | null } | null };
+
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -91,6 +103,29 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMeQuery = { currUser: { id: number, email: string } | null };
 
 
+
+export const CreatePostDocument = new TypedDocumentString(`
+    mutation CreatePost($payload: CreatePostPayload!) {
+  createPost(payload: $payload) {
+    id
+    content
+    imgURL
+  }
+}
+    `);
+
+export const useCreatePostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreatePostMutation, TError, CreatePostMutationVariables, TContext>) => {
+    
+    return useMutation<CreatePostMutation, TError, CreatePostMutationVariables, TContext>(
+      {
+    mutationKey: ['CreatePost'],
+    mutationFn: (variables?: CreatePostMutationVariables) => useCustomFetcher<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, variables)(),
+    ...options
+  }
+    )};
 
 export const GetAllPostsDocument = new TypedDocumentString(`
     query GetAllPosts {

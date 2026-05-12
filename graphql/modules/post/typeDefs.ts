@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 
 export const postTypeDefs = gql`
   
-  input CreatePostData {
+  input CreatePostPayload {
     content: String!
     imgURL: String
   }
@@ -15,7 +15,7 @@ export const postTypeDefs = gql`
   }
 
   type Mutation {
-    createPost(payload: CreatePostData!): Post
+    createPost(payload: CreatePostPayload!): Post
   }
 
   type Query {
