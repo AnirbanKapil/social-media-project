@@ -87,7 +87,10 @@ export default function Dashboard () {
                 <div className="mt-16 mb-10">
                     <Publish />
                      {posts.map((post) => (
-                        <Feeds key={post?.id} img={post?.imgURL || ""} content={post?.content || "No content available"} />
+                        <Feeds key={post?.id} userImg={post?.author?.profileImgUrl || ""} 
+                        content={post?.content || "No content available"} 
+                        user={post?.author?.username || "Unknown User"}
+                        />
                      ))}
                 </div>
             </div>
