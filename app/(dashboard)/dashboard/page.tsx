@@ -1,56 +1,14 @@
 "use client";
 
 import React from "react";
-import { IoHomeOutline } from "react-icons/io5";
-import { GoHash } from "react-icons/go";
-import { FaRegBell , FaRegEnvelope , FaRegBookmark , FaRegUser } from "react-icons/fa";
-import { LuCircleDollarSign } from "react-icons/lu";
-import { SlOptions } from "react-icons/sl";
+import { useState } from "react";
 import { Feeds } from "@/app/src/components/feeds";
 import { NavBar } from "@/app/src/components/navbar";
 import { WhatsHappening } from "@/app/src/components/whatsHappening";
 import { Publish } from "@/app/src/components/publish";
 import { useGetAllPostsQuery } from "@/lib/generated";
+import { sideBarMenuItems } from "@/lib/sideBarMenu";
 
-
-interface SideBarButtons {
-    title : string,
-    icon  : React.ReactNode
-}
-
-
-const sideBarMenuItems : SideBarButtons[] = [
-    {title : "Home",
-     icon  : <IoHomeOutline />   
-    },
-    { title: "Explore",
-        icon : <GoHash />
-    },
-    {
-        title : "Notifications",
-        icon : <FaRegBell />
-       },
-       {
-        title : "Messages",
-        icon : <FaRegEnvelope />
-       },
-       {
-        title : "Bookmarks",
-        icon : <FaRegBookmark />
-       },
-       {
-        title : "Profile",
-        icon :  <FaRegUser />
-       },
-       {
-        title : "Verify",
-        icon : <LuCircleDollarSign />
-       },
-       {
-        title : "Options",
-        icon : <SlOptions />
-       }
-]
 
 
 
@@ -87,7 +45,7 @@ export default function Dashboard () {
                 <div className="mt-16 mb-10">
                     <Publish />
                      {posts.map((post) => (
-                        <Feeds key={post?.id} userImg={post?.author?.profileImgUrl || ""} 
+                        <Feeds key={post?.id} userImg={post?.author?.profileImgUrl} 
                         content={post?.content || "No content available"} 
                         user={post?.author?.username || "Unknown User"}
                         />

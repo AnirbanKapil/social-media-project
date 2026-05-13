@@ -2,9 +2,37 @@
 
 import Image from "next/image";
 import { MdOutlinePermMedia } from "react-icons/md";
+import { useCreatePostMutation } from "@/lib/generated";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+
+export const CreatePostForm = () => {
+    const [content, setContent] = useState("");
+    const queryClient = useQueryClient();
+
+    const {mutate , isPending} = useCreatePostMutation({
+        onSuccess : () => {
+            queryClient.invalidateQueries({queryKey : ["GetAllPosts"]});
+            setContent("");
+            alert("Post created!");
+        },
+        onError : (err) => {
+            const error = err as Error;
+            alert(`Error creating post: ${error.message}`);
+        }
+    });
+
+    const handleSubmit = (e : React.FormEvent) => {
+        e.preventDefault();
+        mutate({payload : {content}});
+}
+}
+
+
+
 
 export function Publish () {
-    
+
     const handleSelectImg = () => {
         const input = document.createElement("input");
         input.setAttribute("type","file");

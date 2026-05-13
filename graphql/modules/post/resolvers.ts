@@ -1,16 +1,13 @@
 import prisma from "@/lib/prisma";
 import { postQueries } from "./queries";
 
-interface CreatePostPayload {
-   content: string;
-   imgURL?: string;
-}
+
 
 
 
 export const postResolvers= {
     Mutation: {
-    createPost:async (parent:any, {payload}:{payload : CreatePostPayload}, ctx:any) => {
+    createPost:async (parent : any, payload : any, ctx:any) => {
 
         if(!ctx.user){
             throw new Error("Not authenticated!!")

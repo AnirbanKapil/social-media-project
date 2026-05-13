@@ -8,6 +8,7 @@ const config: CodegenConfig = {
   documents: [
   "app/**/*.{ts,tsx,graphql}",
   "!node_modules",
+  "!lib/generated.ts",
   "!**/*.test.*",
   "!**/__tests__/**"
 ],
