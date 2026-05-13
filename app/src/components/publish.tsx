@@ -6,7 +6,16 @@ import { useCreatePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-export const CreatePostForm = () => {
+
+export function Publish () {
+
+    const handleSelectImg = () => {
+        const input = document.createElement("input");
+        input.setAttribute("type","file");
+        input.setAttribute("accept","image/*")
+        input.click();
+    }
+
     const [content, setContent] = useState("");
     const queryClient = useQueryClient();
 
@@ -25,21 +34,7 @@ export const CreatePostForm = () => {
     const handleSubmit = (e : React.FormEvent) => {
         e.preventDefault();
         mutate({payload : {content}});
-}
-}
-
-
-
-
-export function Publish () {
-
-    const handleSelectImg = () => {
-        const input = document.createElement("input");
-        input.setAttribute("type","file");
-        input.setAttribute("accept","image/*")
-        input.click();
     }
-
     return (
         <div className="grid grid-cols-12 border-b border-gray-600 m-2">
             <div className="col-span-1">
@@ -47,15 +42,24 @@ export function Publish () {
               className="rounded-full p-1 pt-2"/>
             </div>
             <div className="col-span-11">
+                <form onSubmit={handleSubmit}>
                 <textarea 
+                value={content}
+                onChange={(e)=> setContent(e.target.value)}
                 className="w-full border-b border-slate-700 p-3 text-xl m-1" 
                 rows={3} 
                 placeholder="What's on your mind???"></textarea>
                 <div className="flex justify-between m-2">
                 <MdOutlinePermMedia className="text-xl items-center cursor-pointer" onClick={handleSelectImg}/>
-                <button className="bg-blue-600 rounded-lg px-3 cursor-pointer">Post</button>
+                <button 
+                 type="submit" disabled={isPending} 
+                className="bg-blue-600 rounded-lg px-3 cursor-pointer">
+                    {isPending ? "Posting..." : "Post"}
+                </button>
                 </div>
+                </form>
             </div>
+            
         </div>
     )
 }

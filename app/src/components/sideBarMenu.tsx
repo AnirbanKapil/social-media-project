@@ -12,7 +12,7 @@ interface SideBarButtons {
 
 
 
-export const sideBarMenuItems : SideBarButtons[] = [
+export const SideBarMenuItems : SideBarButtons[] = [
     {title : "Home",
      icon  : <IoHomeOutline />   
     },

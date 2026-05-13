@@ -7,7 +7,7 @@ import { NavBar } from "@/app/src/components/navbar";
 import { WhatsHappening } from "@/app/src/components/whatsHappening";
 import { Publish } from "@/app/src/components/publish";
 import { useGetAllPostsQuery } from "@/lib/generated";
-import { sideBarMenuItems } from "@/lib/sideBarMenu";
+import { SideBarMenuItems } from "@/app/src/components/sideBarMenu";
 
 
 
@@ -33,7 +33,7 @@ export default function Dashboard () {
         <div className="grid grid-cols-12 w-screen h-screen px-52 overflow-hidden">
             <div className="col-span-3 mt-10 sticky top-0 h-screen">
                <ul> 
-               {sideBarMenuItems.map((itm)=> <li className="flex justify-center cursor-pointer 
+               {SideBarMenuItems.map((itm)=> <li className="flex justify-center cursor-pointer 
                                                 hover:bg-blue-400 hover:scale-120 transition-transform duration-300 w-fit rounded-lg" 
                                                             key={itm.title}>
                                                    <div className="m-6 text-2xl">{itm.title}</div>
