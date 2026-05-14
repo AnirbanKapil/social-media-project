@@ -18,7 +18,10 @@ export const postResolvers= {
                 content : payload.payload.content,
                 imgURL  : payload.payload.imgURL || null,
                 author  : {connect :{ id: ctx.session.user.id }}
-            }
+            },
+             include: {
+               author: true,
+            },
         });
         
         return post;

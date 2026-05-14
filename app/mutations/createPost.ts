@@ -7,6 +7,11 @@ export const CreatePostDocument = gql`
       id
       content
       imgURL
+      author {
+        id
+        name
+        email
     }
   }
+}    
 `;
