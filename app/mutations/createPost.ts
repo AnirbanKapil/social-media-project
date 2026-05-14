@@ -9,7 +9,7 @@ export const CreatePostDocument = gql`
       imgURL
       author {
         id
-        name
+        username
         email
     }
   }
