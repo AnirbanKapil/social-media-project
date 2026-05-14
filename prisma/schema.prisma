@@ -14,7 +14,7 @@ datasource db {
 
 
 model User {
-  id        Int   @id @default(autoincrement())
+  id        String  @id @default(cuid())
   email     String @unique
   username  String @unique
   password  String?
@@ -29,12 +29,12 @@ model User {
 
 
 model Post {
-  id        Int   @id @default(autoincrement())
+  id        String  @id @default(cuid())
   content   String
   imgURL    String?
   
   author    User  @relation(fields: [authorId], references: [id])
-  authorId  Int
+  authorId  String
 
   createdAt DateTime @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
