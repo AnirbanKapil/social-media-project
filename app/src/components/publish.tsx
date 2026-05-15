@@ -27,6 +27,7 @@ export function Publish () {
         },
         onError : (err) => {
             const error = err as Error;
+            console.log(error.message)
             alert(`Error creating post: ${error.message}`);
         }
     });

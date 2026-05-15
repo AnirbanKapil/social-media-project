@@ -8,7 +8,7 @@ export const postTypeDefs = gql`
   }
 
   type Post {
-    id: Int!
+    id: String!
     content: String!
     imgURL: String
     author: User 

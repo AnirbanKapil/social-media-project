@@ -16,7 +16,7 @@ export default function UsersPage() {
   }
 
   const user = data?.currUser
-
+  
   if (!data) return <p>No data</p>;
 
   return (

@@ -46,7 +46,7 @@ export type Post = {
   __typename?: 'Post';
   author?: Maybe<User>;
   content: Scalars['String']['output'];
-  id: Scalars['Int']['output'];
+  id: Scalars['String']['output'];
   imgURL?: Maybe<Scalars['String']['output']>;
 };
 
@@ -62,7 +62,7 @@ export type User = {
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   firstName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['Int']['output'];
+  id: Scalars['String']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   profileImgUrl?: Maybe<Scalars['String']['output']>;
   tweets?: Maybe<Array<Maybe<Post>>>;
@@ -80,27 +80,27 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { createPost: { id: number, content: string, imgURL: string | null, author: { id: number, username: string, email: string } | null } | null };
+export type CreatePostMutation = { createPost: { id: string, content: string, imgURL: string | null, author: { id: string, username: string, email: string } | null } | null };
 
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllPostsQuery = { getAllPosts: Array<{ id: number, content: string, imgURL: string | null, author: { id: number, username: string, profileImgUrl: string | null } | null } | null> };
+export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { currUser: { id: number, email: string, username: string } | null };
+export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { users: Array<{ id: number, email: string, username: string, profileImgUrl: string | null } | null> };
+export type GetUsersQuery = { users: Array<{ id: string, email: string, username: string, profileImgUrl: string | null } | null> };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { currUser: { id: number, email: string } | null };
+export type GetMeQuery = { currUser: { id: string, email: string } | null };
 
 
 
