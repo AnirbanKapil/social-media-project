@@ -13,22 +13,11 @@ export const postResolvers= {
             throw new Error("Not authenticated!!")
         }; 
             
-            const user = await prisma.user.findUnique({
-             where: {
-              email: ctx.session.user.email,
-               },
-             });
-             
-
-           if (!user) {
-             throw new Error("User not found in database");
-              }      
-               
         const post = await prisma.post.create({
             data: {
                 content : payload.payload.content,
                 imgURL  : payload.payload.imgURL || null,
-                author  : {connect :{ id: user.id }}
+                author  : {connect :{ id: ctx.session.user.id }}
             },
              include: {
                author: true,
