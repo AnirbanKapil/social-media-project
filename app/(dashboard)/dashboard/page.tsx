@@ -6,7 +6,13 @@ import { useGetAllPostsQuery } from "@/lib/generated";
 
 export default function FeedsPage () {
 
-    const { data, isLoading, error } = useGetAllPostsQuery({});
+    const { data, isLoading, error } = useGetAllPostsQuery({},
+      {
+      staleTime: 1000 * 60, 
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+    }
+    );
     if (isLoading) return <p>Loading...</p>;
 
     

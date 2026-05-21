@@ -12,10 +12,6 @@ import { SideBarMenuItems } from "@/app/src/components/sideBarMenu";
 
 
 export default function DashboardLayout({children}: {children: React.ReactNode}) {
-    
-     
-     
-    
 
      return (
      <div>
