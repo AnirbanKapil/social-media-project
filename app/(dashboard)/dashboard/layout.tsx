@@ -1,10 +1,11 @@
+
+
+
 "use client";
 
 
 import { NavBar } from "@/app/src/components/navbar";
 import { WhatsHappening } from "@/app/src/components/whatsHappening";
-
-
 import { SideBarMenuItems } from "@/app/src/components/sideBarMenu";
 
 
@@ -12,6 +13,8 @@ import { SideBarMenuItems } from "@/app/src/components/sideBarMenu";
 
 
 export default function DashboardLayout({children}: {children: React.ReactNode}) {
+
+   
 
      return (
      <div>
