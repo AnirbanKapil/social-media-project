@@ -23,7 +23,6 @@ export const postResolvers= {
                author: true,
             },
         });
-        
         return post;
      }
    },

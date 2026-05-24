@@ -14,6 +14,17 @@ export const postTypeDefs = gql`
     author: User 
   }
 
+   type User {
+    id: String!
+    email: String!
+    username: String!
+    firstName: String
+    lastName: String
+    profileImgUrl: String
+    createdAt: String!
+    updatedAt: String!
+  }
+
   type Mutation {
     createPost(payload: CreatePostPayload!): Post
   }
