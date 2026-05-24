@@ -10,7 +10,8 @@ export const userQueries = {
   if (!session?.user?.email) throw new Error("Invalid session");
 
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email }
+    where: { email: session.user.email },
+    include: {Posts: true}
   });
   if (!user) {
   throw new Error("User not found in DB");
