@@ -10,7 +10,6 @@ export const GetUserDocument = gql`
       profileImgUrl
       posts {
         id
-        title
         content
      }
     }

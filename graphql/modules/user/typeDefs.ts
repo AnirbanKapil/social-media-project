@@ -11,12 +11,19 @@ export const userTypeDefs  = gql`
     profileImgUrl: String
     createdAt: String!
     updatedAt: String!
-    tweets: [Post]
+    posts: [Post]
   }
   
   type Query {
     users: [User]!
     currUser: User
+  }
+
+  type Post {
+    id: String!
+    content: String!
+    imgURL: String
+    author: User 
   }
 
 `;
