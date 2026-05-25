@@ -7,40 +7,50 @@ import { SlOptions } from "react-icons/sl";
 
 interface SideBarButtons {
     title : string,
-    icon  : React.ReactNode
+    icon  : React.ReactNode,
+    link? : string
+
 }
 
 
 
 export const SideBarMenuItems : SideBarButtons[] = [
     {title : "Home",
-     icon  : <IoHomeOutline />   
+     icon  : <IoHomeOutline /> , 
+     link : "/dashboard" 
     },
     { title: "Explore",
-        icon : <GoHash />
+        icon : <GoHash />,
+        link : "/dashboard/explore"
     },
     {
         title : "Notifications",
-        icon : <FaRegBell />
+        icon : <FaRegBell />,
+        link : "/dashboard/notifications"
        },
        {
         title : "Messages",
-        icon : <FaRegEnvelope />
+        icon : <FaRegEnvelope />,
+        link : "/dashboard/messages"
        },
        {
         title : "Bookmarks",
-        icon : <FaRegBookmark />
+        icon : <FaRegBookmark />,
+        link : "/dashboard/bookmarks"
        },
        {
         title : "Profile",
-        icon :  <FaRegUser />
+        icon :  <FaRegUser />,
+        link : "/dashboard/profile"
        },
        {
         title : "Verify",
-        icon : <LuCircleDollarSign />
+        icon : <LuCircleDollarSign />,
+        link : "/dashboard/verify"
        },
        {
         title : "Options",
-        icon : <SlOptions />
+        icon : <SlOptions />,
+        link : "/dashboard/options"
        }
 ]
