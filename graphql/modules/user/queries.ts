@@ -13,9 +13,12 @@ export const userQueries = {
     where: { email: session.user.email },
     include: {Posts: true}
   });
+
   if (!user) {
   throw new Error("User not found in DB");
   };
-  return user;
+  return {
+    ...user, posts: user.Posts || []
+  };
   }
 };

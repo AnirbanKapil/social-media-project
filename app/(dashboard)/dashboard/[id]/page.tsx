@@ -6,6 +6,8 @@ import { useGetCurrentUserQuery } from "@/lib/generated";
 import Image from "next/image";
 import { Loader } from "@/app/src/components/loader";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { Feeds } from "@/app/src/components/feeds";
+
 
 export default function UsersPage() {
   const { data, isLoading, error } = useGetCurrentUserQuery({});
@@ -44,6 +46,14 @@ export default function UsersPage() {
 
        <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1> 
       </div> 
+      <div>
+        {user?.posts && user?.posts.map((post) => (
+          <Feeds key={post?.id} userImg={user?.profileImgUrl}
+          content={post?.content || "No content available"} 
+          user={user?.username || "Unknown User"}
+          />
+        ))}
+      </div>
     </div>
   );
 }
