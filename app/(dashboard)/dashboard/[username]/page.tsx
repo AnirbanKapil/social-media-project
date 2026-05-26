@@ -4,26 +4,28 @@
 
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import Image from "next/image";
-import { Loader } from "@/app/src/components/loader";
+
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Feeds } from "@/app/src/components/feeds";
+import { Loader } from "@/app/src/components/loader";
 
 
 export default function UsersPage() {
-  const { data, isLoading, error } = useGetCurrentUserQuery({});
+
+   const { data, isLoading, error } = useGetCurrentUserQuery({});
+
+    if (isLoading) return <Loader />;
+
+    if (error) {
+    const err = error as Error;
+    return <p>Error: {err.message}</p>;
+    }
+
+    if (!data) return <p>No data</p>;
+
+    const user = data?.currUser;
+
   
-  if (isLoading) return <Loader />;
-
-  if (error) {
-  const err = error as Error;
-  return <p>Error: {err.message}</p>;
-  }
-
-  const user = data?.currUser
-  console.log(user)
-  
-  if (!data) return <p>No data</p>;
-
   return (
     <div className="text-white">
       <div className="flex justify-start items-center gap-4 mx-2">

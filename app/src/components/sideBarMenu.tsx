@@ -14,7 +14,8 @@ interface SideBarButtons {
 
 
 
-export const SideBarMenuItems : SideBarButtons[] = [
+
+export const SideBarMenuItems = ({username} : {username : string}) : SideBarButtons[] => { return  [
     {title : "Home",
      icon  : <IoHomeOutline /> , 
      link : "/dashboard" 
@@ -41,7 +42,7 @@ export const SideBarMenuItems : SideBarButtons[] = [
        {
         title : "Profile",
         icon :  <FaRegUser />,
-        link : "/dashboard/profile"
+        link :  `/dashboard/${username}`
        },
        {
         title : "Verify",
@@ -54,3 +55,4 @@ export const SideBarMenuItems : SideBarButtons[] = [
         link : "/dashboard/options"
        }
 ]
+}

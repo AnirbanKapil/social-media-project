@@ -8,13 +8,27 @@ import { NavBar } from "@/app/src/components/navbar";
 import { WhatsHappening } from "@/app/src/components/whatsHappening";
 import { SideBarMenuItems } from "@/app/src/components/sideBarMenu";
 import Link from "next/link";
-
+import { useGetCurrentUserQuery } from "@/lib/generated";
+import { Loader } from "@/app/src/components/loader";
 
 
 
 export default function DashboardLayout({children}: {children: React.ReactNode}) {
 
-   
+    const { data, isLoading, error } = useGetCurrentUserQuery({});
+    
+     if (isLoading) return <Loader />;
+    
+        if (error) {
+        const err = error as Error;
+        return <p>Error: {err.message}</p>;
+        }
+    
+        if (!data?.currUser) return <p>No data</p>;
+    
+        const username  = data?.currUser?.username;
+
+        const sideBarItems = SideBarMenuItems({username});
 
      return (
      <div>
@@ -22,7 +36,7 @@ export default function DashboardLayout({children}: {children: React.ReactNode})
         <div className="grid grid-cols-12 w-screen h-screen px-52 overflow-hidden">
             <div className="col-span-3 mt-10 sticky top-0 h-screen">
                <ul> 
-               {SideBarMenuItems.map((itm)=> <li key={itm.title}>
+               {sideBarItems.map((itm)=> <li key={itm.title}>
                                                    <Link className="flex justify-center cursor-pointer 
                                                    hover:bg-blue-400 hover:scale-120 transition-transform duration-300 w-fit rounded-lg"
                                                    href={itm.link || "#"}>             

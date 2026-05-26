@@ -3,7 +3,7 @@ import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { typeDefs, resolvers, } from "@/graphql/schema";
-
+import { NextRequest } from 'next/server';
 
 
 const server = new ApolloServer({
@@ -12,7 +12,7 @@ const server = new ApolloServer({
 });
 
 // 4. Handler (Next.js App Router)
-const handler = startServerAndCreateNextHandler(server,{
+const handler = startServerAndCreateNextHandler<NextRequest>(server,{
   context : async () => {
     const session = await getAuthSession();
     return{
