@@ -54,7 +54,13 @@ export type Query = {
   __typename?: 'Query';
   currUser?: Maybe<User>;
   getAllPosts: Array<Maybe<Post>>;
+  getUserByUsername?: Maybe<User>;
   users: Array<Maybe<User>>;
+};
+
+
+export type QueryGetUserByUsernameArgs = {
+  username: Scalars['String']['input'];
 };
 
 export type User = {
@@ -91,6 +97,13 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, posts: Array<{ id: string, content: string } | null> | null } | null };
+
+export type GetUserByUsernameQueryVariables = Exact<{
+  username: string;
+}>;
+
+
+export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, profileImgUrl: string | null, posts: Array<{ id: string, content: string } | null> | null } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -197,6 +210,39 @@ export const useGetCurrentUserQuery = <
     )};
 
 useGetCurrentUserQuery.getKey = (variables?: GetCurrentUserQueryVariables) => variables === undefined ? ['GetCurrentUser'] : ['GetCurrentUser', variables];
+
+export const GetUserByUsernameDocument = new TypedDocumentString(`
+    query GetUserByUsername($username: String!) {
+  getUserByUsername(username: $username) {
+    id
+    email
+    username
+    profileImgUrl
+    posts {
+      id
+      content
+    }
+  }
+}
+    `);
+
+export const useGetUserByUsernameQuery = <
+      TData = GetUserByUsernameQuery,
+      TError = unknown
+    >(
+      variables: GetUserByUsernameQueryVariables,
+      options?: Omit<UseQueryOptions<GetUserByUsernameQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetUserByUsernameQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetUserByUsernameQuery, TError, TData>(
+      {
+    queryKey: ['GetUserByUsername', variables],
+    queryFn: useCustomFetcher<GetUserByUsernameQuery, GetUserByUsernameQueryVariables>(GetUserByUsernameDocument, variables),
+    ...options
+  }
+    )};
+
+useGetUserByUsernameQuery.getKey = (variables: GetUserByUsernameQueryVariables) => ['GetUserByUsername', variables];
 
 export const GetUsersDocument = new TypedDocumentString(`
     query GetUsers {

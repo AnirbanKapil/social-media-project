@@ -2,17 +2,18 @@
 
 "use client";
 
-import { useGetCurrentUserQuery } from "@/lib/generated";
 import Image from "next/image";
-
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Feeds } from "@/app/src/components/feeds";
 import { Loader } from "@/app/src/components/loader";
-
+import { useGetUserByUsernameQuery } from "@/lib/generated";
+import { useParams } from "next/navigation";
 
 export default function UsersPage() {
 
-   const { data, isLoading, error } = useGetCurrentUserQuery({},
+  const userName = useParams().username as string;  
+
+   const { data, isLoading, error } = useGetUserByUsernameQuery({ username: userName || "" },
         {
         staleTime: 1000 * 60 * 5, 
         refetchOnWindowFocus: false 
@@ -28,7 +29,7 @@ export default function UsersPage() {
 
     if (!data) return <p>No data</p>;
 
-    const user = data?.currUser;
+    const user = data?.getUserByUsername;
 
   
   return (
