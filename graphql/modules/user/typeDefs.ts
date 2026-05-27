@@ -17,6 +17,7 @@ export const userTypeDefs  = gql`
   type Query {
     users: [User]!
     currUser: User
+    getUserByUsername(username: String!): User
   }
 
   type Post {
