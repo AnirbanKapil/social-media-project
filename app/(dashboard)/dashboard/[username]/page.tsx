@@ -8,6 +8,7 @@ import { Feeds } from "@/app/src/components/feeds";
 import { Loader } from "@/app/src/components/loader";
 import { useGetUserByUsernameQuery } from "@/lib/generated";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 export default function UsersPage() {
 
@@ -35,7 +36,10 @@ export default function UsersPage() {
   return (
     <div className="text-white">
       <div className="flex justify-start items-center gap-4 mx-2">
-         <IoMdArrowRoundBack />
+         <Link href="/dashboard"
+          className="cursor-pointer hover:scale-110 transition-transform duration-300 p-2 inline-block">
+          <IoMdArrowRoundBack size={24} />
+         </Link>
          
          <div>
             <h1 className="font-bold">{user?.username}</h1> 

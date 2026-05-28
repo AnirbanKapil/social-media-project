@@ -6,7 +6,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { Feeds } from "@/app/src/components/feeds";
 import { Loader } from "@/app/src/components/loader";
 import { useGetCurrentUserQuery } from "@/lib/generated";
-
+import Link from "next/link";
 
 
 export default function ProfilePage() {
@@ -32,8 +32,10 @@ export default function ProfilePage() {
     return (
         <div className="text-white">
           <div className="flex justify-start items-center gap-4 mx-2">
-             <IoMdArrowRoundBack />
-             
+             <Link href="/dashboard"
+              className="cursor-pointer hover:scale-110 transition-transform duration-300 p-2 inline-block">
+               <IoMdArrowRoundBack size={24} />
+             </Link>
              <div>
                 <h1 className="font-bold">{user?.username}</h1> 
                 <p className="text-slate-600 mx-1">Posts 100</p>
