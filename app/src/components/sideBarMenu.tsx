@@ -42,7 +42,7 @@ export const SideBarMenuItems = ({username} : {username : string}) : SideBarButt
        {
         title : "Profile",
         icon :  <FaRegUser />,
-        link :  `/dashboard/${username}`
+        link :  `/dashboard/userProfile`
        },
        {
         title : "Verify",
