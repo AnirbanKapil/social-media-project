@@ -15,7 +15,7 @@ interface SideBarButtons {
 
 
 
-export const SideBarMenuItems = ({username} : {username : string}) : SideBarButtons[] => { return  [
+export const SideBarMenuItems = () : SideBarButtons[] => { return  [
     {title : "Home",
      icon  : <IoHomeOutline /> , 
      link : "/dashboard" 

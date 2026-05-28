@@ -16,7 +16,7 @@ export function Feeds ({content, userImg, user} : {content : string, userImg? : 
                  className="rounded-full m-2" /> : <div className="w-12 h-12 rounded-full bg-blue-300 m-2"></div>}
             </div>
             <div className="col-span-11 m-2.5">
-                <h1 className="font-semibold">{user}</h1>
+                <h1 className="inline-block font-semibold cursor-pointer hover:scale-110 transition-transform duration-300">{user}</h1>
                     <p>{content}</p>
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><LuMessageCircle /></div>

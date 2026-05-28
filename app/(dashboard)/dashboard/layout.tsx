@@ -1,39 +1,17 @@
 
 
 
-"use client";
-
-
 import { NavBar } from "@/app/src/components/navbar";
 import { WhatsHappening } from "@/app/src/components/whatsHappening";
 import { SideBarMenuItems } from "@/app/src/components/sideBarMenu";
 import Link from "next/link";
-import { useGetCurrentUserQuery } from "@/lib/generated";
-import { Loader } from "@/app/src/components/loader";
+
 
 
 
 export default function DashboardLayout({children}: {children: React.ReactNode}) {
 
-    const { data, isLoading, error } = useGetCurrentUserQuery({},
-        {
-        staleTime: 1000 * 60 * 5, 
-        refetchOnWindowFocus: false 
-        }
-    );
-    
-     if (isLoading) return <Loader />;
-    
-        if (error) {
-        const err = error as Error;
-        return <p>Error: {err.message}</p>;
-        }
-    
-        if (!data?.currUser) return <p>No data</p>;
-    
-        const username  = data?.currUser?.username;
-
-        const sideBarItems = SideBarMenuItems({username});
+    const sideBarItems = SideBarMenuItems();
 
      return (
      <div>
