@@ -9,12 +9,18 @@ import { useState } from "react";
 
 export function Publish () {
 
+    const [selectedFile,setSelectedFile] = useState<File | null>(null)
+
     const handleSelectImg = () => {
         const input = document.createElement("input");
-        input.setAttribute("type","file");
-        input.setAttribute("accept","image/*")
-        input.click();
-    }
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = (e) => {
+            const target = e.target as HTMLInputElement;
+            if(!target.files?.length) return;
+            setSelectedFile(target.files[0]);
+        }
+    };
 
     const [content, setContent] = useState("");
     const queryClient = useQueryClient();
