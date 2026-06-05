@@ -38,9 +38,33 @@ export function Publish () {
         }
     });
 
-    const handleSubmit = (e : React.FormEvent) => {
+    const handleSubmit =async (e : React.FormEvent) => {
         e.preventDefault();
-        mutate({payload : {content}});
+
+        try {
+            let imgUrl = "" 
+
+            if(selectedFile){
+                const formData = new FormData();
+                formData.append("file",selectedFile)
+                
+                const uploadImg = await fetch("/api/img-upload",
+                   { method : "POST",
+                    body : formData }
+                );
+
+                if(!uploadImg.ok){
+                    throw new Error("Error uploading image")
+                };
+
+                const data = await uploadImg.json()
+                imgUrl = data.imageUrl
+            }
+            
+             await mutate({payload : {content ,}});
+        } catch (error) {
+            throw error
+        }
     }
     return (
         <div className="grid grid-cols-12 border-b border-gray-600 m-2">
