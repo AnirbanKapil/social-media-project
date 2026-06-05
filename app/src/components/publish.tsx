@@ -20,6 +20,7 @@ export function Publish () {
             if(!target.files?.length) return;
             setSelectedFile(target.files[0]);
         }
+        input.click();
     };
 
     const [content, setContent] = useState("");
@@ -61,7 +62,7 @@ export function Publish () {
                 imgUrl = data.imageUrl
             }
             
-             await mutate({payload : {content ,}});
+             await mutate({payload : {content , imgURL : imgUrl}});
         } catch (error) {
             throw error
         }
