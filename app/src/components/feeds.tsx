@@ -8,8 +8,8 @@ import Link from "next/link";
 import { CldImage } from 'next-cloudinary'
 
 
-export function Feeds ({content, userImg, user, imgSrc} : {content : string, userImg? : string | null, user : string, imgSrc : string}) {
-   
+export function Feeds ({content, userImg, user, imgSrc} : {content : string, userImg? : string | null, user : string, imgSrc : string | null}) {
+    console.log(imgSrc)
 
     return(
         <div className="grid grid-cols-12 border-b border-gray-600">

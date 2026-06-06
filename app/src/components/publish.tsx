@@ -54,7 +54,7 @@ export function Publish () {
                    { method : "POST",
                     body : formData }
                 );
-                console.log(uploadImg)
+                
                 if(!uploadImg.ok){
                     const errorData = await uploadImg.json()
                     throw new Error(errorData.error || "Error uploading image")

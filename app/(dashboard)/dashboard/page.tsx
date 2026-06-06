@@ -25,7 +25,8 @@ export default function FeedsPage () {
     const posts = data?.getAllPosts;
     
     if (!posts) return <p>No data</p>;
-
+    
+    
     return (
           <div className="mt-16 mb-10">
                     <Publish />
@@ -33,7 +34,7 @@ export default function FeedsPage () {
                         <Feeds key={post?.id} userImg={post?.author?.profileImgUrl} 
                         content={post?.content || "No content available"} 
                         user={post?.author?.username || "Unknown User"}
-                        imgSrc={post?.author?.imgURL}
+                        imgSrc={post?.imgURL}
                         />
                      ))}
                 </div>
