@@ -5,8 +5,10 @@ import { FaRegHeart } from "react-icons/fa";
 import { BsUpload } from "react-icons/bs";
 import { FaRegBookmark } from "react-icons/fa6";
 import Link from "next/link";
+import { CldImage } from 'next-cloudinary'
 
-export function Feeds ({content, userImg, user} : {content : string, userImg? : string | null, user : string}) {
+
+export function Feeds ({content, userImg, user, imgSrc} : {content : string, userImg? : string | null, user : string, imgSrc : string}) {
    
 
     return(
@@ -21,6 +23,14 @@ export function Feeds ({content, userImg, user} : {content : string, userImg? : 
                        {user}
                     </Link>
                     <p>{content}</p>
+                    {imgSrc && <CldImage
+                    alt="image"
+                    src={imgSrc}
+                    width={1080}
+                    height={1080}
+                    crop="fill"
+                    gravity="auto"
+                    />}
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><LuMessageCircle /></div>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><AiOutlineRetweet /></div>

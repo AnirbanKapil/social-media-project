@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 
+
 export function Publish () {
 
     const [selectedFile,setSelectedFile] = useState<File | null>(null)
@@ -53,9 +54,10 @@ export function Publish () {
                    { method : "POST",
                     body : formData }
                 );
-
+                console.log(uploadImg)
                 if(!uploadImg.ok){
-                    throw new Error("Error uploading image")
+                    const errorData = await uploadImg.json()
+                    throw new Error(errorData.error || "Error uploading image")
                 };
 
                 const data = await uploadImg.json()

@@ -16,7 +16,7 @@ interface CloudinaryUploadResult {
 
 export async function POST (request : NextRequest) {
        
-       if(!process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_SECRET){
+       if(!(process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_SECRET)){
              return NextResponse.json(
                 {error : "Cloudinary credentials not found"},
                 {status : 500}

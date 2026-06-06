@@ -33,6 +33,7 @@ export default function FeedsPage () {
                         <Feeds key={post?.id} userImg={post?.author?.profileImgUrl} 
                         content={post?.content || "No content available"} 
                         user={post?.author?.username || "Unknown User"}
+                        imgSrc={post?.author?.imgURL}
                         />
                      ))}
                 </div>
