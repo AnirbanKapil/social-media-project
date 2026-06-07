@@ -67,6 +67,8 @@ export function Publish () {
              await mutate({payload : {content , imgURL : imgUrl}});
         } catch (error) {
             throw error
+        } finally{
+            setSelectedFile(null);
         }
     }
     return (

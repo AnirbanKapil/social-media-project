@@ -58,6 +58,7 @@ export default function ProfilePage() {
               <Feeds key={post?.id} userImg={user?.profileImgUrl}
               content={post?.content || "No content available"} 
               user={user?.username || "Unknown User"}
+              imgSrc={post?.imgURL}
               />
             ))}
           </div>
