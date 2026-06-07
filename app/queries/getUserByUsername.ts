@@ -11,6 +11,7 @@ export const GetUserByUsernameDocument = gql`
         posts {
         id
         content
+        imgURL
      }
     }
   }
