@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+        cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, 
         api_key: process.env.CLOUDINARY_API_KEY, 
         api_secret: process.env.CLOUDINARY_API_SECRET
 })
@@ -16,7 +16,7 @@ interface CloudinaryUploadResult {
 
 export async function POST (request : NextRequest) {
        
-       if(!(process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_SECRET)){
+       if(!(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_SECRET)){
              return NextResponse.json(
                 {error : "Cloudinary credentials not found"},
                 {status : 500}
