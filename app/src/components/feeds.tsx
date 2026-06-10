@@ -17,11 +17,13 @@ export function Feeds ({content, userImg, user, imgSrc, created} : {content : st
                  className="rounded-full m-2" /> : <div className="w-12 h-12 rounded-full bg-blue-300 m-2"></div>}
             </div>
             <div className="col-span-11 m-2.5">
+                   <div className="flex justify-between">
                    <Link href={`/dashboard/${user}`}
                     className="inline-block font-semibold cursor-pointer hover:scale-110 transition-transform duration-300">
                        {user}
                     </Link>
-                    <p>{new Date(Number(created)).toLocaleString()}</p>
+                    <p className="text-slate-400 text-xs">{new Date(Number(created)).toLocaleString()}</p>
+                    </div>
                     <p>{content}</p>
                     {imgSrc && <CldImage
                     alt="image"
