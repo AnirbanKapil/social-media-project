@@ -16,7 +16,10 @@ import {
   Globe,
   Shield
 } from 'lucide-react';
+import { useGetCurrentUserQuery } from "@/lib/generated";
 import { useRef } from 'react';
+import { signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 // Custom Inkwell Logo Component
 const InkwellLogo = ({ className = "w-10 h-10" }: { className?: string }) => (
@@ -84,6 +87,9 @@ const floatingAnimation = {
 };
 
 export default function LandingPage() {
+  const router = useRouter();
+  const { data } = useGetCurrentUserQuery({});
+  const user = data?.currUser
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -133,6 +139,18 @@ export default function LandingPage() {
     { value: "190", label: "Countries" }
   ];
 
+  const handleAuthAction =async () => {
+    if(user){
+       try {
+         await signOut()
+       } catch (error : any) {
+        throw new Error("Failed logout option",error)
+       } 
+    }else{
+        router.push("/signin") 
+    }
+  }
+
   return (
     <div ref={containerRef} className="min-h-screen bg-slate-950 text-slate-50 overflow-x-hidden">
       {/* Navigation */}
@@ -150,10 +168,11 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="hidden sm:block text-sm font-medium text-slate-400 hover:text-white transition-colors">
-              Log in
+            <button onClick={handleAuthAction} 
+            className="hidden sm:block text-sm font-medium text-slate-400 hover:text-white transition-colors cursor-pointer">
+              {!user ? "Log in" : "Log out"}
             </button>
-            <button className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95">
+            <button className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-400 cursor-pointer text-white text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95">
               Get Started
             </button>
           </div>
