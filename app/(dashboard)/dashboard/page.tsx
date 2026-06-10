@@ -35,6 +35,7 @@ export default function FeedsPage () {
                         content={post?.content || "No content available"} 
                         user={post?.author?.username || "Unknown User"}
                         imgSrc={post?.imgURL}
+                        created={post?.createdAt || "unknown"}
                         />
                      ))}
                 </div>

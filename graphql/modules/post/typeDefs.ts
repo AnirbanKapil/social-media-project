@@ -11,6 +11,8 @@ export const postTypeDefs = gql`
     id: String!
     content: String!
     imgURL: String
+    createdAt: String!
+    updatedAt: String!
     author: User 
   }
 

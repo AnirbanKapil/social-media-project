@@ -46,8 +46,10 @@ export type Post = {
   __typename?: 'Post';
   author?: Maybe<User>;
   content: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   imgURL?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 export type Query = {
@@ -91,7 +93,7 @@ export type CreatePostMutation = { createPost: { id: string, content: string, im
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
+export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -151,6 +153,7 @@ export const GetAllPostsDocument = new TypedDocumentString(`
     id
     content
     imgURL
+    createdAt
     author {
       id
       username

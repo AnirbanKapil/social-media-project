@@ -8,6 +8,7 @@ export const GetAllPostsDocument = gql`
         id, 
         content,
         imgURL,
+        createdAt
         author {   
             id,
             username,

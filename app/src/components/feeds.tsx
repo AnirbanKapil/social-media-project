@@ -8,9 +8,8 @@ import Link from "next/link";
 import { CldImage } from 'next-cloudinary'
 
 
-export function Feeds ({content, userImg, user, imgSrc} : {content : string, userImg? : string | null, user : string, imgSrc : string | null}) {
-    console.log(imgSrc)
-
+export function Feeds ({content, userImg, user, imgSrc, created} : {content : string, userImg? : string | null, user : string, imgSrc : string | null, created : string}) {
+    
     return(
         <div className="grid grid-cols-12 border-b border-gray-600">
             <div className="col-span-1">
@@ -22,6 +21,7 @@ export function Feeds ({content, userImg, user, imgSrc} : {content : string, use
                     className="inline-block font-semibold cursor-pointer hover:scale-110 transition-transform duration-300">
                        {user}
                     </Link>
+                    <p>{new Date(Number(created)).toLocaleString()}</p>
                     <p>{content}</p>
                     {imgSrc && <CldImage
                     alt="image"
