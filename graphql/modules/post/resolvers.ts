@@ -7,7 +7,7 @@ import { postQueries } from "./queries";
 
 export const postResolvers= {
     Mutation: {
-    createPost:async (parent : any, payload : any, ctx:any) => {
+    createPost:async (parent : any, payload : any, ctx : any) => {
         
         if(!ctx.session?.user){
             throw new Error("Not authenticated!!")

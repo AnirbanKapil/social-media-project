@@ -12,6 +12,9 @@ export const userTypeDefs  = gql`
     createdAt: String!
     updatedAt: String!
     posts: [Post]
+
+    followers: [User]
+    followings : [User]
   }
   
   type Query {
@@ -25,6 +28,5 @@ export const userTypeDefs  = gql`
     content: String!
     imgURL: String
     author: User 
-  }
 
 `;
