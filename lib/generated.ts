@@ -32,14 +32,32 @@ export type CreatePostPayload = {
   imgURL?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type Follows = {
+  __typename?: 'Follows';
+  followerId: Scalars['String']['output'];
+  followingId: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPost?: Maybe<Post>;
+  followUser: Follows;
+  unfollowUser?: Maybe<Follows>;
 };
 
 
 export type MutationCreatePostArgs = {
   payload: CreatePostPayload;
+};
+
+
+export type MutationFollowUserArgs = {
+  to: Scalars['String']['input'];
+};
+
+
+export type MutationUnfollowUserArgs = {
+  to: Scalars['String']['input'];
 };
 
 export type Post = {
@@ -70,6 +88,8 @@ export type User = {
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   firstName?: Maybe<Scalars['String']['output']>;
+  followers?: Maybe<Array<Maybe<User>>>;
+  followings?: Maybe<Array<Maybe<User>>>;
   id: Scalars['String']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   posts?: Maybe<Array<Maybe<Post>>>;
@@ -89,6 +109,20 @@ export type CreatePostMutationVariables = Exact<{
 
 
 export type CreatePostMutation = { createPost: { id: string, content: string, imgURL: string | null, author: { id: string, username: string, email: string } | null } | null };
+
+export type FollowUserMutationVariables = Exact<{
+  to: string;
+}>;
+
+
+export type FollowUserMutation = { followUser: { followerId: string, followingId: string } };
+
+export type UnfollowUserMutationVariables = Exact<{
+  to: string;
+}>;
+
+
+export type UnfollowUserMutation = { unfollowUser: { followerId: string, followingId: string } | null };
 
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -143,6 +177,50 @@ export const useCreatePostMutation = <
       {
     mutationKey: ['CreatePost'],
     mutationFn: (variables?: CreatePostMutationVariables) => useCustomFetcher<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const FollowUserDocument = new TypedDocumentString(`
+    mutation FollowUser($to: String!) {
+  followUser(to: $to) {
+    followerId
+    followingId
+  }
+}
+    `);
+
+export const useFollowUserMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<FollowUserMutation, TError, FollowUserMutationVariables, TContext>) => {
+    
+    return useMutation<FollowUserMutation, TError, FollowUserMutationVariables, TContext>(
+      {
+    mutationKey: ['FollowUser'],
+    mutationFn: (variables?: FollowUserMutationVariables) => useCustomFetcher<FollowUserMutation, FollowUserMutationVariables>(FollowUserDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const UnfollowUserDocument = new TypedDocumentString(`
+    mutation UnfollowUser($to: String!) {
+  unfollowUser(to: $to) {
+    followerId
+    followingId
+  }
+}
+    `);
+
+export const useUnfollowUserMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UnfollowUserMutation, TError, UnfollowUserMutationVariables, TContext>) => {
+    
+    return useMutation<UnfollowUserMutation, TError, UnfollowUserMutationVariables, TContext>(
+      {
+    mutationKey: ['UnfollowUser'],
+    mutationFn: (variables?: UnfollowUserMutationVariables) => useCustomFetcher<UnfollowUserMutation, UnfollowUserMutationVariables>(UnfollowUserDocument, variables)(),
     ...options
   }
     )};
