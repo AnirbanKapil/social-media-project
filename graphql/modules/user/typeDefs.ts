@@ -28,5 +28,16 @@ export const userTypeDefs  = gql`
     content: String!
     imgURL: String
     author: User 
+  }
+
+  type Follows {
+     followerId: String!
+     followingId: String!
+  }
+  
+  type Mutation {
+    followUser(to : String!): Follows! 
+    unfollowUser(to : String!): Follows
+  }  
 
 `;
