@@ -15,6 +15,8 @@ export const userTypeDefs  = gql`
 
     followers: [User]
     followings : [User]
+
+    isFollowing: Boolean!
   }
   
   type Query {

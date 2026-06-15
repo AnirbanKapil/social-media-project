@@ -31,7 +31,7 @@ export default function UsersPage() {
     if (!data) return <p>No data</p>;
 
     const user = data?.getUserByUsername;
-
+    
   
   return (
     <div className="text-white">

@@ -8,6 +8,7 @@ export const GetUserByUsernameDocument = gql`
         email
         username
         profileImgUrl
+        isFollowing
         posts {
         id
         content
