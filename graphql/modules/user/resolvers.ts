@@ -3,6 +3,25 @@ import { userQueries } from "./queries";
 
 
 export const userResolvers = {
+  User: {
+    isFollowing: async (parent : any, _args : any, ctx : any) => {
+      const currentUserId = ctx.session?.user?.id;
+
+      if (!currentUserId) return false;
+
+      const follow = await ctx.prisma.follows.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: currentUserId,
+            followingId: parent.id,
+          },
+        },
+      });
+
+      return !!follow;
+    },
+  },
+  
   Mutation: {
     
     followUser : async (parent : any, {to}: {to : string}, ctx : any) => {
