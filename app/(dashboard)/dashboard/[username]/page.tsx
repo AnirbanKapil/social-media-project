@@ -32,6 +32,11 @@ export default function UsersPage() {
 
     const user = data?.getUserByUsername;
     
+    const isFollowing = user?.isFollowing
+
+    const handleFollow = () => {
+       console.log("clicked")
+    }
   
   return (
     <div className="text-white">
@@ -55,8 +60,14 @@ export default function UsersPage() {
            height={100}
       />
       ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
-
-       <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1> 
+        <div className="flex justify-between">
+        <h1 className="font-extrabold text-3xl mx-5 my-5">{user?.username}</h1> 
+        <button onClick={handleFollow}
+        className="self-center block-inline mt-2 p-2 mx-3 cursor-pointer 
+         hover:bg-blue-400 hover:scale-120 transition-transform duration-300 bg-blue-600 rounded-lg">
+           {isFollowing ? "Unfollow" : "Follow"}
+        </button>
+        </div> 
       </div> 
       <div>
         {user?.posts && user?.posts.map((post) => (

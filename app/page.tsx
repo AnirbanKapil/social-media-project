@@ -147,7 +147,7 @@ export default function LandingPage() {
         throw new Error("Failed logout option",error)
        } 
     }else{
-        router.push("/signin") 
+        router.push("/api/auth/signin") 
     }
   }
 

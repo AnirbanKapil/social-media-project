@@ -9,8 +9,6 @@ import { CldImage } from 'next-cloudinary'
 
 
 export function Feeds ({content, userImg, user, imgSrc, created} : {content : string, userImg? : string | null, user : string, imgSrc : string | null, created : string}) {
-     
-    
 
     return(
         <div className="grid grid-cols-12 border-b border-gray-600">
@@ -20,13 +18,10 @@ export function Feeds ({content, userImg, user, imgSrc, created} : {content : st
             </div>
             <div className="col-span-11 m-2.5">
                    <div className="flex justify-between">
-                   <div>
                    <Link href={`/dashboard/${user}`}
                     className="inline-block font-semibold cursor-pointer hover:scale-110 transition-transform duration-300">
                        {user}
                     </Link>
-                    <button className="bg-blue-600 px-1 rounded-lg text-xs mx-2">Follow</button>
-                    </div> 
                     <p className="text-slate-400 text-xs mt-2">{new Date(Number(created)).toLocaleString()}</p>
                     </div>
                     <p>{content}</p>
