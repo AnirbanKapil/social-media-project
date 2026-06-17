@@ -7,8 +7,11 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { Feeds } from "@/app/src/components/feeds";
 import { Loader } from "@/app/src/components/loader";
 import { useGetUserByUsernameQuery } from "@/lib/generated";
+import { useFollowUserMutation } from "@/lib/generated";
+import { useUnfollowUserMutation } from "@/lib/generated";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function UsersPage() {
 
@@ -20,6 +23,11 @@ export default function UsersPage() {
         refetchOnWindowFocus: false 
         }
    );
+
+    const { mutateAsync: followUser } = useFollowUserMutation();
+    const { mutateAsync: unfollowUser } = useUnfollowUserMutation();
+   
+     const queryClient = useQueryClient();
 
     if (isLoading) return <Loader />;
 
@@ -34,8 +42,16 @@ export default function UsersPage() {
     
     const isFollowing = user?.isFollowing
 
-    const handleFollow = () => {
-       console.log("clicked")
+    const handleFollow = async () => {
+      if(isFollowing){
+        await unfollowUser({to : user?.id})
+      }else {
+        await followUser({to : user?.id})
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ["GetUserByUsername"]
+      })
     }
   
   return (
