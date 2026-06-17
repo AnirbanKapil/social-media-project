@@ -12,22 +12,25 @@ import { useUnfollowUserMutation } from "@/lib/generated";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGetCurrentUserQuery } from "@/lib/generated";
 
 export default function UsersPage() {
 
   const userName = useParams().username as string;  
 
-   const { data, isLoading, error } = useGetUserByUsernameQuery({ username: userName || "" },
+   const { data : profileData, isLoading, error } = useGetUserByUsernameQuery({ username: userName || "" },
         {
         staleTime: 1000 * 60 * 5, 
         refetchOnWindowFocus: false 
         }
    );
+   
+   const { data : currentuserData } = useGetCurrentUserQuery({});
 
     const { mutateAsync: followUser } = useFollowUserMutation();
     const { mutateAsync: unfollowUser } = useUnfollowUserMutation();
    
-     const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
     if (isLoading) return <Loader />;
 
@@ -36,10 +39,14 @@ export default function UsersPage() {
     return <p>Error: {err.message}</p>;
     }
 
-    if (!data) return <p>No data</p>;
+    if (!profileData) return <p>No data</p>;
 
-    const user = data?.getUserByUsername;
-    
+    const user = profileData?.getUserByUsername;
+
+    const userId = user?.id;
+    const currUserId = currentuserData?.currUser?.id
+    const isOwnProfile = userId === currUserId ;
+
     const isFollowing = user?.isFollowing
 
     const handleFollow = async () => {
@@ -78,11 +85,11 @@ export default function UsersPage() {
       ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
         <div className="flex justify-between">
         <h1 className="font-extrabold text-3xl mx-5 my-5">{user?.username}</h1> 
-        <button onClick={handleFollow}
+        {!isOwnProfile &&  (<button onClick={handleFollow}
         className="self-center block-inline mt-2 p-2 mx-3 cursor-pointer 
          hover:bg-blue-400 hover:scale-120 transition-transform duration-300 bg-blue-600 rounded-lg">
            {isFollowing ? "Unfollow" : "Follow"}
-        </button>
+        </button>)}
         </div> 
       </div> 
       <div>
