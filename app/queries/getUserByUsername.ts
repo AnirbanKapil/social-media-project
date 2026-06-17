@@ -13,6 +13,7 @@ export const GetUserByUsernameDocument = gql`
         id
         content
         imgURL
+        createdAt
      }
     }
   }

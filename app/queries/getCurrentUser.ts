@@ -12,6 +12,7 @@ export const GetUserDocument = gql`
         id
         content
         imgURL
+        createdAt
      }
     }
  }  

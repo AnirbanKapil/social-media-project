@@ -59,6 +59,7 @@ export default function ProfilePage() {
               content={post?.content || "No content available"} 
               user={user?.username || "Unknown User"}
               imgSrc={post?.imgURL}
+              created={post?.createdAt || "unknown"}
               />
             ))}
           </div>

@@ -24,7 +24,7 @@ export function Feeds ({content, userImg, user, imgSrc, created} : {content : st
                     </Link>
                     <p className="text-slate-400 text-xs mt-2">{new Date(Number(created)).toLocaleString()}</p>
                     </div>
-                    <p>{content}</p>
+                    <p className="mt-2">{content}</p>
                     {imgSrc && <CldImage
                     alt="image"
                     src={imgSrc}
