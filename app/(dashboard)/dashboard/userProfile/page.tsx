@@ -7,6 +7,8 @@ import { Feeds } from "@/app/src/components/feeds";
 import { Loader } from "@/app/src/components/loader";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import Link from "next/link";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 
 export default function ProfilePage() {
@@ -38,19 +40,24 @@ export default function ProfilePage() {
              </Link>
              <div>
                 <h1 className="font-bold">{user?.username}</h1> 
-                <p className="text-slate-600 mx-1">Posts 100</p>
+                <p className="text-slate-600 mx-1">Posts {user?.posts?.length}</p>
              </div>
           </div>
           <div className="border-b border-slate-800 my-5">
-          {user?.profileImgUrl ? (
+           <div className="flex"> 
+            {user?.profileImgUrl ? (
+             <Zoom>
               <Image
+               className="m-3 rounded-full"
                alt="profileImg"
                src={user.profileImgUrl}
                width={100}
                height={100}
-          />
-          ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
-    
+            />
+             </Zoom>
+            ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
+            <button className="self-center bg-slate-200 text-black p-1 mx-3 rounded-lg hover:duration-300 cursor-pointer hover:scale-120">Change Profile Pic</button>
+           </div>  
            <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1> 
           </div> 
           <div>
