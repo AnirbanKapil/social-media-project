@@ -16,6 +16,9 @@ export const userTypeDefs  = gql`
     followers: [User]
     followings : [User]
 
+    followersCount: Int!
+    followingCount: Int!
+
     isFollowing: Boolean!
   }
   

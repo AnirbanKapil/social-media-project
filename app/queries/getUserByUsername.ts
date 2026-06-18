@@ -9,6 +9,8 @@ export const GetUserByUsernameDocument = gql`
         username
         profileImgUrl
         isFollowing
+        followersCount
+        followingCount
         posts {
         id
         content

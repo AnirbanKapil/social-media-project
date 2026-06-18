@@ -58,7 +58,11 @@ export default function ProfilePage() {
             ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
             <button className="self-center bg-slate-200 text-black p-1 mx-3 rounded-lg hover:duration-300 cursor-pointer hover:scale-120">Change Profile Pic</button>
            </div>  
-           <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1> 
+           <div className="flex">
+            <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1>
+            <h3 className="mx-4 my-7 text-slate-600">Followers 0</h3>
+            <h3 className="mx-4 my-7 text-slate-600">Following 0</h3> 
+           </div>
           </div> 
           <div>
             {user?.posts && user?.posts.map((post) => (

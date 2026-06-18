@@ -20,6 +20,22 @@ export const userResolvers = {
 
       return !!follow;
     },
+
+    followersCount: async (parent : any,_args : any, ctx : any) => { 
+      return await ctx.prisma.follows.count({
+        where : {
+          followingId : parent.id
+        }
+      })
+    },
+    
+    followingCount: async (parent : any,_args : any, ctx : any) => {
+      return await ctx.prisma.follows.count({
+        where : {
+          followerId : parent.id
+        }
+      })
+    }
   },
   
   Mutation: {
