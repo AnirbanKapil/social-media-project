@@ -71,12 +71,13 @@ export default function UsersPage() {
          
          <div>
             <h1 className="font-bold">{user?.username}</h1> 
-            <p className="text-slate-600 mx-1">Posts 100</p>
+            <p className="text-slate-600 mx-1">Posts {user?.posts?.length}</p>
          </div>
       </div>
       <div className="border-b border-slate-800 my-5">
       {user?.profileImgUrl ? (
           <Image
+           className="mx-4 rounded-full"
            alt="profileImg"
            src={user.profileImgUrl}
            width={100}
@@ -84,13 +85,17 @@ export default function UsersPage() {
       />
       ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
         <div className="flex justify-between">
-        <h1 className="font-extrabold text-3xl mx-5 my-5">{user?.username}</h1> 
+        <h1 className="font-extrabold text-3xl mx-5 my-4">{user?.username}</h1> 
         {!isOwnProfile &&  (<button onClick={handleFollow}
         className="self-center block-inline mt-2 p-2 mx-3 cursor-pointer 
          hover:bg-blue-400 hover:scale-120 transition-transform duration-300 bg-blue-600 rounded-lg">
            {isFollowing ? "Unfollow" : "Follow"}
         </button>)}
         </div> 
+        <div className="flex">
+        <p className="mx-4 my-6 text-slate-600">{user?.followersCount} Followers</p>
+        <p className="mx-4 my-6 text-slate-600">{user?.followingCount} Following</p>
+        </div>
       </div> 
       <div>
         {user?.posts && user?.posts.map((post) => (

@@ -89,6 +89,8 @@ export type User = {
   email: Scalars['String']['output'];
   firstName?: Maybe<Scalars['String']['output']>;
   followers?: Maybe<Array<Maybe<User>>>;
+  followersCount: Scalars['Int']['output'];
+  followingCount: Scalars['Int']['output'];
   followings?: Maybe<Array<Maybe<User>>>;
   id: Scalars['String']['output'];
   isFollowing: Scalars['Boolean']['output'];
@@ -140,7 +142,7 @@ export type GetUserByUsernameQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, profileImgUrl: string | null, isFollowing: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string } | null> | null } | null };
+export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string } | null> | null } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -303,6 +305,8 @@ export const GetUserByUsernameDocument = new TypedDocumentString(`
     username
     profileImgUrl
     isFollowing
+    followersCount
+    followingCount
     posts {
       id
       content
