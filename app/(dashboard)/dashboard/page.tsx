@@ -31,7 +31,8 @@ export default function FeedsPage () {
           <div className="mt-16 mb-10">
                     <Publish />
                      {posts.map((post) => (
-                        <Feeds key={post?.id} userImg={post?.author?.profileImgUrl} 
+                        <Feeds key={post?.id} 
+                        userImg={post?.author?.profileImgUrl} 
                         content={post?.content || "No content available"} 
                         user={post?.author?.username || "Unknown User"}
                         imgSrc={post?.imgURL}

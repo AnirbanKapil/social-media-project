@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs"
 export async function POST (req : NextRequest) {
     
    try {
-     const {username,email,password} = await req.json();
+     const {username,email,password,profileImgUrl} = await req.json();
      if(!username.trim() || !email.trim() || !password.trim()){
          throw new Error("All fields are required")
      }
@@ -26,7 +26,8 @@ export async function POST (req : NextRequest) {
          data : {
              username,
              password : hashedPassword,
-             email
+             email,
+             profileImgUrl
          }
      });
  
