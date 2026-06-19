@@ -74,6 +74,8 @@ export default  function SignUp () {
                            <Image
                            src={user.profileImgUrl}
                            alt="Profile Preview"
+                           width={200}
+                           height={200}
                            className="w-24 h-24 rounded-full object-cover mx-auto my-3"
                            />
                      )}
