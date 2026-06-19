@@ -5,7 +5,9 @@ import { Card } from "../src/components/card"
 import axios from "axios";
 import { useRouter } from "next/navigation"
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { CldUploadWidget } from "next-cloudinary";
+import Image from "next/image";
+
 
 
 
@@ -14,7 +16,8 @@ export default  function SignUp () {
   const [user , setUser] = useState({
     username : "",
     password : "",
-    email : ""
+    email : "",
+    profileImgUrl : ""
   });
 
   const handleSubmit =async () =>{
@@ -39,11 +42,43 @@ export default  function SignUp () {
                  onChange={(e)=> setUser({...user , email : e.target.value})}/> 
                  <input className="m-2 p-3 border-b-2" type="password" placeholder="password" value={user.password} 
                  onChange={(e) => setUser({...user , password : e.target.value})}/> 
-                 <button className="border border-gray-300 rounded-lg mb-4 p-2 m-3" onClick={handleSubmit}>
+                   <CldUploadWidget
+                     uploadPreset="profile-images"
+                     options={{
+                     cropping: true,
+                     croppingAspectRatio: 1,
+                     sources: ["local"],
+                     }}
+                     onSuccess={(result: any) => {
+                        const imageUrl = result?.info?.secure_url;
+                         setUser((prev) => ({
+                         ...prev,
+                         profileImgUrl: imageUrl,
+                         }));
+                      }}
+                     >
+                    {({ open }) => {
+                     return (
+                      <button
+                       type="button"
+                       onClick={() => open()}
+                       className="border border-gray-300 rounded-lg mb-4 p-2 m-3"
+                      >
+                      Upload Profile Image
+                      </button>
+                      );
+                    }}
+                   </CldUploadWidget>
+                   
+                     {user.profileImgUrl && (
+                           <Image
+                           src={user.profileImgUrl}
+                           alt="Profile Preview"
+                           className="w-24 h-24 rounded-full object-cover mx-auto my-3"
+                           />
+                     )}
+                  <button className="border border-gray-300 rounded-lg mb-4 p-2 m-3" onClick={handleSubmit}>
                   SignUp
-                  </button>
-                  <button className="bg-blue-500 p-2 m-2 cursor-pointer" type="button" onClick={() => signIn("google")}>
-                    Sign in with Google
                   </button>
                   <div>
                     <p className="font-semibold">Already have an account ???</p> 
