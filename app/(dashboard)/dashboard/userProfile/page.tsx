@@ -30,7 +30,7 @@ export default function ProfilePage() {
     if (!data) return <p>No data</p>;
 
     const user = data?.currUser;
-
+    
     return (
         <div className="text-white">
           <div className="flex justify-start items-center gap-4 mx-2">
@@ -60,8 +60,8 @@ export default function ProfilePage() {
            </div>  
            <div className="flex">
             <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1>
-            <h3 className="mx-4 my-7 text-slate-600">Followers 0</h3>
-            <h3 className="mx-4 my-7 text-slate-600">Following 0</h3> 
+            <h3 className="mx-4 my-7 text-slate-600">Followers {user?.followersCount}</h3>
+            <h3 className="mx-4 my-7 text-slate-600">Following {user?.followingCount}</h3> 
            </div>
           </div> 
           <div>

@@ -135,7 +135,7 @@ export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: strin
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string } | null> | null } | null };
+export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string } | null> | null } | null };
 
 export type GetUserByUsernameQueryVariables = Exact<{
   username: string;
@@ -269,6 +269,8 @@ export const GetCurrentUserDocument = new TypedDocumentString(`
     email
     username
     profileImgUrl
+    followersCount
+    followingCount
     posts {
       id
       content

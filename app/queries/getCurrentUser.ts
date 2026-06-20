@@ -8,6 +8,8 @@ export const GetUserDocument = gql`
       email
       username
       profileImgUrl
+      followersCount
+      followingCount
       posts {
         id
         content
