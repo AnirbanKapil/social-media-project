@@ -133,6 +133,13 @@ export type UnfollowUserMutationVariables = Exact<{
 
 export type UnfollowUserMutation = { unfollowUser: { followerId: string, followingId: string } | null };
 
+export type UpdateProfileImageMutationVariables = Exact<{
+  profileImgUrl: string;
+}>;
+
+
+export type UpdateProfileImageMutation = { updateProfileImage: { id: string, profileImgUrl: string | null } | null };
+
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -230,6 +237,28 @@ export const useUnfollowUserMutation = <
       {
     mutationKey: ['UnfollowUser'],
     mutationFn: (variables?: UnfollowUserMutationVariables) => useCustomFetcher<UnfollowUserMutation, UnfollowUserMutationVariables>(UnfollowUserDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const UpdateProfileImageDocument = new TypedDocumentString(`
+    mutation UpdateProfileImage($profileImgUrl: String!) {
+  updateProfileImage(profileImgUrl: $profileImgUrl) {
+    id
+    profileImgUrl
+  }
+}
+    `);
+
+export const useUpdateProfileImageMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateProfileImageMutation, TError, UpdateProfileImageMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateProfileImageMutation, TError, UpdateProfileImageMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateProfileImage'],
+    mutationFn: (variables?: UpdateProfileImageMutationVariables) => useCustomFetcher<UpdateProfileImageMutation, UpdateProfileImageMutationVariables>(UpdateProfileImageDocument, variables)(),
     ...options
   }
     )};
