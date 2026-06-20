@@ -67,6 +67,22 @@ export const userResolvers = {
           followerId_followingId: {followerId : userId, followingId : to}
         }
       })
+    },
+
+    updateProfileImage : async (parent : any, {profileImgUrl}: {profileImgUrl  : string}, ctx : any) {
+
+      if(!ctx.session?.user){
+            throw new Error("Not authenticated!!")
+        }; 
+      
+      return await prisma.user.update({
+        where : {
+          id : ctx.session?.user?.id
+        },
+        data : {
+          profileImgUrl
+        }
+      })  
     }
             
   },

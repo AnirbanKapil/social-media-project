@@ -5,12 +5,15 @@ import { MdOutlinePermMedia } from "react-icons/md";
 import { useCreatePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-
+import { useGetCurrentUserQuery } from "@/lib/generated";
 
 
 export function Publish () {
 
     const [selectedFile,setSelectedFile] = useState<File | null>(null)
+
+    const { data } = useGetCurrentUserQuery({});
+    const user = data?.currUser
 
     const handleSelectImg = () => {
         const input = document.createElement("input");
@@ -74,8 +77,8 @@ export function Publish () {
     return (
         <div className="grid grid-cols-12 border-b border-gray-600 m-2">
             <div className="col-span-1">
-             <Image alt="DP image" src="https://avatars.githubusercontent.com/u/131807985?v=4" height={50} width={50} 
-              className="rounded-full p-1 pt-2"/>
+             {user?.profileImgUrl && <Image alt="DP image" src={user?.profileImgUrl} height={50} width={50}
+              className="rounded-full m-1 w-12 h-12" />}
             </div>
             <div className="col-span-11">
                 <form onSubmit={handleSubmit}>

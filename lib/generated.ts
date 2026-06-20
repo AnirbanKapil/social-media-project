@@ -43,6 +43,7 @@ export type Mutation = {
   createPost?: Maybe<Post>;
   followUser: Follows;
   unfollowUser?: Maybe<Follows>;
+  updateProfileImage?: Maybe<User>;
 };
 
 
@@ -58,6 +59,11 @@ export type MutationFollowUserArgs = {
 
 export type MutationUnfollowUserArgs = {
   to: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateProfileImageArgs = {
+  profileImgUrl: Scalars['String']['input'];
 };
 
 export type Post = {
