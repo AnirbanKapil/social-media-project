@@ -9,10 +9,13 @@ import { useGetCurrentUserQuery } from "@/lib/generated";
 import Link from "next/link";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-
+import { useUpdateProfileImageMutation } from "@/lib/generated";
+import { CldUploadWidget } from "next-cloudinary";
 
 export default function ProfilePage() {
  
+  const mutation = useUpdateProfileImageMutation();
+
   const { data, isLoading, error } = useGetCurrentUserQuery({},
     {
       staleTime: 1000 * 60 * 5, 
@@ -30,6 +33,18 @@ export default function ProfilePage() {
     if (!data) return <p>No data</p>;
 
     const user = data?.currUser;
+    
+    const changeProfilePic = async (result : any) => {
+       try {
+        const imageUrl = result?.info?.secure_url;
+        await mutation.mutateAsync({
+          profileImgUrl : imageUrl
+        })
+       } catch (error) {
+        console.log(error)
+       }
+    };
+  
     
     return (
         <div className="text-white">
@@ -56,7 +71,19 @@ export default function ProfilePage() {
             />
              </Zoom>
             ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
-            <button className="self-center bg-slate-200 text-black p-1 mx-3 rounded-lg hover:duration-300 cursor-pointer hover:scale-120">Change Profile Pic</button>
+              <CldUploadWidget
+               uploadPreset="your_upload_preset"
+               onSuccess={changeProfilePic}
+              >
+              {({ open }) => (
+              <button
+               onClick={() => open()}
+               className="self-center bg-slate-200 text-black p-1 mx-3 rounded-lg hover:scale-110"
+              >
+              Change Profile Pic
+              </button>
+              )}
+              </CldUploadWidget>
            </div>  
            <div className="flex">
             <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1>

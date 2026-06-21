@@ -69,7 +69,7 @@ export const userResolvers = {
       })
     },
 
-    updateProfileImage : async (parent : any, {profileImgUrl}: {profileImgUrl  : string}, ctx : any) {
+    updateProfileImage : async (parent : any, {profileImgUrl}: {profileImgUrl  : string}, ctx : any) => {
 
       if(!ctx.session?.user){
             throw new Error("Not authenticated!!")
