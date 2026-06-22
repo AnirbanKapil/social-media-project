@@ -11,8 +11,12 @@ import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import { useUpdateProfileImageMutation } from "@/lib/generated";
 import { CldUploadWidget } from "next-cloudinary";
+import { useState } from "react";
+
 
 export default function ProfilePage() {
+
+  const [isUploading, setIsUploading] = useState(false);
  
   const mutation = useUpdateProfileImageMutation();
 
@@ -35,6 +39,7 @@ export default function ProfilePage() {
     const user = data?.currUser;
     
     const changeProfilePic = async (result : any) => {
+       setIsUploading(true)
        try {
         const imageUrl = result?.info?.secure_url;
         await mutation.mutateAsync({
@@ -42,6 +47,8 @@ export default function ProfilePage() {
         })
        } catch (error) {
         console.log(error)
+       } finally {
+         setIsUploading(false);
        }
     };
   
@@ -62,13 +69,20 @@ export default function ProfilePage() {
            <div className="flex"> 
             {user?.profileImgUrl ? (
              <Zoom>
-              <Image
-               className="m-3 rounded-full"
-               alt="profileImg"
-               src={user.profileImgUrl}
-               width={100}
-               height={100}
-            />
+              <div className="relative m-3">
+                <Image
+                 className="m-3 rounded-full"
+                 alt="profileImg"
+                 src={user.profileImgUrl}
+                 width={100}
+                 height={100}
+                />
+                {isUploading && (
+                 <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded-full">
+                 <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                 </div>
+                )}
+               </div>
              </Zoom>
             ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
               <CldUploadWidget
@@ -83,9 +97,10 @@ export default function ProfilePage() {
               {({ open }) => (
               <button
                onClick={() => open()}
+               disabled={isUploading} 
                className="self-center bg-slate-200 text-black p-1 mx-3 rounded-lg hover:scale-110"
               >
-              Change Profile Pic
+              {isUploading ? "Updating profile Pic" : "Change Profile Pic"}
               </button>
               )}
               </CldUploadWidget>
