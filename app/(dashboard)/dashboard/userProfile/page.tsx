@@ -72,7 +72,12 @@ export default function ProfilePage() {
              </Zoom>
             ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
               <CldUploadWidget
-               uploadPreset="your_upload_preset"
+               uploadPreset="profile-images"
+               options={{
+                     cropping: true,
+                     croppingAspectRatio: 1,
+                     sources: ["local"],
+                     }}
                onSuccess={changeProfilePic}
               >
               {({ open }) => (
