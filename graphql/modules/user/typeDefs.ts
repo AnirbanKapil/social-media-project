@@ -44,6 +44,7 @@ export const userTypeDefs  = gql`
     followUser(to : String!): Follows! 
     unfollowUser(to : String!): Follows
     updateProfileImage(profileImgUrl: String!): User
+    removeProfileImage: User
   }  
 
 `;

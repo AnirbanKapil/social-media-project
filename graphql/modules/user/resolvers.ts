@@ -83,7 +83,9 @@ export const userResolvers = {
           profileImgUrl
         }
       })  
-    }
+    },
+
+    
             
   },
   

@@ -20,6 +20,7 @@ model User {
   firstName     String?
   lastName      String?
   profileImgUrl String?
+  profileImgPublicId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
