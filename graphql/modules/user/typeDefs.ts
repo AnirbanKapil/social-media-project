@@ -9,6 +9,7 @@ export const userTypeDefs  = gql`
     firstName: String
     lastName: String
     profileImgUrl: String
+    profileImgPublicId: String
     createdAt: String!
     updatedAt: String!
     posts: [Post]

@@ -44,6 +44,7 @@ export default function ProfilePage() {
         const imageUrl = result?.info?.secure_url;
         await mutation.mutateAsync({
           profileImgUrl : imageUrl
+
         })
        } catch (error) {
         console.log(error)

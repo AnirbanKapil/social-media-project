@@ -42,6 +42,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createPost?: Maybe<Post>;
   followUser: Follows;
+  removeProfileImage?: Maybe<User>;
   unfollowUser?: Maybe<Follows>;
   updateProfileImage?: Maybe<User>;
 };
@@ -102,6 +103,7 @@ export type User = {
   isFollowing: Scalars['Boolean']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   posts?: Maybe<Array<Maybe<Post>>>;
+  profileImgPublicId?: Maybe<Scalars['String']['output']>;
   profileImgUrl?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
