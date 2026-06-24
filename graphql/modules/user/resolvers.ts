@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { userQueries } from "./queries";
+import cloudinary from "@/lib/cloudinary";
 
 
 export const userResolvers = {
@@ -79,9 +80,9 @@ export const userResolvers = {
        id: ctx.session.user.id,
        },
       });
-       
+       console.log("user in resolver----", user)
        const oldPublicId = user?.profileImgPublicId
-
+       console.log("profileImgPublicId----",oldPublicId) 
        if (oldPublicId) {
        await cloudinary.uploader.destroy(
        user.profileImgPublicId

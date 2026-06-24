@@ -44,7 +44,7 @@ export const userTypeDefs  = gql`
   type Mutation {
     followUser(to : String!): Follows! 
     unfollowUser(to : String!): Follows
-    updateProfileImage(profileImgUrl: String!): User
+    updateProfileImage(profileImgUrl: String! profileImgPublicId: String): User
     removeProfileImage: User
   }  
 

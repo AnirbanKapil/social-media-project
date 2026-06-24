@@ -40,11 +40,14 @@ export default function ProfilePage() {
     
     const changeProfilePic = async (result : any) => {
        setIsUploading(true)
+        console.log("result info ----" ,result?.info)
        try {
         const imageUrl = result?.info?.secure_url;
+        const imageId  = result?.info?.public_id
+        console.log(imageId)
         await mutation.mutateAsync({
-          profileImgUrl : imageUrl
-
+          profileImgUrl : imageUrl,
+          profileImgPublicId : imageId
         })
        } catch (error) {
         console.log(error)

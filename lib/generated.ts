@@ -64,6 +64,7 @@ export type MutationUnfollowUserArgs = {
 
 
 export type MutationUpdateProfileImageArgs = {
+  profileImgPublicId?: InputMaybe<Scalars['String']['input']>;
   profileImgUrl: Scalars['String']['input'];
 };
 
@@ -137,10 +138,11 @@ export type UnfollowUserMutation = { unfollowUser: { followerId: string, followi
 
 export type UpdateProfileImageMutationVariables = Exact<{
   profileImgUrl: string;
+  profileImgPublicId?: string | null | undefined;
 }>;
 
 
-export type UpdateProfileImageMutation = { updateProfileImage: { id: string, profileImgUrl: string | null } | null };
+export type UpdateProfileImageMutation = { updateProfileImage: { id: string, profileImgUrl: string | null, profileImgPublicId: string | null } | null };
 
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -244,10 +246,14 @@ export const useUnfollowUserMutation = <
     )};
 
 export const UpdateProfileImageDocument = new TypedDocumentString(`
-    mutation UpdateProfileImage($profileImgUrl: String!) {
-  updateProfileImage(profileImgUrl: $profileImgUrl) {
+    mutation UpdateProfileImage($profileImgUrl: String!, $profileImgPublicId: String) {
+  updateProfileImage(
+    profileImgUrl: $profileImgUrl
+    profileImgPublicId: $profileImgPublicId
+  ) {
     id
     profileImgUrl
+    profileImgPublicId
   }
 }
     `);
