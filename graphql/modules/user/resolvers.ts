@@ -70,7 +70,7 @@ export const userResolvers = {
       })
     },
 
-    updateProfileImage : async (parent : any, {profileImgUrl, profileImgPublicId}: {profileImgUrl  : string, profileImgPublicId : string | null}, ctx : any) => {
+    updateProfileImage : async (parent : any, {profileImgUrl, profileImgPublicId}: {profileImgUrl  : string, profileImgPublicId : string }, ctx : any) => {
 
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
@@ -83,7 +83,7 @@ export const userResolvers = {
        const oldPublicId = user?.profileImgPublicId
        if (oldPublicId) {
        await cloudinary.uploader.destroy(
-       user.profileImgPublicId
+       oldPublicId
        );
        }
 
@@ -103,20 +103,20 @@ export const userResolvers = {
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
       }; 
-      const user = await prisma.user.findUnique({
+      const currUser = await prisma.user.findUnique({
        where: {
        id: ctx.session.user.id,
        },
       });
-       const oldPublicId = user?.profileImgPublicId
+       const oldPublicId = currUser?.profileImgPublicId
        if (oldPublicId) {
        await cloudinary.uploader.destroy(
-       user.profileImgPublicId
+        oldPublicId
        );
        }
-       return await user?.updatedAt({
+       return await prisma.user?.update({
         where : {
-          id : user.id 
+          id : currUser?.id 
         },
         data : {
           profileImgUrl : null,
