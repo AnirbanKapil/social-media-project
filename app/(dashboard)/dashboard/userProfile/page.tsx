@@ -5,7 +5,7 @@ import Image from "next/image";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Feeds } from "@/app/src/components/feeds";
 import { Loader } from "@/app/src/components/loader";
-import { useGetCurrentUserQuery } from "@/lib/generated";
+import { useGetCurrentUserQuery, useRemoveProfileImageMutation } from "@/lib/generated";
 import Link from "next/link";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
@@ -19,6 +19,7 @@ export default function ProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
  
   const mutation = useUpdateProfileImageMutation();
+  const removeProfileImageMutation = useRemoveProfileImageMutation();
 
   const { data, isLoading, error } = useGetCurrentUserQuery({},
     {
@@ -53,7 +54,14 @@ export default function ProfilePage() {
          setIsUploading(false);
        }
     };
-  
+    
+    const removeProfilePic = async () => {
+      try {
+        await removeProfileImageMutation.mutateAsync({});
+      } catch (error) {
+         console.error(error);
+      }
+    }
     
     return (
         <div className="text-white">
@@ -106,6 +114,13 @@ export default function ProfilePage() {
               </button>
               )}
               </CldUploadWidget>
+              {user?.profileImgUrl && <button className="self-center bg-slate-200 text-black p-1 mx-3 rounded-lg hover:scale-110"
+                                       onClick={removeProfilePic} 
+                                       disabled={removeProfileImageMutation.isPending}>
+                                       {removeProfileImageMutation.isPending
+                                         ? "Removing..."
+                                         : "Remove Profile Pic"}
+                                      </button>}
            </div>  
            <div className="flex">
             <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1>

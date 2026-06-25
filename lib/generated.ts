@@ -122,6 +122,11 @@ export type CreatePostMutationVariables = Exact<{
 
 export type CreatePostMutation = { createPost: { id: string, content: string, imgURL: string | null, author: { id: string, username: string, email: string } | null } | null };
 
+export type RemoveProfileImageMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RemoveProfileImageMutation = { removeProfileImage: { id: string, profileImgUrl: string | null, profileImgPublicId: string | null } | null };
+
 export type FollowUserMutationVariables = Exact<{
   to: string;
 }>;
@@ -197,6 +202,29 @@ export const useCreatePostMutation = <
       {
     mutationKey: ['CreatePost'],
     mutationFn: (variables?: CreatePostMutationVariables) => useCustomFetcher<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const RemoveProfileImageDocument = new TypedDocumentString(`
+    mutation RemoveProfileImage {
+  removeProfileImage {
+    id
+    profileImgUrl
+    profileImgPublicId
+  }
+}
+    `);
+
+export const useRemoveProfileImageMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<RemoveProfileImageMutation, TError, RemoveProfileImageMutationVariables, TContext>) => {
+    
+    return useMutation<RemoveProfileImageMutation, TError, RemoveProfileImageMutationVariables, TContext>(
+      {
+    mutationKey: ['RemoveProfileImage'],
+    mutationFn: (variables?: RemoveProfileImageMutationVariables) => useCustomFetcher<RemoveProfileImageMutation, RemoveProfileImageMutationVariables>(RemoveProfileImageDocument, variables)(),
     ...options
   }
     )};
