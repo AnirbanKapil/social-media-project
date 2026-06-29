@@ -1,8 +1,8 @@
 
 export const postQueries = {
-    getAllPosts : async ( _parent : any, _args : any, context : any) => {
+    getAllPosts : async ( _parent : any, _args : any, ctx : any) => {
           try {
-             const { prisma } = context; 
+             const { prisma } = ctx; 
             const posts = await prisma.post.findMany({
               include: {
                        author: true,
