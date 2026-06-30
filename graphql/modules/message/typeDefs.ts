@@ -19,4 +19,9 @@ export const messageTypeDefs = gql`
     createdAt: String!
     updatedAt: String!
   }
+
+  type Query {
+    getConversation: Conversation
+    getMessages(conversationId: String): Message
+  }
 `;

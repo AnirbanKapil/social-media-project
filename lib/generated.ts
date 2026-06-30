@@ -27,6 +27,15 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Conversation = {
+  __typename?: 'Conversation';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  messages: Array<Message>;
+  participants: Array<User>;
+  updatedAt: Scalars['String']['output'];
+};
+
 export type CreatePostPayload = {
   content: Scalars['String']['input'];
   imgURL?: InputMaybe<Scalars['String']['input']>;
@@ -36,6 +45,16 @@ export type Follows = {
   __typename?: 'Follows';
   followerId: Scalars['String']['output'];
   followingId: Scalars['String']['output'];
+};
+
+export type Message = {
+  __typename?: 'Message';
+  content: Scalars['String']['output'];
+  conversation: Conversation;
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  sender: User;
+  updatedAt: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -82,8 +101,15 @@ export type Query = {
   __typename?: 'Query';
   currUser?: Maybe<User>;
   getAllPosts: Array<Maybe<Post>>;
+  getConversation?: Maybe<Conversation>;
+  getMessages?: Maybe<Message>;
   getUserByUsername?: Maybe<User>;
   users: Array<Maybe<User>>;
+};
+
+
+export type QueryGetMessagesArgs = {
+  conversationId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
