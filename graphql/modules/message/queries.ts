@@ -1,14 +1,13 @@
 
 export const messageQueries = {
-    
-
     getConversation : async ( _parent : any, _args : any, ctx : any) => {
         if (!ctx?.session?.user) {
           throw new Error("Not authenticated");
         }
-          const { prisma } = ctx; 
+
+        const { prisma } = ctx; 
         try {
-            return prisma.conversation.findMany({
+            return await prisma.conversation.findMany({
                 where: {
                 participants: {
                 some: {
@@ -20,6 +19,28 @@ export const messageQueries = {
         } catch (error) {
             console.log("Failed to fetch messages:", error)
             throw new Error("Internal Server Error");
+        }
+    },
+    
+    getMessages : async (_parent : any, { conversationId }: { conversationId: string }, ctx : any) => {
+        if (!ctx?.session?.user) {
+          throw new Error("Not authenticated");
+        }
+
+        const { prisma } =  ctx ;
+          
+        try {
+            return await prisma.message.findMany({
+            where : {
+                conversationId
+            },
+            orderBy : {
+                createdAt : "asc"
+            }
+          })
+        } catch (error) {
+            console.log("Failed to fetch messages:", error)
+            throw new Error("Internal Server Error"); 
         }
     }
 }
