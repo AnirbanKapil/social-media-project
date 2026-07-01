@@ -65,7 +65,7 @@ export const messageResolvers = {
 
             const conversation = await prisma.conversation.create({
                data: {
-                  participants: {
+                  participants : {
                           create: [
                                    {
                                    userId: currentUserId,
@@ -79,6 +79,37 @@ export const messageResolvers = {
             });
 
             return conversation;
+     },
+
+     sendMessage : async (parent : any, { conversationId,content }: {conversationId : string, content: string }, ctx : any) => {
+        if (!ctx?.session?.user) {
+             throw new Error("Not authenticated");
+           };   
+        const currentUserId = ctx?.session?.user?.id;
+
+        const { prisma } = ctx;
+
+        const participant = await prisma.conversationParticipant.findUnique({
+            where : {
+                conversationId_userId : {
+                     conversationId,
+                     userId : currentUserId
+                }
+            }
+        });
+        if (!participant) {
+          throw new Error("You are not a participant in this conversation.");
+        };
+
+        const message = await prisma.message.create({
+            data : {
+                content,
+                conversationId,
+                senderId : currentUserId
+            }
+        });
+
+        return message;
      }
     },
     Query : messageQueries

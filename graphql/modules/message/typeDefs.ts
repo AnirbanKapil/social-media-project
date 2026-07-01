@@ -27,5 +27,6 @@ export const messageTypeDefs = gql`
 
   type Mutation {
     createConversation(userId: String) : Conversation
+    sendMessage(conversationId: String! content: String!) : Message!
   }
 `;
