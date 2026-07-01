@@ -1,6 +1,6 @@
 
 export const messageQueries = {
-    getConversation : async ( _parent : any, _args : any, ctx : any) => {
+    getConversations : async ( _parent : any, _args : any, ctx : any) => {
         if (!ctx?.session?.user) {
           throw new Error("Not authenticated");
         }

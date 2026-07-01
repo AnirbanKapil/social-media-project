@@ -15,6 +15,19 @@ export const messageResolvers = {
 
        return participants.map((p) => p.user);
      },
+
+     messages : async (parent: any, _args : any, ctx : any) => {
+        const { prisma } = ctx;
+
+        return await prisma.message.findMany({
+            where : {
+                conversationId : parent.id
+            },
+            orderBy : {
+                createdAt: "asc",
+            }
+        })
+     }
     },
     
     Mutation: {

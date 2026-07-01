@@ -21,7 +21,7 @@ export const messageTypeDefs = gql`
   }
 
   type Query {
-    getConversation: Conversation
+    getConversations: [Conversation!]!
     getMessages(conversationId: String): Message
   }
 

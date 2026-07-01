@@ -63,6 +63,7 @@ export type Mutation = {
   createPost?: Maybe<Post>;
   followUser: Follows;
   removeProfileImage?: Maybe<User>;
+  sendMessage: Message;
   unfollowUser?: Maybe<Follows>;
   updateProfileImage?: Maybe<User>;
 };
@@ -80,6 +81,12 @@ export type MutationCreatePostArgs = {
 
 export type MutationFollowUserArgs = {
   to: Scalars['String']['input'];
+};
+
+
+export type MutationSendMessageArgs = {
+  content: Scalars['String']['input'];
+  conversationId: Scalars['String']['input'];
 };
 
 
@@ -107,7 +114,7 @@ export type Query = {
   __typename?: 'Query';
   currUser?: Maybe<User>;
   getAllPosts: Array<Maybe<Post>>;
-  getConversation?: Maybe<Conversation>;
+  getConversations: Array<Conversation>;
   getMessages?: Maybe<Message>;
   getUserByUsername?: Maybe<User>;
   users: Array<Maybe<User>>;
