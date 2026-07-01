@@ -59,11 +59,17 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createConversation?: Maybe<Conversation>;
   createPost?: Maybe<Post>;
   followUser: Follows;
   removeProfileImage?: Maybe<User>;
   unfollowUser?: Maybe<Follows>;
   updateProfileImage?: Maybe<User>;
+};
+
+
+export type MutationCreateConversationArgs = {
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 

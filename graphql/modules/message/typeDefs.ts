@@ -24,4 +24,8 @@ export const messageTypeDefs = gql`
     getConversation: Conversation
     getMessages(conversationId: String): Message
   }
+
+  type Mutation {
+    createConversation(userId: String) : Conversation
+  }
 `;

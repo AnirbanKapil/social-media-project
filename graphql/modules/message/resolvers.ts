@@ -1,6 +1,22 @@
 import { messageQueries } from "./queries"
 
 export const messageResolvers = {
+    
+    Conversation: {
+     participants: async (parent: any, _args : any, ctx : any) => {
+      const participants = await ctx.prisma.conversationParticipant.findMany({
+      where: {
+        conversationId: parent.id,
+       },
+        include: {
+        user: true,
+        },
+       });
+
+       return participants.map((p) => p.user);
+     },
+    },
+    
     Mutation: {
 
      createConversation : async (parent : any, { userId }: { userId: string }, ctx : any) => {
@@ -14,8 +30,7 @@ export const messageResolvers = {
            }
 
            const { prisma } = ctx;
-
-           const otherUser= await prisma.user.find({
+           const otherUser= await prisma.user.findUnique({
             where : {
                 id : userId
             }
