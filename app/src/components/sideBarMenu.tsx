@@ -32,7 +32,7 @@ export const SideBarMenuItems = () : SideBarButtons[] => { return  [
        {
         title : "Messages",
         icon : <FaRegEnvelope />,
-        link : "/dashboard/messages"
+        link : "/messages"
        },
        {
         title : "Bookmarks",

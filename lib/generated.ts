@@ -115,14 +115,14 @@ export type Query = {
   currUser?: Maybe<User>;
   getAllPosts: Array<Maybe<Post>>;
   getConversations: Array<Conversation>;
-  getMessages?: Maybe<Message>;
+  getMessages: Array<Message>;
   getUserByUsername?: Maybe<User>;
   users: Array<Maybe<User>>;
 };
 
 
 export type QueryGetMessagesArgs = {
-  conversationId?: InputMaybe<Scalars['String']['input']>;
+  conversationId: Scalars['String']['input'];
 };
 
 
@@ -193,10 +193,22 @@ export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
 
+export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetConversationsQuery = { getConversations: Array<{ id: string, participants: Array<{ id: string, username: string, profileImgUrl: string | null }> }> };
+
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string } | null> | null } | null };
+
+export type GetMessagesQueryVariables = Exact<{
+  conversationId: string;
+}>;
+
+
+export type GetMessagesQuery = { getMessages: Array<{ id: string, content: string, createdAt: string, sender: { username: string, profileImgUrl: string | null } }> };
 
 export type GetUserByUsernameQueryVariables = Exact<{
   username: string;
@@ -372,6 +384,37 @@ export const useGetAllPostsQuery = <
 
 useGetAllPostsQuery.getKey = (variables?: GetAllPostsQueryVariables) => variables === undefined ? ['GetAllPosts'] : ['GetAllPosts', variables];
 
+export const GetConversationsDocument = new TypedDocumentString(`
+    query GetConversations {
+  getConversations {
+    id
+    participants {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+    `);
+
+export const useGetConversationsQuery = <
+      TData = GetConversationsQuery,
+      TError = unknown
+    >(
+      variables?: GetConversationsQueryVariables,
+      options?: Omit<UseQueryOptions<GetConversationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetConversationsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetConversationsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetConversations'] : ['GetConversations', variables],
+    queryFn: useCustomFetcher<GetConversationsQuery, GetConversationsQueryVariables>(GetConversationsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetConversationsQuery.getKey = (variables?: GetConversationsQueryVariables) => variables === undefined ? ['GetConversations'] : ['GetConversations', variables];
+
 export const GetCurrentUserDocument = new TypedDocumentString(`
     query GetCurrentUser {
   currUser {
@@ -408,6 +451,38 @@ export const useGetCurrentUserQuery = <
     )};
 
 useGetCurrentUserQuery.getKey = (variables?: GetCurrentUserQueryVariables) => variables === undefined ? ['GetCurrentUser'] : ['GetCurrentUser', variables];
+
+export const GetMessagesDocument = new TypedDocumentString(`
+    query GetMessages($conversationId: String!) {
+  getMessages(conversationId: $conversationId) {
+    id
+    content
+    createdAt
+    sender {
+      username
+      profileImgUrl
+    }
+  }
+}
+    `);
+
+export const useGetMessagesQuery = <
+      TData = GetMessagesQuery,
+      TError = unknown
+    >(
+      variables: GetMessagesQueryVariables,
+      options?: Omit<UseQueryOptions<GetMessagesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMessagesQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetMessagesQuery, TError, TData>(
+      {
+    queryKey: ['GetMessages', variables],
+    queryFn: useCustomFetcher<GetMessagesQuery, GetMessagesQueryVariables>(GetMessagesDocument, variables),
+    ...options
+  }
+    )};
+
+useGetMessagesQuery.getKey = (variables: GetMessagesQueryVariables) => ['GetMessages', variables];
 
 export const GetUserByUsernameDocument = new TypedDocumentString(`
     query GetUserByUsername($username: String!) {
