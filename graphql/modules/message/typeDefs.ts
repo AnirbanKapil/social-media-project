@@ -22,7 +22,7 @@ export const messageTypeDefs = gql`
 
   type Query {
     getConversations: [Conversation!]!
-    getMessages(conversationId: String): Message
+    getMessages(conversationId: String!): [Message!]!
   }
 
   type Mutation {

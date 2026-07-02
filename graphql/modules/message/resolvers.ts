@@ -35,7 +35,7 @@ export const messageResolvers = {
         const { prisma } = ctx;
         return await prisma.user.findUnique({
         where: {
-        id: parent.senderId,
+             id: parent.senderId,
         },
       });
      },
