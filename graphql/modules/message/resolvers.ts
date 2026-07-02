@@ -29,6 +29,17 @@ export const messageResolvers = {
         })
      }
     },
+
+    Message: {
+     sender: async (parent : any, arg : any, ctx : any) => {
+        const { prisma } = ctx;
+        return await prisma.user.findUnique({
+        where: {
+        id: parent.senderId,
+        },
+      });
+     },
+    },
     
     Mutation: {
 
