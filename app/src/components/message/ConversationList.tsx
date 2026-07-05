@@ -4,7 +4,13 @@ import { useGetConversationsQuery } from "@/lib/generated";
 import { Loader } from "../loader";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 
-export default function ConversationList() {
+type Props = {
+   selectedConversationId: string | null;
+   setSelectedConversationId: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+
+export default function ConversationList({selectedConversationId,setSelectedConversationId} : Props) {
 
    const { data, isLoading, error } = useGetConversationsQuery();
    const { data : currentUser } = useGetCurrentUserQuery();
@@ -25,7 +31,12 @@ export default function ConversationList() {
           (participant) => participant.id !== curUserId
         );
       return (
-       <div key={conv.id}>
+       <div key={conv.id}
+        onClick={()=>{setSelectedConversationId(conv.id)}}
+        className={`p-4 cursor-pointer border-b ${
+        selectedConversationId === conv.id ? "bg-gray-200" : "hover:bg-gray-100"
+        }`}
+       >
         <p>{otherParticipant?.username}</p>
        </div>
       );

@@ -6,7 +6,6 @@ export default function MessagesPage() {
 
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   
-  
   return (
     <div className="flex h-screen">
         <ConversationList
