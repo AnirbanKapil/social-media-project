@@ -173,6 +173,14 @@ export type FollowUserMutationVariables = Exact<{
 
 export type FollowUserMutation = { followUser: { followerId: string, followingId: string } };
 
+export type SendMessageMutationVariables = Exact<{
+  conversationId: string;
+  content: string;
+}>;
+
+
+export type SendMessageMutation = { sendMessage: { id: string, content: string, createdAt: string } };
+
 export type UnfollowUserMutationVariables = Exact<{
   to: string;
 }>;
@@ -298,6 +306,29 @@ export const useFollowUserMutation = <
       {
     mutationKey: ['FollowUser'],
     mutationFn: (variables?: FollowUserMutationVariables) => useCustomFetcher<FollowUserMutation, FollowUserMutationVariables>(FollowUserDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const SendMessageDocument = new TypedDocumentString(`
+    mutation SendMessage($conversationId: String!, $content: String!) {
+  sendMessage(conversationId: $conversationId, content: $content) {
+    id
+    content
+    createdAt
+  }
+}
+    `);
+
+export const useSendMessageMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<SendMessageMutation, TError, SendMessageMutationVariables, TContext>) => {
+    
+    return useMutation<SendMessageMutation, TError, SendMessageMutationVariables, TContext>(
+      {
+    mutationKey: ['SendMessage'],
+    mutationFn: (variables?: SendMessageMutationVariables) => useCustomFetcher<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, variables)(),
     ...options
   }
     )};
