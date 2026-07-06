@@ -1,3 +1,6 @@
+"use client"
+
+
 import ChatWindow from "../src/components/message/ChatWindow";
 import ConversationList from "../src/components/message/ConversationList";
 import { useState } from "react";

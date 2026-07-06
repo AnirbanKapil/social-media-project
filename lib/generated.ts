@@ -208,7 +208,7 @@ export type GetMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetMessagesQuery = { getMessages: Array<{ id: string, content: string, createdAt: string, sender: { username: string, profileImgUrl: string | null } }> };
+export type GetMessagesQuery = { getMessages: Array<{ id: string, content: string, createdAt: string, sender: { id: string, username: string, profileImgUrl: string | null } }> };
 
 export type GetUserByUsernameQueryVariables = Exact<{
   username: string;
@@ -459,6 +459,7 @@ export const GetMessagesDocument = new TypedDocumentString(`
     content
     createdAt
     sender {
+      id
       username
       profileImgUrl
     }

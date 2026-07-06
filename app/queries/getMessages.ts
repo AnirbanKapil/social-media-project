@@ -8,6 +8,7 @@ export const GetMessagesDocument = gql`
     content
     createdAt
     sender {
+      id
       username
       profileImgUrl
     }
