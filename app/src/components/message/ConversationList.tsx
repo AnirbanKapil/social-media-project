@@ -34,7 +34,7 @@ export default function ConversationList({selectedConversationId,setSelectedConv
        <div key={conv.id}
         onClick={()=>{setSelectedConversationId(conv.id)}}
         className={`p-4 cursor-pointer border-b ${
-        selectedConversationId === conv.id ? "bg-gray-200" : "hover:bg-gray-100"
+        selectedConversationId === conv.id ? "bg-blue-500" : "hover:bg-blue-300"
         }`}
        >
         <p>{otherParticipant?.username}</p>
