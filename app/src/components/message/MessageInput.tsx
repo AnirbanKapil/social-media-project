@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSendMessageMutation } from "@/lib/generated";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 type Props = {
@@ -13,6 +14,8 @@ export default function MessageInput ({conversationId} : Props) {
 
     const sendMessageMutation = useSendMessageMutation();
 
+    const queryClient = useQueryClient();
+
     const handleSend = async () => {
         if (!content.trim()) return;
 
@@ -21,7 +24,11 @@ export default function MessageInput ({conversationId} : Props) {
             conversationId,
             content
           });
-          setContent("")             
+          setContent(""); 
+          
+          queryClient.invalidateQueries({
+          queryKey: ["GetMessages"]
+          });
         } catch (error) {
             console.log(error)
         }
@@ -35,11 +42,13 @@ export default function MessageInput ({conversationId} : Props) {
             onChange={(e)=> setContent(e.target.value)}
             placeholder="Type a message..."
            />
-           <button
+           {content && <button
             onClick={handleSend}
             className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120">
             Send
            </button>
+           }
+           
         </div>
     )
 
