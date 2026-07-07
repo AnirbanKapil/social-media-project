@@ -37,7 +37,7 @@ export default function MessageInput ({conversationId} : Props) {
            />
            <button
             onClick={handleSend}
-            className="px-4 py-2 rounded-lg bg-blue-500 text-white">
+            className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120">
             Send
            </button>
         </div>

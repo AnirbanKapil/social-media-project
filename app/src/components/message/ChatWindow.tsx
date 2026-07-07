@@ -3,6 +3,7 @@
 import { useGetMessagesQuery } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { Loader } from "../loader";
+import MessageInput from "./MessageInput";
 
 
 type Props = {
@@ -37,17 +38,24 @@ export default function ChatWindow({conversationId} : Props) {
 
 
    return (
-    <div className="flex-1 overflow-y-auto">
-      {data?.getMessages.map((message)=> {
+    <div className="flex flex-col h-screen max-h-screen w-full pb-7 px-7 ">
+      
+      <div className="flex-1 overflow-y-auto px-4 mt-10">
+        {data?.getMessages.map((message)=> {
         const isMine = message.sender.id === currentUser?.id
         return (
-        <div key={message.id} className={`flex mb-4 ${isMine ? "justify-end" : "justify-end"}`}>
+         <div key={message.id} className={`flex mb-4 ${isMine ? "justify-end" : "justify-start"}`}>
           <div className={`max-w-sm rounded-xl px-4 py-2 ${isMine ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}>
           <p>{message.content}</p>
           </div>
-        </div>
+         </div>
         )
-       })}
+        })}
+      </div>
+
+      <div className="flex-shrink-0 px-4 mt-4">
+       <MessageInput conversationId={conversationId} />
+      </div>
     </div>
   );
 }
