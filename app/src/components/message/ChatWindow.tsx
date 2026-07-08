@@ -4,6 +4,7 @@ import { useGetMessagesQuery } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { Loader } from "../loader";
 import MessageInput from "./MessageInput";
+import ChatHeader from "./ChatHeader";
 
 
 type Props = {
@@ -39,7 +40,7 @@ export default function ChatWindow({conversationId} : Props) {
 
    return (
     <div className="flex flex-col h-screen max-h-screen w-full pb-7 px-7 ">
-      
+      <ChatHeader username={}/>
       <div className="flex-1 overflow-y-auto px-4 mt-10">
         {data?.getMessages.map((message)=> {
         const isMine = message.sender.id === currentUser?.id

@@ -1,18 +1,22 @@
 "use client";
 
-import { useGetConversationsQuery } from "@/lib/generated";
+
 import { Loader } from "../loader";
 import { useGetCurrentUserQuery } from "@/lib/generated";
+import { GetConversationsQuery } from "@/lib/generated"
+
 
 type Props = {
-   selectedConversationId: string | null;
-   setSelectedConversationId: React.Dispatch<React.SetStateAction<string | null>>;
+  conversations: GetConversationsQuery["getConversations"];
+  isLoading: boolean;
+  error: Error | null;
+  selectedConversationId: string | null;
+  setSelectedConversationId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 
-export default function ConversationList({selectedConversationId,setSelectedConversationId} : Props) {
+export default function ConversationList({selectedConversationId,setSelectedConversationId,conversations,isLoading,error} : Props) {
 
-   const { data, isLoading, error } = useGetConversationsQuery();
    const { data : currentUser } = useGetCurrentUserQuery();
 
    const curUserId = currentUser?.currUser?.id;
@@ -26,7 +30,7 @@ export default function ConversationList({selectedConversationId,setSelectedConv
    }
   return (
     <div className="sm:w-50 border-r border-gray-300 ">
-      {data?.getConversations.map((conv)=> {
+      {conversations.map((conv)=> {
         const otherParticipant = conv.participants.find(
           (participant) => participant.id !== curUserId
         );
