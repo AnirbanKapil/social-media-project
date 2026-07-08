@@ -7,6 +7,7 @@ export const messageTypeDefs = gql`
     id: ID!
     participants: [User!]!
     messages: [Message!]!
+    lastMessage: Message
     createdAt: String!
     updatedAt: String!
   }

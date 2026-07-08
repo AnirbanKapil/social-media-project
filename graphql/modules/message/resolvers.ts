@@ -2,6 +2,7 @@ import { messageQueries } from "./queries"
 
 export const messageResolvers = {
     
+    
     Conversation: {
      participants: async (parent: any, _args : any, ctx : any) => {
       const participants = await ctx.prisma.conversationParticipant.findMany({
@@ -27,8 +28,22 @@ export const messageResolvers = {
                 createdAt: "asc",
             }
         })
-     }
+     },
+
+     lastMessage : async (parent: any, _args : any, ctx : any) => {
+        const { prisma } = ctx;
+
+        return await prisma.message.findFirst({
+            where : {
+                conversationId : parent.id
+            },
+            orderBy : {
+                createdAt : "desc"
+            }
+        })
+     },
     },
+
 
     Message: {
      sender: async (parent : any, arg : any, ctx : any) => {

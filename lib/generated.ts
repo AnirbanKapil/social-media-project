@@ -31,6 +31,7 @@ export type Conversation = {
   __typename?: 'Conversation';
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  lastMessage?: Maybe<Message>;
   messages: Array<Message>;
   participants: Array<User>;
   updatedAt: Scalars['String']['output'];
@@ -204,7 +205,7 @@ export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: strin
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConversationsQuery = { getConversations: Array<{ id: string, participants: Array<{ id: string, username: string, profileImgUrl: string | null }> }> };
+export type GetConversationsQuery = { getConversations: Array<{ id: string, participants: Array<{ id: string, username: string, profileImgUrl: string | null }>, lastMessage: { content: string, createdAt: string } | null }> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -423,6 +424,10 @@ export const GetConversationsDocument = new TypedDocumentString(`
       id
       username
       profileImgUrl
+    }
+    lastMessage {
+      content
+      createdAt
     }
   }
 }

@@ -10,7 +10,11 @@ export const GetConversationsDocument =  gql`
            id
            username
            profileImgUrl
-           }
         }
+        lastMessage {
+        content
+        createdAt
+       }   
+     }
     }
 `;

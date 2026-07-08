@@ -37,7 +37,10 @@ export default function ConversationList({selectedConversationId,setSelectedConv
         selectedConversationId === conv.id ? "bg-blue-500" : "hover:bg-blue-300"
         }`}
        >
-        <p>{otherParticipant?.username}</p>
+        <p className="font-semibold">{otherParticipant?.username}</p>
+        <p className="text-sm text-gray-500 truncate">
+          {conv.lastMessage?.content ?? "Start a conversation"}
+        </p>
        </div>
       );
       }
