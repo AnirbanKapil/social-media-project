@@ -13,12 +13,12 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetCurrentUserQuery } from "@/lib/generated";
-import { useCreateCon }
-
+import { useCreateConversationMutation } from "@/lib/generated";
+import { useRouter } from "next/navigation";
 
 export default function UsersPage() {
 
-  const userName = useParams().username as string;  
+   const userName = useParams().username as string;  
 
    const { data : profileData, isLoading, error } = useGetUserByUsernameQuery({ username: userName || "" },
         {
@@ -27,7 +27,10 @@ export default function UsersPage() {
         }
    );
    
+   const router = useRouter();
+
    const { data : currentuserData } = useGetCurrentUserQuery({});
+   const createConversationMutation = useCreateConversationMutation();
 
     const { mutateAsync: followUser } = useFollowUserMutation();
     const { mutateAsync: unfollowUser } = useUnfollowUserMutation();
@@ -61,7 +64,20 @@ export default function UsersPage() {
       queryClient.invalidateQueries({
         queryKey: ["GetUserByUsername"]
       })
-    }
+    };
+
+    const handleSendMessage = async () => {
+      if(!userId) return;
+      try {
+        await createConversationMutation.mutateAsync({
+        userId
+        });
+        router.push("/messages")
+      } catch (error) {
+        console.log(error);
+        throw new Error("Something went wrong");
+      }
+    };
   
   return (
     <div className="text-white">
@@ -87,7 +103,9 @@ export default function UsersPage() {
            height={100}
        />
        ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
-       <button className="self-center bg-slate-200 text-black p-1 mx-9 rounded-lg hover:scale-110">
+       <button className="self-center bg-slate-200 text-black p-1 mx-9 rounded-lg hover:scale-110"
+        onClick={handleSendMessage}   
+       >
         Send Message
        </button>
       </div>  
