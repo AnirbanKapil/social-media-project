@@ -32,6 +32,8 @@ model User {
   conversations ConversationParticipant[]
 
   sentMessages Message[]
+
+  likes      Like[] 
 }
 
 model Follows {
@@ -51,6 +53,8 @@ model Post {
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
+
+  likes   Like[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -96,4 +100,17 @@ model Message {
   updatedAt DateTime @updatedAt
 
   isEdited Boolean @default(false)
+
+}
+
+model Like {
+  userId String
+  postId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, postId])
 }
