@@ -13,6 +13,8 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetCurrentUserQuery } from "@/lib/generated";
+import { useCreateCon }
+
 
 export default function UsersPage() {
 
@@ -75,22 +77,28 @@ export default function UsersPage() {
          </div>
       </div>
       <div className="border-b border-slate-800 my-5">
-      {user?.profileImgUrl ? (
+      <div className="flex">
+       {user?.profileImgUrl ? (
           <Image
            className="mx-4 rounded-full"
            alt="profileImg"
            src={user.profileImgUrl}
            width={100}
            height={100}
-      />
-      ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
+       />
+       ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
+       <button className="self-center bg-slate-200 text-black p-1 mx-9 rounded-lg hover:scale-110">
+        Send Message
+       </button>
+      </div>  
         <div className="flex justify-between">
         <h1 className="font-extrabold text-3xl mx-5 my-4">{user?.username}</h1> 
         {!isOwnProfile &&  (<button onClick={handleFollow}
         className="self-center block-inline mt-2 p-2 mx-3 cursor-pointer 
          hover:bg-blue-400 hover:scale-120 transition-transform duration-300 bg-blue-600 rounded-lg">
            {isFollowing ? "Unfollow" : "Follow"}
-        </button>)}
+        </button>
+      )}
         </div> 
         <div className="flex">
         <p className="mx-4 my-6 text-slate-600">{user?.followersCount} Followers</p>

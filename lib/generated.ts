@@ -155,6 +155,13 @@ export type CreatePostPayload = {
   imgURL?: string | null | undefined;
 };
 
+export type CreateConversationMutationVariables = Exact<{
+  userId: string;
+}>;
+
+
+export type CreateConversationMutation = { createConversation: { id: string, participants: Array<{ id: string, username: string }> } | null };
+
 export type CreatePostMutationVariables = Exact<{
   payload: CreatePostPayload;
 }>;
@@ -237,6 +244,31 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMeQuery = { currUser: { id: string, email: string } | null };
 
 
+
+export const CreateConversationDocument = new TypedDocumentString(`
+    mutation CreateConversation($userId: String!) {
+  createConversation(userId: $userId) {
+    id
+    participants {
+      id
+      username
+    }
+  }
+}
+    `);
+
+export const useCreateConversationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateConversationMutation, TError, CreateConversationMutationVariables, TContext>) => {
+    
+    return useMutation<CreateConversationMutation, TError, CreateConversationMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateConversation'],
+    mutationFn: (variables?: CreateConversationMutationVariables) => useCustomFetcher<CreateConversationMutation, CreateConversationMutationVariables>(CreateConversationDocument, variables)(),
+    ...options
+  }
+    )};
 
 export const CreatePostDocument = new TypedDocumentString(`
     mutation CreatePost($payload: CreatePostPayload!) {
