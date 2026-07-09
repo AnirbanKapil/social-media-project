@@ -24,7 +24,7 @@ export default function ConversationList({selectedConversationId,setSelectedConv
    if (isLoading) {
     return <Loader />;
    }
-
+   console.log("connv from conversation-",conversations)
    if (error) {
     return <div className="w-80 p-4">Error fetching conversations.</div>;
    }

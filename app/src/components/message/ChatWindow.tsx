@@ -5,18 +5,19 @@ import { useGetCurrentUserQuery } from "@/lib/generated";
 import { Loader } from "../loader";
 import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
-
+import { GetConversationsQuery } from "@/lib/generated"
 
 type Props = {
   conversationId: string | null;
+  conversations: GetConversationsQuery["getConversations"];
 };
 
-export default function ChatWindow({conversationId} : Props) {
+export default function ChatWindow({conversationId,conversations} : Props) {
   
   const {data : currentUserData} = useGetCurrentUserQuery();
   const {data , isLoading} = useGetMessagesQuery(
     {
-      conversationId : conversationId!
+      conversationId : conversationId || ""
     },
     {
       enabled : !!conversationId,
@@ -24,7 +25,7 @@ export default function ChatWindow({conversationId} : Props) {
   )
   
   const currentUser = currentUserData?.currUser
-  
+   
   if (!conversationId) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -32,15 +33,27 @@ export default function ChatWindow({conversationId} : Props) {
       </div>
     );
   }
+  console.log("conv from chatwindow",conversations) 
+  if (!conversations) {
+    return <div className="flex-1 p-4"><Loader /></div>; 
+  }
 
   if (isLoading) {
     return <div className="flex-1 p-4"><Loader /></div>;
   }
 
+  const activeConversation = conversations?.find((c)=> c.id === conversationId)
+  
+  const otherParticipant = activeConversation?.participants.find((p)=> p.id !== currentUser?.id)
 
    return (
     <div className="flex flex-col h-screen max-h-screen w-full pb-7 px-7 ">
-      <ChatHeader username={}/>
+     {otherParticipant && (
+      <div key={otherParticipant.id}>
+        <ChatHeader username={otherParticipant.username}/>
+      </div>
+     )}
+      
       <div className="flex-1 overflow-y-auto px-4 mt-10">
         {data?.getMessages.map((message)=> {
         const isMine = message.sender.id === currentUser?.id

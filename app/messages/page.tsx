@@ -15,13 +15,15 @@ export default function MessagesPage() {
     <div>
      <div className="flex h-screen">
         <ConversationList
-        conversations={data?.getConversations ?? []}
-        isLoading={isLoading}
-        error={error as Error | null}
-        selectedConversationId={selectedConversationId}
-        setSelectedConversationId={setSelectedConversationId}
+         conversations={data?.getConversations ?? []}
+         isLoading={isLoading}
+         error={error as Error | null}
+         selectedConversationId={selectedConversationId}
+         setSelectedConversationId={setSelectedConversationId}
         />
-         <ChatWindow conversationId={selectedConversationId}/>
+        <ChatWindow conversationId={selectedConversationId}
+         conversations={data?.getConversations ?? []}  
+         />
      </div>
     </div>
   );
