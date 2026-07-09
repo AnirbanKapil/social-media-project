@@ -5,11 +5,16 @@ import ChatWindow from "../src/components/message/ChatWindow";
 import ConversationList from "../src/components/message/ConversationList";
 import { useState } from "react";
 import { useGetConversationsQuery } from "@/lib/generated";
+import { useSearchParams } from "next/navigation";
 
 export default function MessagesPage() {
-  
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const initialConversationId = searchParams.get("conversationId");
+
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(initialConversationId);
   const { data, isLoading, error} = useGetConversationsQuery();
+
+
 
   return (
     <div>

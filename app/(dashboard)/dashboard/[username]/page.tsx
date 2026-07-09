@@ -69,10 +69,10 @@ export default function UsersPage() {
     const handleSendMessage = async () => {
       if(!userId) return;
       try {
-        await createConversationMutation.mutateAsync({
+        const conversation = await createConversationMutation.mutateAsync({
         userId
         });
-        router.push("/messages")
+        router.push(`/messages?conversationId=${conversation.createConversation?.id}`)
       } catch (error) {
         console.log(error);
         throw new Error("Something went wrong");
