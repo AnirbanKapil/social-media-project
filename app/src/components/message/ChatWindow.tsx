@@ -6,6 +6,8 @@ import { Loader } from "../loader";
 import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
 import { GetConversationsQuery } from "@/lib/generated"
+import Link from "next/link";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 type Props = {
   conversationId: string | null;
@@ -33,7 +35,7 @@ export default function ChatWindow({conversationId,conversations} : Props) {
       </div>
     );
   }
-  console.log("conv from chatwindow",conversations) 
+  
   if (!conversations) {
     return <div className="flex-1 p-4"><Loader /></div>; 
   }
@@ -48,6 +50,10 @@ export default function ChatWindow({conversationId,conversations} : Props) {
 
    return (
     <div className="flex flex-col h-screen max-h-screen w-full pb-7 px-7 ">
+     <Link href="/dashboard"
+              className="cursor-pointer p-2">
+              <IoMdArrowRoundBack size={24} />
+      </Link> 
      {otherParticipant && (
       <div key={otherParticipant.id}>
         <ChatHeader username={otherParticipant.username}/>
