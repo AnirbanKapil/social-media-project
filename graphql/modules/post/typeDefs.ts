@@ -14,6 +14,8 @@ export const postTypeDefs = gql`
     createdAt: String!
     updatedAt: String!
     author: User 
+    isLiked: Boolean!
+    likesCount: Int!
   }
 
    type User {
@@ -27,8 +29,15 @@ export const postTypeDefs = gql`
     updatedAt: String!
   }
 
+  type Like {
+     userId: String!
+     postId: String!
+  }
+
   type Mutation {
     createPost(payload: CreatePostPayload!): Post
+    likePost(postId: String!): Post
+    unlikePost(postId: String!): Post
   }
 
   type Query {

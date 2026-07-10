@@ -22,8 +22,6 @@ export const userTypeDefs  = gql`
 
     isFollowing: Boolean!
 
-    isLiked: Boolean!
-    likesCount: Int!
   }
   
   type Query {
@@ -44,13 +42,13 @@ export const userTypeDefs  = gql`
      followingId: String!
   }
   
+  
+  
   type Mutation {
     followUser(to : String!): Follows! 
     unfollowUser(to : String!): Follows
     updateProfileImage(profileImgUrl: String! profileImgPublicId: String): User
     removeProfileImage: User
-    likePost(postId: String!): Post
-    unlikePost(postId: String!): Post
   }  
 
 `;
