@@ -54,7 +54,7 @@ export default function ChatWindow({conversationId,conversations} : Props) {
      <Link href="/dashboard"
               className="cursor-pointer p-2">
               <IoMdArrowRoundBack size={24} />
-      </Link> 
+     </Link> 
      {otherParticipant && (
       <div key={otherParticipant.id}>
         <ChatHeader username={otherParticipant.username}/>
@@ -66,8 +66,9 @@ export default function ChatWindow({conversationId,conversations} : Props) {
         const isMine = message.sender.id === currentUser?.id
         return (
          <div key={message.id} className={`flex mb-4 ${isMine ? "justify-end" : "justify-start"}`}>
-          <div className={`max-w-sm rounded-xl px-4 py-2 ${isMine ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}>
+          <div className={`max-w-sm rounded-xl px-4 py-2 ${isMine ? "bg-blue-600 text-white" : "bg-gray-200 text-black"}`}>
           <p>{message.content}</p>
+          <p className="text-slate-400 text-xs my-1.5 flex justify-end">{new Date(Number(message.createdAt)).toLocaleString()}</p>
           </div>
          </div>
         )
