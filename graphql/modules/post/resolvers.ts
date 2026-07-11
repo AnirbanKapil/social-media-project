@@ -31,7 +31,8 @@ export const postResolvers= {
           throw new Error("Not authenticated!!")
       }; 
        const userId = ctx.session?.user?.id;
-       const like = await prisma.like.upsert({
+
+       await prisma.like.upsert({
         where : {
           userId_postId: {
           userId,
@@ -45,7 +46,13 @@ export const postResolvers= {
          },
         });
        
-       return like;
+       const post = await prisma.post.findUnique({
+        where: {
+          id : postId
+        }
+       })
+        
+       return post;
     },
     
     unLikePost : async (parent : any, {postId} : {postId : string}, ctx : any) => {
@@ -55,15 +62,23 @@ export const postResolvers= {
       
       const userId = ctx.session?.user?.id;
 
-      return await prisma.like.delete({
-        where: {
-          userId_postId: {
-          userId,
-          postId,
-        }, 
-        }
+      try {
+        return await prisma.like.delete({
+          where: {
+            userId_postId: {
+            userId,
+            postId,
+          }, 
+          }
+        });
+      } catch (error) {
+        console.log(error)
+      }
+      const post = await prisma.post.findUnique({
+      where: { id: postId },
       });
-      
+
+      return post;
     }
    },
    Query: postQueries

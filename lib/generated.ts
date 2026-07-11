@@ -48,6 +48,12 @@ export type Follows = {
   followingId: Scalars['String']['output'];
 };
 
+export type Like = {
+  __typename?: 'Like';
+  postId: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
+};
+
 export type Message = {
   __typename?: 'Message';
   content: Scalars['String']['output'];
@@ -63,9 +69,11 @@ export type Mutation = {
   createConversation?: Maybe<Conversation>;
   createPost?: Maybe<Post>;
   followUser: Follows;
+  likePost?: Maybe<Post>;
   removeProfileImage?: Maybe<User>;
   sendMessage: Message;
   unfollowUser?: Maybe<Follows>;
+  unlikePost?: Maybe<Post>;
   updateProfileImage?: Maybe<User>;
 };
 
@@ -85,6 +93,11 @@ export type MutationFollowUserArgs = {
 };
 
 
+export type MutationLikePostArgs = {
+  postId: Scalars['String']['input'];
+};
+
+
 export type MutationSendMessageArgs = {
   content: Scalars['String']['input'];
   conversationId: Scalars['String']['input'];
@@ -93,6 +106,11 @@ export type MutationSendMessageArgs = {
 
 export type MutationUnfollowUserArgs = {
   to: Scalars['String']['input'];
+};
+
+
+export type MutationUnlikePostArgs = {
+  postId: Scalars['String']['input'];
 };
 
 
@@ -108,6 +126,8 @@ export type Post = {
   createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
   imgURL?: Maybe<Scalars['String']['output']>;
+  isLiked: Scalars['Boolean']['output'];
+  likesCount: Scalars['Int']['output'];
   updatedAt: Scalars['String']['output'];
 };
 
@@ -181,6 +201,13 @@ export type FollowUserMutationVariables = Exact<{
 
 export type FollowUserMutation = { followUser: { followerId: string, followingId: string } };
 
+export type LikePostMutationVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type LikePostMutation = { likePost: { id: string, isLiked: boolean, likesCount: number, author: { id: string } | null } | null };
+
 export type SendMessageMutationVariables = Exact<{
   conversationId: string;
   content: string;
@@ -195,6 +222,13 @@ export type UnfollowUserMutationVariables = Exact<{
 
 
 export type UnfollowUserMutation = { unfollowUser: { followerId: string, followingId: string } | null };
+
+export type UnLikePostMutationVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type UnLikePostMutation = { unlikePost: { id: string, isLiked: boolean, likesCount: number, author: { id: string } | null } | null };
 
 export type UpdateProfileImageMutationVariables = Exact<{
   profileImgUrl: string;
@@ -343,6 +377,32 @@ export const useFollowUserMutation = <
   }
     )};
 
+export const LikePostDocument = new TypedDocumentString(`
+    mutation LikePost($postId: String!) {
+  likePost(postId: $postId) {
+    id
+    isLiked
+    likesCount
+    author {
+      id
+    }
+  }
+}
+    `);
+
+export const useLikePostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<LikePostMutation, TError, LikePostMutationVariables, TContext>) => {
+    
+    return useMutation<LikePostMutation, TError, LikePostMutationVariables, TContext>(
+      {
+    mutationKey: ['LikePost'],
+    mutationFn: (variables?: LikePostMutationVariables) => useCustomFetcher<LikePostMutation, LikePostMutationVariables>(LikePostDocument, variables)(),
+    ...options
+  }
+    )};
+
 export const SendMessageDocument = new TypedDocumentString(`
     mutation SendMessage($conversationId: String!, $content: String!) {
   sendMessage(conversationId: $conversationId, content: $content) {
@@ -384,6 +444,32 @@ export const useUnfollowUserMutation = <
       {
     mutationKey: ['UnfollowUser'],
     mutationFn: (variables?: UnfollowUserMutationVariables) => useCustomFetcher<UnfollowUserMutation, UnfollowUserMutationVariables>(UnfollowUserDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const UnLikePostDocument = new TypedDocumentString(`
+    mutation UnLikePost($postId: String!) {
+  unlikePost(postId: $postId) {
+    id
+    isLiked
+    likesCount
+    author {
+      id
+    }
+  }
+}
+    `);
+
+export const useUnLikePostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UnLikePostMutation, TError, UnLikePostMutationVariables, TContext>) => {
+    
+    return useMutation<UnLikePostMutation, TError, UnLikePostMutationVariables, TContext>(
+      {
+    mutationKey: ['UnLikePost'],
+    mutationFn: (variables?: UnLikePostMutationVariables) => useCustomFetcher<UnLikePostMutation, UnLikePostMutationVariables>(UnLikePostDocument, variables)(),
     ...options
   }
     )};
