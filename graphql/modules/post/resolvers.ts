@@ -3,9 +3,34 @@ import { postQueries } from "./queries";
 
 
 
-
-
 export const postResolvers= {
+
+  Post: {
+     likesCount: async(parent : any) => {
+       return await prisma.like.count({
+        where: {
+          postId: parent.id
+        }
+       })
+     },
+     
+     isLiked: async(parent : any, arg : any, ctx : any) => { 
+        if(!ctx.session?.user){
+            return
+        };  
+        const like = await prisma.like.findUnique({
+          where: {
+            userId_postId: {
+              userId : ctx.session?.user?.id,
+              postId : parent.id
+            }
+          }
+        });
+        return !!like;
+      }
+
+  },  
+    
     Mutation: {
     createPost:async (parent : any, payload : any, ctx : any) => {
         
