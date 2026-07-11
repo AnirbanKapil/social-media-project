@@ -2,7 +2,7 @@
 import { gql } from "graphql-tag";
 
 export const UnLikePostDocument = gql`
-   mutation UnLikePost($postId: String!) {
+   mutation UnlikePost($postId: String!) {
      unlikePost(postId: $postId) {
         id
         isLiked

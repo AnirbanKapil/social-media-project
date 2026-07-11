@@ -80,7 +80,7 @@ export const postResolvers= {
        return post;
     },
     
-    unLikePost : async (parent : any, {postId} : {postId : string}, ctx : any) => {
+    unlikePost : async (parent : any, {postId} : {postId : string}, ctx : any) => {
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
       };

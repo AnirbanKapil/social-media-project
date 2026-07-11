@@ -6,12 +6,20 @@ import { BsUpload } from "react-icons/bs";
 import { FaRegBookmark } from "react-icons/fa6";
 import Link from "next/link";
 import { CldImage } from 'next-cloudinary'
+import { useGetAllPostsQuery } from "@/lib/generated";
 
 
 export function Feeds ({content, userImg, user, imgSrc, created} : 
     {content : string, userImg? : string | null,
      user : string, imgSrc : string | null |  undefined,
       created : string,}) {
+    
+    const {data, isLoading, error} = useGetAllPostsQuery({});
+    
+    const post = data?.getAllPosts
+
+    const handleLike = () => {}
+
     return(
         <div className="grid grid-cols-12 border-b border-gray-600">
             <div className="col-span-1">
@@ -38,7 +46,9 @@ export function Feeds ({content, userImg, user, imgSrc, created} :
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><LuMessageCircle /></div>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><AiOutlineRetweet /></div>
-                    <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><FaRegHeart /></div>
+                    <div className="cursor-pointer hover:scale-120 transition-transform duration-300"
+                      onClick={handleLike} 
+                    ><FaRegHeart /></div>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><BsUpload /></div>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><FaRegBookmark /></div>
                 </div>    

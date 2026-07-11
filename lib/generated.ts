@@ -223,12 +223,12 @@ export type UnfollowUserMutationVariables = Exact<{
 
 export type UnfollowUserMutation = { unfollowUser: { followerId: string, followingId: string } | null };
 
-export type UnLikePostMutationVariables = Exact<{
+export type UnlikePostMutationVariables = Exact<{
   postId: string;
 }>;
 
 
-export type UnLikePostMutation = { unlikePost: { id: string, isLiked: boolean, likesCount: number, author: { id: string } | null } | null };
+export type UnlikePostMutation = { unlikePost: { id: string, isLiked: boolean, likesCount: number, author: { id: string } | null } | null };
 
 export type UpdateProfileImageMutationVariables = Exact<{
   profileImgUrl: string;
@@ -241,7 +241,7 @@ export type UpdateProfileImageMutation = { updateProfileImage: { id: string, pro
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
+export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, likesCount: number, isLiked: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
 
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -448,8 +448,8 @@ export const useUnfollowUserMutation = <
   }
     )};
 
-export const UnLikePostDocument = new TypedDocumentString(`
-    mutation UnLikePost($postId: String!) {
+export const UnlikePostDocument = new TypedDocumentString(`
+    mutation UnlikePost($postId: String!) {
   unlikePost(postId: $postId) {
     id
     isLiked
@@ -461,15 +461,15 @@ export const UnLikePostDocument = new TypedDocumentString(`
 }
     `);
 
-export const useUnLikePostMutation = <
+export const useUnlikePostMutation = <
       TError = unknown,
       TContext = unknown
-    >(options?: UseMutationOptions<UnLikePostMutation, TError, UnLikePostMutationVariables, TContext>) => {
+    >(options?: UseMutationOptions<UnlikePostMutation, TError, UnlikePostMutationVariables, TContext>) => {
     
-    return useMutation<UnLikePostMutation, TError, UnLikePostMutationVariables, TContext>(
+    return useMutation<UnlikePostMutation, TError, UnlikePostMutationVariables, TContext>(
       {
-    mutationKey: ['UnLikePost'],
-    mutationFn: (variables?: UnLikePostMutationVariables) => useCustomFetcher<UnLikePostMutation, UnLikePostMutationVariables>(UnLikePostDocument, variables)(),
+    mutationKey: ['UnlikePost'],
+    mutationFn: (variables?: UnlikePostMutationVariables) => useCustomFetcher<UnlikePostMutation, UnlikePostMutationVariables>(UnlikePostDocument, variables)(),
     ...options
   }
     )};
@@ -506,6 +506,8 @@ export const GetAllPostsDocument = new TypedDocumentString(`
     id
     content
     imgURL
+    likesCount
+    isLiked
     createdAt
     author {
       id
