@@ -130,6 +130,8 @@ export default function UsersPage() {
           user={user?.username || "Unknown User"}
           imgSrc={post?.imgURL}
           created={post?.createdAt || "unknown"}
+          likesCount={post?.likesCount}
+          isLiked={post?.isLiked}
           />
         ))}
       </div>

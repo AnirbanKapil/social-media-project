@@ -1,19 +1,43 @@
+"use client"
+
 import Image from "next/image";
 import { LuMessageCircle } from "react-icons/lu";
 import { AiOutlineRetweet } from "react-icons/ai";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart , FaHeart} from "react-icons/fa";
 import { BsUpload } from "react-icons/bs";
 import { FaRegBookmark } from "react-icons/fa6";
 import Link from "next/link";
 import { CldImage } from 'next-cloudinary'
+import { useLikePostMutation } from "@/lib/generated";
+import { useUnlikePostMutation } from "@/lib/generated";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 
-export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked} : 
+export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id} : 
     {content : string, userImg? : string | null,
      user : string, imgSrc : string | null |  undefined,
-      created : string, likesCount : number | undefined, isLiked : boolean | undefined}) {
+      created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string}) {
     
+    const {mutateAsync: likePost} = useLikePostMutation();
+    const {mutateAsync: unlikePost} = useUnlikePostMutation();
+
+    const queryClient = useQueryClient();
+
+    const handleLikeToggle = async () => {
+        try {
+            if (isLiked) {
+                await unlikePost({ postId: id }); 
+            } else {
+                await likePost({ postId: id });
+            }
+        } catch (error) {
+            console.error("Failed to update like status:", error);
+        }
+        queryClient.invalidateQueries({
+        queryKey: ["GetAllPosts"]
+        });
+    };
 
     return(
         <div className="grid grid-cols-12 border-b border-gray-600">
@@ -41,8 +65,9 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><LuMessageCircle /></div>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><AiOutlineRetweet /></div>
-                    
-                    <div className={`cursor-pointer hover:scale-120 transition-transform duration-300`}><FaRegHeart className={isLiked ? "text-red-700" : "text-blue-300"}/></div>
+                    <div onClick={handleLikeToggle} 
+                    className={`cursor-pointer hover:scale-120 transition-transform duration-300`}>
+                    {isLiked ? ( <FaHeart className="text-red-700" /> ) : (  <FaRegHeart className="" /> )}</div>
                     <p>{likesCount}  Likes</p> 
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><BsUpload /></div>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><FaRegBookmark /></div>
