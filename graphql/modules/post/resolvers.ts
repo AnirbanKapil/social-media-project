@@ -88,7 +88,7 @@ export const postResolvers= {
       const userId = ctx.session?.user?.id;
 
       try {
-        return await prisma.like.delete({
+         await prisma.like.delete({
           where: {
             userId_postId: {
             userId,
