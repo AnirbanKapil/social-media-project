@@ -16,6 +16,8 @@ export const postTypeDefs = gql`
     author: User 
     isLiked: Boolean!
     likesCount: Int!
+    commentsCount: Int!
+    comments: [Comment!]!
   }
 
    type User {
