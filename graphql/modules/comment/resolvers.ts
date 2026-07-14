@@ -2,6 +2,22 @@ import { commentQueries } from "./queries";
 
 
 export const commentResolvers = {
+    
+    Comment: {
+       
+        author: async (parent: any, _args : any, ctx : any) => {
+
+        const {prisma} = ctx;
+
+        return await prisma.user.findUnique({
+            where : {
+                id : parent.authorId
+            }
+        });
+        },
+        
+
+    },
 
     Mutation: {
 
@@ -22,8 +38,34 @@ export const commentResolvers = {
              })
         },
 
-        deleteComment : async (parent : any, {postId}: {postId : string}, ctx : any) => {
+        deleteComment : async (parent : any, {commentId}: {commentId : string}, ctx : any) => {
+           if (!ctx?.session?.user) {
+             throw new Error("Not authenticated");
+            };
             
+            const {prisma} = ctx;
+
+            const comment = await prisma.comment.findUnique({
+                where: {
+                  id: commentId,
+                 },
+            });
+            
+            if(!comment){
+                throw new Error("Comment not found");
+            };
+            
+            if(comment.authorId !== ctx?.session?.user.id){
+                throw new Error("Unauthorized")
+            };
+
+            await prisma.comment.delete({
+                where : {
+                    id : commentId
+                }
+            });
+
+            return true;
         }
     },
 
