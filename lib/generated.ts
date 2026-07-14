@@ -27,6 +27,16 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Comment = {
+  __typename?: 'Comment';
+  author: User;
+  content: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  post: Post;
+  updatedAt: Scalars['String']['output'];
+};
+
 export type Conversation = {
   __typename?: 'Conversation';
   createdAt: Scalars['String']['output'];
@@ -66,8 +76,10 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createComment: Comment;
   createConversation?: Maybe<Conversation>;
   createPost?: Maybe<Post>;
+  deleteComment: Scalars['Boolean']['output'];
   followUser: Follows;
   likePost?: Maybe<Post>;
   removeProfileImage?: Maybe<User>;
@@ -78,6 +90,12 @@ export type Mutation = {
 };
 
 
+export type MutationCreateCommentArgs = {
+  content: Scalars['String']['input'];
+  postId: Scalars['String']['input'];
+};
+
+
 export type MutationCreateConversationArgs = {
   userId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -85,6 +103,11 @@ export type MutationCreateConversationArgs = {
 
 export type MutationCreatePostArgs = {
   payload: CreatePostPayload;
+};
+
+
+export type MutationDeleteCommentArgs = {
+  commentId: Scalars['String']['input'];
 };
 
 
@@ -122,6 +145,8 @@ export type MutationUpdateProfileImageArgs = {
 export type Post = {
   __typename?: 'Post';
   author?: Maybe<User>;
+  comments: Array<Comment>;
+  commentsCount: Scalars['Int']['output'];
   content: Scalars['String']['output'];
   createdAt: Scalars['String']['output'];
   id: Scalars['String']['output'];
@@ -135,10 +160,16 @@ export type Query = {
   __typename?: 'Query';
   currUser?: Maybe<User>;
   getAllPosts: Array<Maybe<Post>>;
+  getComments: Array<Comment>;
   getConversations: Array<Conversation>;
   getMessages: Array<Message>;
   getUserByUsername?: Maybe<User>;
   users: Array<Maybe<User>>;
+};
+
+
+export type QueryGetCommentsArgs = {
+  postId: Scalars['String']['input'];
 };
 
 
@@ -241,7 +272,7 @@ export type UpdateProfileImageMutation = { updateProfileImage: { id: string, pro
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, likesCount: number, isLiked: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
+export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, likesCount: number, isLiked: boolean, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
 
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -251,7 +282,7 @@ export type GetConversationsQuery = { getConversations: Array<{ id: string, part
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string } | null> | null } | null };
+export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number } | null> | null } | null };
 
 export type GetMessagesQueryVariables = Exact<{
   conversationId: string;
@@ -265,7 +296,7 @@ export type GetUserByUsernameQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string } | null> | null } | null };
+export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number } | null> | null } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -508,6 +539,7 @@ export const GetAllPostsDocument = new TypedDocumentString(`
     imgURL
     likesCount
     isLiked
+    commentsCount
     createdAt
     author {
       id
@@ -585,6 +617,9 @@ export const GetCurrentUserDocument = new TypedDocumentString(`
       content
       imgURL
       createdAt
+      likesCount
+      isLiked
+      commentsCount
     }
   }
 }
@@ -656,6 +691,9 @@ export const GetUserByUsernameDocument = new TypedDocumentString(`
       content
       imgURL
       createdAt
+      likesCount
+      isLiked
+      commentsCount
     }
   }
 }

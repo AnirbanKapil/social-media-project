@@ -15,6 +15,9 @@ export const GetUserDocument = gql`
         content
         imgURL
         createdAt
+        likesCount
+        isLiked
+        commentsCount
      }
     }
  }  

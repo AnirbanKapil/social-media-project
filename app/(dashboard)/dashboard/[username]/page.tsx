@@ -126,6 +126,7 @@ export default function UsersPage() {
       <div>
         {user?.posts && user?.posts.map((post) => (
           <Feeds key={post?.id} userImg={user?.profileImgUrl}
+          id={post?.id || ""}
           content={post?.content || "No content available"} 
           user={user?.username || "Unknown User"}
           imgSrc={post?.imgURL}

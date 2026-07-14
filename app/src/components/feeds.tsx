@@ -64,6 +64,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     />}
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><LuMessageCircle /></div>
+                    <p></p>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><AiOutlineRetweet /></div>
                     <div onClick={handleLikeToggle} 
                     className={`cursor-pointer hover:scale-120 transition-transform duration-300`}>
