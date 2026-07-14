@@ -10,6 +10,7 @@ export const GetAllPostsDocument = gql`
         imgURL,
         likesCount
         isLiked
+        commentsCount
         createdAt
         author {   
             id,
