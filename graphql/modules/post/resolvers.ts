@@ -27,7 +27,16 @@ export const postResolvers= {
           }
         });
         return !!like;
-      }
+      },
+
+     commentsCount: async (parent: any, arg: any,ctx : any) => {
+      const { prisma } = ctx;
+      return await prisma.comment.count({
+       where: {
+       postId: parent.id,
+      },
+      });
+     },
 
   },  
     

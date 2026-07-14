@@ -16,7 +16,16 @@ export const commentResolvers = {
         });
         },
         
-
+        post: async (parent: any, _args : any, ctx : any) => {
+        
+        const {prisma} = ctx;
+        
+        return await prisma.post.findUnique({
+            where : {
+                id : parent.postId
+            }
+        });
+        },
     },
 
     Mutation: {
