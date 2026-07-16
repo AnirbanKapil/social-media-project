@@ -33,12 +33,11 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
             }
             queryClient.invalidateQueries({queryKey: ["GetAllPosts"]});
             queryClient.invalidateQueries({ queryKey: ['GetUserByUsername', { username : user }] });
+            queryClient.invalidateQueries({queryKey: ["GetCurrentUser"]});
         } catch (error) {
             console.error("Failed to update like status:", error);
         }   
-    },
-    };
-
+       };
     return(
         <div className="grid grid-cols-12 border-b border-gray-600">
             <div className="col-span-1">
