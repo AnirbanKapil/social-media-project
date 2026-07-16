@@ -23,7 +23,7 @@ export default function ProfilePage() {
 
   const { data, isLoading, error } = useGetCurrentUserQuery({},
     {
-      staleTime: 1000 * 60 * 5, 
+      staleTime: 0, 
       refetchOnWindowFocus: false 
     }
   );
@@ -131,7 +131,7 @@ export default function ProfilePage() {
           <div>
             {user?.posts && user?.posts.map((post) => (
               <Feeds key={post?.id} userImg={user?.profileImgUrl}
-               id={post?.id || ""}
+              id={post?.id || ""}
               content={post?.content || "No content available"} 
               user={user?.username || "Unknown User"}
               imgSrc={post?.imgURL}

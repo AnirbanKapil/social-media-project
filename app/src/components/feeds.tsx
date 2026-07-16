@@ -31,12 +31,12 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
             } else {
                 await likePost({ postId: id });
             }
+            queryClient.invalidateQueries({queryKey: ["GetAllPosts"]});
+            queryClient.invalidateQueries({ queryKey: ['GetUserByUsername', { username : user }] });
         } catch (error) {
             console.error("Failed to update like status:", error);
-        }
-        queryClient.invalidateQueries({
-        queryKey: ["GetAllPosts"]
-        });
+        }   
+    },
     };
 
     return(

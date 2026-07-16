@@ -12,13 +12,13 @@ export const GetUserByUsernameDocument = gql`
         followersCount
         followingCount
         posts {
-        id
-        content
-        imgURL
-        createdAt
-        likesCount
-        isLiked
-        commentsCount
+          id
+          content
+          imgURL
+          createdAt
+          likesCount
+          isLiked
+          commentsCount
      }
     }
   }

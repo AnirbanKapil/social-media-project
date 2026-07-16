@@ -22,7 +22,7 @@ export default function UsersPage() {
 
    const { data : profileData, isLoading, error } = useGetUserByUsernameQuery({ username: userName || "" },
         {
-        staleTime: 1000 * 60 * 5, 
+        staleTime: 0, 
         refetchOnWindowFocus: false 
         }
    );
