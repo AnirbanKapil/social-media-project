@@ -274,6 +274,13 @@ export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, likesCount: number, isLiked: boolean, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
 
+export type GetCommentsQueryVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type GetCommentsQuery = { getComments: Array<{ id: string, content: string, author: { id: string, username: string, profileImgUrl: string | null } }> };
+
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -567,6 +574,38 @@ export const useGetAllPostsQuery = <
     )};
 
 useGetAllPostsQuery.getKey = (variables?: GetAllPostsQueryVariables) => variables === undefined ? ['GetAllPosts'] : ['GetAllPosts', variables];
+
+export const GetCommentsDocument = new TypedDocumentString(`
+    query GetComments($postId: String!) {
+  getComments(postId: $postId) {
+    id
+    content
+    author {
+      id
+      username
+      profileImgUrl
+    }
+  }
+}
+    `);
+
+export const useGetCommentsQuery = <
+      TData = GetCommentsQuery,
+      TError = unknown
+    >(
+      variables: GetCommentsQueryVariables,
+      options?: Omit<UseQueryOptions<GetCommentsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetCommentsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetCommentsQuery, TError, TData>(
+      {
+    queryKey: ['GetComments', variables],
+    queryFn: useCustomFetcher<GetCommentsQuery, GetCommentsQueryVariables>(GetCommentsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetCommentsQuery.getKey = (variables: GetCommentsQueryVariables) => ['GetComments', variables];
 
 export const GetConversationsDocument = new TypedDocumentString(`
     query GetConversations {

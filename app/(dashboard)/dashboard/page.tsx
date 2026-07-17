@@ -44,6 +44,7 @@ export default function FeedsPage () {
                         created={post?.createdAt || "unknown"}
                         likesCount={post?.likesCount}
                         isLiked={post?.isLiked}
+                        commentsCount={post?.commentsCount}
                         />
                      ))}
                 </div>
