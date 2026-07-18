@@ -11,7 +11,6 @@ import { CldImage } from 'next-cloudinary'
 import { useLikePostMutation } from "@/lib/generated";
 import { useUnlikePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { CommentSection } from "./comment/commentSection";
 
 export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount} : 
@@ -19,7 +18,6 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
      user : string, imgSrc : string | null |  undefined,
       created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string, commentsCount: number | undefined}) {
     
-    const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
         
     const {mutateAsync: likePost} = useLikePostMutation();
     const {mutateAsync: unlikePost} = useUnlikePostMutation();
@@ -65,9 +63,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     />}
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><LuMessageCircle /></div>
-                    <button onClick={() => setSelectedPostId(id)}>{commentsCount}</button>
-                    {selectedPostId === id && (
-                     <CommentSection postId={id}/> )}
+                    <p>{commentsCount}</p>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><AiOutlineRetweet /></div>
                     <div onClick={handleLikeToggle} 
                     className={`cursor-pointer hover:scale-120 transition-transform duration-300`}>

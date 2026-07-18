@@ -4,11 +4,12 @@ import { Publish } from "@/app/src/components/publish";
 import { Feeds } from "@/app/src/components/feeds";
 import { useGetAllPostsQuery } from "@/lib/generated";
 import { Loader } from "@/app/src/components/loader";
-
+import { CommentModal } from "@/app/src/components/comment/commentModal";
+import { useState } from "react";
 
 export default function FeedsPage () {
     
-   
+    const [selectedPostId, setSelectedPostId] = useState<string | null>(null); 
 
     const { data, isLoading, error } = useGetAllPostsQuery({},
       {
@@ -45,8 +46,15 @@ export default function FeedsPage () {
                         likesCount={post?.likesCount}
                         isLiked={post?.isLiked}
                         commentsCount={post?.commentsCount}
+                        onCommentClick={() => setSelectedPostId(post?.id)}
                         />
                      ))}
+                     {selectedPostId && (
+                      <CommentModal 
+                       postId={selectedPostId}
+                       onClose={() => setSelectedPostId(null)}
+                      />
+                     )}
                 </div>
     )
 }

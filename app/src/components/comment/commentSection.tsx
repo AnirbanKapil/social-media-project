@@ -13,7 +13,7 @@ type Props = {
 export function CommentSection ({postId} : Props) {
     const { data, isLoading } =useGetCommentsQuery({postId,});
     const [content, setContent] = useState("");
-
+    
     const createCommentMutation = useCreateCommentMutation();
 
     const queryClient = useQueryClient();
