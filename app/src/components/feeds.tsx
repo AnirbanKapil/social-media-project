@@ -65,7 +65,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     gravity="auto"
                     />}
                 <div className="flex justify-between items-center mt-2 w-1/2">
-                    <div className="cursor-pointer hover:scale-120 transition-transform duration-300">
+                    <div className="mt-0.5 cursor-pointer hover:scale-120 transition-transform duration-300">
                         <button onClick={onCommentClick}><LuMessageCircle /></button>
                     </div>
                     <p>{commentsCount}</p>

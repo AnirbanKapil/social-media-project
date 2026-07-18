@@ -33,16 +33,32 @@ export function CommentSection ({postId} : Props) {
     }
 
     return(
-      <div>
+      <div className="flex h-full flex-col">
         {data?.getComments.map((comment) => (
         <div key={comment.id}>
-        <p>{comment.author.username}</p>
-        <p>{comment.content}</p>
+            <div className="flex gap-3 mb-6">
+
+    <div className="w-10 h-10 rounded-full bg-gray-600"/>
+
+    <div>
+        <div className="flex gap-2 items-center">
+            <p className="font-semibold">
+                {comment?.author?.username}
+            </p>
+         </div>
+           <p>{comment?.content}</p>
+          </div>
+         </div>
         </div>
         ))}
+        <div className="flex gap-3">
         <input value={content}
+         className="flex-1 rounded-full border border-gray-600 bg-transparent px-4 py-2 outline-none"
          onChange={(e) => setContent(e.target.value)}/>
-         <button onClick={handleComment}>Comment</button>
+         <button className="rounded-full bg-blue-500 px-5 py-2 text-white" 
+          onClick={handleComment}>Comment</button>
+        </div>
       </div>
     )
 };
+
