@@ -9,7 +9,7 @@ import { useState } from "react";
 
 export default function FeedsPage () {
     
-    const [selectedPostId, setSelectedPostId] = useState<string | null>(null); 
+    const [selectedPostId, setSelectedPostId] = useState<string | undefined | null>(null); 
 
     const { data, isLoading, error } = useGetAllPostsQuery({},
       {

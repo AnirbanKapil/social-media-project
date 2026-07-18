@@ -13,10 +13,13 @@ import { useUnlikePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import { CommentSection } from "./comment/commentSection";
 
-export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount} : 
+
+export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount, onCommentClick} : 
     {content : string, userImg? : string | null,
      user : string, imgSrc : string | null |  undefined,
-      created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string, commentsCount: number | undefined}) {
+      created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string, commentsCount: number | undefined
+      onCommentClick : () => void 
+    }) {
     
         
     const {mutateAsync: likePost} = useLikePostMutation();
@@ -62,7 +65,9 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     gravity="auto"
                     />}
                 <div className="flex justify-between items-center mt-2 w-1/2">
-                    <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><LuMessageCircle /></div>
+                    <div className="cursor-pointer hover:scale-120 transition-transform duration-300">
+                        <button onClick={onCommentClick}><LuMessageCircle /></button>
+                    </div>
                     <p>{commentsCount}</p>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><AiOutlineRetweet /></div>
                     <div onClick={handleLikeToggle} 
