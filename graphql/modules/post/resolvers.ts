@@ -41,7 +41,7 @@ export const postResolvers= {
   },  
     
     Mutation: {
-    createPost:async (parent : any, payload : any, ctx : any) => {
+    createPost : async (parent : any, payload : any, ctx : any) => {
         
         if(!ctx.session?.user){
             throw new Error("Not authenticated!!")
@@ -59,6 +59,34 @@ export const postResolvers= {
         });
         return post;
      },
+
+    deletePost : async (parent : any, postId : string, ctx : any) => {
+        if(!ctx.session?.user){
+            throw new Error("Not authenticated!!")
+        };
+        
+        const post = await prisma.post.findUnique({
+          where : {
+             id: postId,
+          }
+        });
+
+        if(!post){
+          throw new Error("Post not found");
+        };
+
+        if (post?.authorId !== ctx.session?.user?.id) {
+         throw new Error("Unauthorized");
+        };
+
+        await prisma.post.delete({
+          where : {
+            id : postId
+          }
+        });
+
+        return true;
+    }, 
 
     likePost : async (parent : any, {postId}: {postId : string}, ctx : any) => {
       if(!ctx.session?.user){

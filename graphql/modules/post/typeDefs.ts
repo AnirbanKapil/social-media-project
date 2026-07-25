@@ -40,6 +40,7 @@ export const postTypeDefs = gql`
     createPost(payload: CreatePostPayload!): Post
     likePost(postId: String!): Post
     unlikePost(postId: String!): Post
+    deletePost(postId: String!): Boolean!
   }
 
   type Query {
