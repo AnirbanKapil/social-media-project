@@ -12,7 +12,7 @@ import { useLikePostMutation } from "@/lib/generated";
 import { useUnlikePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeletePostMutation } from "@/lib/generated";
-
+import { useGetCurrentUserQuery } from "@/lib/generated";
 
 export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount, onCommentClick} : 
     {content : string, userImg? : string | null,
@@ -21,6 +21,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
       onCommentClick : () => void 
     }) {
     
+    const { data } = useGetCurrentUserQuery({});
         
     const {mutateAsync: likePost} = useLikePostMutation();
     const {mutateAsync: unlikePost} = useUnlikePostMutation();
@@ -28,6 +29,8 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
     const deletePostMutation = useDeletePostMutation();
 
     const queryClient = useQueryClient();
+
+    const currUser = data?.currUser
 
     const handleLikeToggle = async () => {
         try {
@@ -51,12 +54,17 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
             </div>
             <div className="col-span-11 m-2.5">
                    <div className="flex justify-between">
-                   <Link href={`/dashboard/${user}`}
-                    className="inline-block font-semibold cursor-pointer hover:scale-110 transition-transform duration-300">
+                    <div>
+                      <Link href={`/dashboard/${user}`}
+                       className="inline-block font-semibold cursor-pointer hover:scale-110 transition-transform duration-300">
                        {user}
-                   </Link>
-                    <p className="text-slate-400 text-xs mt-2">{new Date(Number(created)).toLocaleString()}</p>
+                      </Link>
                     </div>
+                    <div className="flex">
+                       <p className="text-slate-400 text-xs mt-2">{new Date(Number(created)).toLocaleString()}</p>
+                       {currUser?.username === user && (<button className="mx-2 text-slate-400 text-xs mt-2">Delete Comment</button>)}
+                    </div>
+                  </div>
                     <p className="mt-2">{content}</p>
                     {imgSrc && <CldImage
                     alt="image"
@@ -66,6 +74,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     crop="fill"
                     gravity="auto"
                     />}
+                    
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="mt-0.5 cursor-pointer hover:scale-120 transition-transform duration-300">
                         <button onClick={onCommentClick}><LuMessageCircle /></button>
