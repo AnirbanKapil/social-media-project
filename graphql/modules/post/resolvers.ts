@@ -60,7 +60,7 @@ export const postResolvers= {
         return post;
      },
 
-    deletePost : async (parent : any, postId : string, ctx : any) => {
+    deletePost : async (parent : any, {postId}: {postId : string}, ctx : any) => {
         if(!ctx.session?.user){
             throw new Error("Not authenticated!!")
         };

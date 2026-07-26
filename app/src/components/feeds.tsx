@@ -45,7 +45,17 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
         } catch (error) {
             console.error("Failed to update like status:", error);
         }   
-       };
+    };
+    
+    const handleDeletePost = async () => {
+        try {
+          await deletePostMutation.mutateAsync({postId : id});
+          queryClient.invalidateQueries({queryKey: ["GetAllPosts"]});  
+        } catch (error) {
+          console.error("Failed to delete post:", error);  
+        }
+    }
+
     return(
         <div className="grid grid-cols-12 border-b border-gray-600">
             <div className="col-span-1">
@@ -62,7 +72,9 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     </div>
                     <div className="flex">
                        <p className="text-slate-400 text-xs mt-2">{new Date(Number(created)).toLocaleString()}</p>
-                       {currUser?.username === user && (<button className="mx-2 text-slate-400 text-xs mt-2">Delete Comment</button>)}
+                       {currUser?.username === user && (<button onClick={handleDeletePost} 
+                       className="mx-2 text-slate-400 text-xs mt-2">
+                        Delete Comment</button>)}
                     </div>
                   </div>
                     <p className="mt-2">{content}</p>

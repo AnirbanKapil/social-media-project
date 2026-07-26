@@ -108,9 +108,9 @@ model Message {
 }
 
 model Like {
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  post Post @relation(fields: [postId], references: [id])
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
   createdAt DateTime @default(now())
 
