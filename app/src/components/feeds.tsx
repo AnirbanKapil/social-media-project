@@ -11,7 +11,7 @@ import { CldImage } from 'next-cloudinary'
 import { useLikePostMutation } from "@/lib/generated";
 import { useUnlikePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
-import { CommentSection } from "./comment/commentSection";
+import { useDeletePostMutation } from "@/lib/generated";
 
 
 export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount, onCommentClick} : 
@@ -24,6 +24,8 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
         
     const {mutateAsync: likePost} = useLikePostMutation();
     const {mutateAsync: unlikePost} = useUnlikePostMutation();
+
+    const deletePostMutation = useDeletePostMutation();
 
     const queryClient = useQueryClient();
 

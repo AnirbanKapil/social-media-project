@@ -80,6 +80,7 @@ export type Mutation = {
   createConversation?: Maybe<Conversation>;
   createPost?: Maybe<Post>;
   deleteComment: Scalars['Boolean']['output'];
+  deletePost: Scalars['Boolean']['output'];
   followUser: Follows;
   likePost?: Maybe<Post>;
   removeProfileImage?: Maybe<User>;
@@ -108,6 +109,11 @@ export type MutationCreatePostArgs = {
 
 export type MutationDeleteCommentArgs = {
   commentId: Scalars['String']['input'];
+};
+
+
+export type MutationDeletePostArgs = {
+  postId: Scalars['String']['input'];
 };
 
 
@@ -227,6 +233,13 @@ export type CreatePostMutationVariables = Exact<{
 
 
 export type CreatePostMutation = { createPost: { id: string, content: string, imgURL: string | null, author: { id: string, username: string, email: string } | null } | null };
+
+export type DeletePostMutationVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type DeletePostMutation = { deletePost: boolean };
 
 export type RemoveProfileImageMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -402,6 +415,25 @@ export const useCreatePostMutation = <
       {
     mutationKey: ['CreatePost'],
     mutationFn: (variables?: CreatePostMutationVariables) => useCustomFetcher<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const DeletePostDocument = new TypedDocumentString(`
+    mutation DeletePost($postId: String!) {
+  deletePost(postId: $postId)
+}
+    `);
+
+export const useDeletePostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeletePostMutation, TError, DeletePostMutationVariables, TContext>) => {
+    
+    return useMutation<DeletePostMutation, TError, DeletePostMutationVariables, TContext>(
+      {
+    mutationKey: ['DeletePost'],
+    mutationFn: (variables?: DeletePostMutationVariables) => useCustomFetcher<DeletePostMutation, DeletePostMutationVariables>(DeletePostDocument, variables)(),
     ...options
   }
     )};
