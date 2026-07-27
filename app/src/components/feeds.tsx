@@ -15,7 +15,7 @@ import { useDeletePostMutation } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-
+import DeletePostModal from "./post/DeletePostModal";
 
 
 export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount, onCommentClick} : 
@@ -126,6 +126,15 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><FaRegBookmark /></div>
                 </div>    
             </div>
+                {showDeleteModal && (
+                  <DeletePostModal
+                  onClose={() => setShowDeleteModal(false)}
+                  onDelete={async () => {
+                  await handleDeletePost();
+                  setShowDeleteModal(false);
+                  }}
+                />
+          )}
         </div>
     )
 }
