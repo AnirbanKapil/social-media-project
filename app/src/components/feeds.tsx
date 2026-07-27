@@ -13,6 +13,10 @@ import { useUnlikePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeletePostMutation } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
+import { useState } from "react";
+import { BsThreeDots } from "react-icons/bs";
+
+
 
 export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount, onCommentClick} : 
     {content : string, userImg? : string | null,
@@ -31,6 +35,9 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
     const queryClient = useQueryClient();
 
     const currUser = data?.currUser
+    
+    const [showMenu, setShowMenu] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const handleLikeToggle = async () => {
         try {
@@ -72,9 +79,27 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     </div>
                     <div className="flex">
                        <p className="text-slate-400 text-xs mt-2">{new Date(Number(created)).toLocaleString()}</p>
-                       {currUser?.username === user && (<button onClick={handleDeletePost} 
-                       className="mx-2 text-slate-400 text-xs mt-2">
-                        Delete Comment</button>)}
+                       {currUser?.username === user && (
+                         <div className="relative">
+                          <button onClick={() => setShowMenu((prev) => !prev)} 
+                          className="p-2 rounded-full hover:bg-gray-800">
+                          <BsThreeDots size={18} /></button>
+                          {showMenu && (
+                            <div className="absolute right-0 mt-2 w-40 rounded-lg border border-gray-700 bg-black shadow-lg">
+                              <button
+                               onClick={()=> {
+                                  setShowMenu(false);
+                                  setShowDeleteModal(true);
+                               }}
+                                className="w-full px-4 py-3 text-left text-red-500 hover:bg-gray-800"
+                              >
+                                 Delete Post
+                              </button> 
+                            </div>
+                          )}
+                         </div>    
+                        )
+                       }
                     </div>
                   </div>
                     <p className="mt-2">{content}</p>
