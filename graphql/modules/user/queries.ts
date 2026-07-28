@@ -35,5 +35,24 @@ export const userQueries = {
       throw new Error("User not found");
     }
     return {...user, posts: user.Posts || []};
+  },
+
+  searchUser: async (_: any, { keyword }: { keyword: string }, { prisma, session }: any) => {
+    if (!session) {
+    throw new Error("Not logged in");
+    };
+
+    return await prisma.user.findMany({
+      where: {
+      id: {
+        not: session.user.id,
+      },
+      username: {
+        contains: keyword,
+        mode: "insensitive",
+      },
+      },
+      take: 10,
+    })
   }
 }
