@@ -170,6 +170,7 @@ export type Query = {
   getConversations: Array<Conversation>;
   getMessages: Array<Message>;
   getUserByUsername?: Maybe<User>;
+  searchUsers: Array<User>;
   users: Array<Maybe<User>>;
 };
 
@@ -186,6 +187,11 @@ export type QueryGetMessagesArgs = {
 
 export type QueryGetUserByUsernameArgs = {
   username: Scalars['String']['input'];
+};
+
+
+export type QuerySearchUsersArgs = {
+  keyword: Scalars['String']['input'];
 };
 
 export type User = {
