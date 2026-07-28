@@ -37,7 +37,7 @@ export const userQueries = {
     return {...user, posts: user.Posts || []};
   },
 
-  searchUser: async (_: any, { keyword }: { keyword: string }, { prisma, session }: any) => {
+  searchUsers: async (_: any, { keyword }: { keyword: string }, { prisma, session }: any) => {
     if (!session) {
     throw new Error("Not logged in");
     };

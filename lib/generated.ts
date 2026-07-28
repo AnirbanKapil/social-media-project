@@ -337,6 +337,13 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsersQuery = { users: Array<{ id: string, email: string, username: string, profileImgUrl: string | null } | null> };
 
+export type SearchUsersQueryVariables = Exact<{
+  keyword: string;
+}>;
+
+
+export type SearchUsersQuery = { searchUsers: Array<{ username: string, profileImgUrl: string | null, id: string }> };
+
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -858,6 +865,34 @@ export const useGetUsersQuery = <
     )};
 
 useGetUsersQuery.getKey = (variables?: GetUsersQueryVariables) => variables === undefined ? ['GetUsers'] : ['GetUsers', variables];
+
+export const SearchUsersDocument = new TypedDocumentString(`
+    query SearchUsers($keyword: String!) {
+  searchUsers(keyword: $keyword) {
+    username
+    profileImgUrl
+    id
+  }
+}
+    `);
+
+export const useSearchUsersQuery = <
+      TData = SearchUsersQuery,
+      TError = unknown
+    >(
+      variables: SearchUsersQueryVariables,
+      options?: Omit<UseQueryOptions<SearchUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<SearchUsersQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<SearchUsersQuery, TError, TData>(
+      {
+    queryKey: ['SearchUsers', variables],
+    queryFn: useCustomFetcher<SearchUsersQuery, SearchUsersQueryVariables>(SearchUsersDocument, variables),
+    ...options
+  }
+    )};
+
+useSearchUsersQuery.getKey = (variables: SearchUsersQueryVariables) => ['SearchUsers', variables];
 
 export const GetMeDocument = new TypedDocumentString(`
     query GetMe {
