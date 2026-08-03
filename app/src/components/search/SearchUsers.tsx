@@ -3,8 +3,8 @@
 
 import { useState } from "react";
 import { useSearchUsersQuery } from "@/lib/generated";
-
-
+import Link from "next/link";
+import Image from "next/image";
 
 
 
@@ -40,9 +40,26 @@ export default function SearchUsers () {
 
            <div className="mt-4 space-y-3">
              {data?.searchUsers.map((user)=> (
-                <div key={user.id}>
-                   {user.username}    
-                </div>
+                <Link
+                  key={user.id}
+                  href={`/dashboard/${user.username}`}
+                  className="flex items-center gap-3 rounded-xl p-3 hover:bg-gray-800 transition-colors"
+                >
+                {user.profileImgUrl ? (
+                <Image
+                src={user.profileImgUrl}
+                alt={user.username}
+                width={40}
+                height={40}
+                className="rounded-full"
+                />
+                ) : (
+                <div className="h-10 w-10 rounded-full bg-blue-300" />
+                )}
+               <div>
+               <p className="font-semibold">{user.username}</p>
+               </div>
+               </Link>
              ))}
            </div>
         </div>
