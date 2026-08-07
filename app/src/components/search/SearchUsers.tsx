@@ -23,7 +23,7 @@ export default function SearchUsers () {
     );
     
     return (
-        <div className="w-full rounded-2xl border border-gray-700 p-4 text-slate-600">
+        <div className="w-full rounded-2xl border border-gray-700 p-4 text-slate-200">
            <input 
             type="text"
             value={keyword}
