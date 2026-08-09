@@ -104,6 +104,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                   </div>
                     <p className="mt-2">{content}</p>
                     {imgSrc && <CldImage
+                    className="rounded-md"
                     alt="image"
                     src={imgSrc}
                     width={1080}

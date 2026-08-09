@@ -4,13 +4,14 @@ import Image from "next/image";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { useCreatePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 
 
 export function Publish () {
 
     const [selectedFile,setSelectedFile] = useState<File | null>(null)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const { data } = useGetCurrentUserQuery({});
     const user = data?.currUser
@@ -22,7 +23,9 @@ export function Publish () {
         input.onchange = (e) => {
             const target = e.target as HTMLInputElement;
             if(!target.files?.length) return;
-            setSelectedFile(target.files[0]);
+            const file = target.files[0]
+            setSelectedFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
         }
         input.click();
     };
@@ -34,6 +37,8 @@ export function Publish () {
         onSuccess : () => {
             queryClient.invalidateQueries({queryKey : ["GetAllPosts"]});
             setContent("");
+            setSelectedFile(null);
+            setPreviewUrl(null); 
             alert("Post created!");
         },
         onError : (err) => {
@@ -74,6 +79,15 @@ export function Publish () {
             setSelectedFile(null);
         }
     }
+
+    useEffect(() => {
+    return () => {
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+        }
+    };
+    }, [previewUrl]);
+
     return (
         <div className="grid grid-cols-12 border-b border-gray-600 m-2">
             <div className="col-span-1">
@@ -98,7 +112,26 @@ export function Publish () {
                 </div>
                 </form>
             </div>
-            
+               {previewUrl && (
+               <div style={{ position: 'relative', marginTop: '10px', width: '400px', height: '300px' }}>
+               <Image
+                fill
+                src={previewUrl} 
+                alt="Preview" 
+                style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} 
+               />
+              <button 
+               type="button"
+               onClick={() => {
+                setSelectedFile(null);
+                setPreviewUrl(null);
+              }}
+            style={{ position: 'absolute', top: '5px', right: '5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', cursor: 'pointer' }}
+        >
+            ✕
+          </button>
+            </div>
+          )}
         </div>
     )
 }
