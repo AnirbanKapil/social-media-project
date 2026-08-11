@@ -16,7 +16,7 @@ import { useGetCurrentUserQuery } from "@/lib/generated";
 import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import DeletePostModal from "./post/DeletePostModal";
-
+import EditPostModal from "./post/EditPostModal";
 
 export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount, onCommentClick} : 
     {content : string, userImg? : string | null,
@@ -137,6 +137,14 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><FaRegBookmark /></div>
                 </div>    
             </div>
+                {showEditModal && (
+                <EditPostModal
+                postId={id}
+                initialContent={content}
+                initialImgURL={imgSrc}
+                onClose={() => setShowEditModal(false)}
+                />
+                )} 
                 {showDeleteModal && (
                   <DeletePostModal
                   onClose={() => setShowDeleteModal(false)}

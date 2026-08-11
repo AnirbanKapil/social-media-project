@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 type Props = {
   postId: string,
   initialContent: string,
-  initialImgURL?: string,
+  initialImgURL?: string | undefined | null,
   onClose: () => void;
 }
 
@@ -23,7 +23,7 @@ export default function EditPostModal ({postId,initialContent,initialImgURL,onCl
     
     const handleEdit = async () => {
         if(!content.trim()) return;
-
+  
         await editPostMutation.mutateAsync({
            payload : { 
             postId,
