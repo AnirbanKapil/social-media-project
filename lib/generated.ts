@@ -81,6 +81,7 @@ export type Mutation = {
   createPost?: Maybe<Post>;
   deleteComment: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
+  editPost?: Maybe<Post>;
   followUser: Follows;
   likePost?: Maybe<Post>;
   removeProfileImage?: Maybe<User>;
@@ -113,6 +114,11 @@ export type MutationDeleteCommentArgs = {
 
 
 export type MutationDeletePostArgs = {
+  postId: Scalars['String']['input'];
+};
+
+
+export type MutationEditPostArgs = {
   postId: Scalars['String']['input'];
 };
 

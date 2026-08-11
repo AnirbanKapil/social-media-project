@@ -6,6 +6,12 @@ export const postTypeDefs = gql`
     content: String!
     imgURL: String
   }
+  
+  input EditPostPayload {
+    postId: String!
+    content: String
+    imgURL: String
+  }
 
   type Post {
     id: String!
@@ -41,6 +47,7 @@ export const postTypeDefs = gql`
     likePost(postId: String!): Post
     unlikePost(postId: String!): Post
     deletePost(postId: String!): Boolean!
+    editPost(payload: EditPostPayload!): Post!
   }
 
   type Query {
