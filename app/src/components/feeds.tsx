@@ -38,6 +38,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
     
     const [showMenu, setShowMenu] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const handleLikeToggle = async () => {
         try {
@@ -86,6 +87,15 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                           <BsThreeDots size={18} /></button>
                           {showMenu && (
                             <div className="absolute right-0 mt-2 w-40 rounded-lg border border-gray-700 bg-black shadow-lg">
+                              <button
+                               onClick={() => {
+                               setShowMenu(false);
+                               setShowEditModal(true);
+                               }}
+                               className="w-full px-4 py-3 text-left hover:bg-gray-800"
+                               >
+                                Edit Post
+                              </button>
                               <button
                                onClick={()=> {
                                   setShowMenu(false);

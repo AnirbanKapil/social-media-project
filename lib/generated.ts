@@ -52,6 +52,12 @@ export type CreatePostPayload = {
   imgURL?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type EditPostPayload = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  imgURL?: InputMaybe<Scalars['String']['input']>;
+  postId: Scalars['String']['input'];
+};
+
 export type Follows = {
   __typename?: 'Follows';
   followerId: Scalars['String']['output'];
@@ -81,7 +87,7 @@ export type Mutation = {
   createPost?: Maybe<Post>;
   deleteComment: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
-  editPost?: Maybe<Post>;
+  editPost: Post;
   followUser: Follows;
   likePost?: Maybe<Post>;
   removeProfileImage?: Maybe<User>;
@@ -119,7 +125,7 @@ export type MutationDeletePostArgs = {
 
 
 export type MutationEditPostArgs = {
-  postId: Scalars['String']['input'];
+  payload: EditPostPayload;
 };
 
 
@@ -224,6 +230,12 @@ export type CreatePostPayload = {
   imgURL?: string | null | undefined;
 };
 
+export type EditPostPayload = {
+  content?: string | null | undefined;
+  imgURL?: string | null | undefined;
+  postId: string;
+};
+
 export type CreateCommentMutationVariables = Exact<{
   postId: string;
   content: string;
@@ -257,6 +269,13 @@ export type RemoveProfileImageMutationVariables = Exact<{ [key: string]: never; 
 
 
 export type RemoveProfileImageMutation = { removeProfileImage: { id: string, profileImgUrl: string | null, profileImgPublicId: string | null } | null };
+
+export type EditPostMutationVariables = Exact<{
+  payload: EditPostPayload;
+}>;
+
+
+export type EditPostMutation = { editPost: { id: string, content: string, imgURL: string | null, createdAt: string, updatedAt: string, author: { id: string, username: string } | null } };
 
 export type FollowUserMutationVariables = Exact<{
   to: string;
@@ -476,6 +495,35 @@ export const useRemoveProfileImageMutation = <
       {
     mutationKey: ['RemoveProfileImage'],
     mutationFn: (variables?: RemoveProfileImageMutationVariables) => useCustomFetcher<RemoveProfileImageMutation, RemoveProfileImageMutationVariables>(RemoveProfileImageDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const EditPostDocument = new TypedDocumentString(`
+    mutation EditPost($payload: EditPostPayload!) {
+  editPost(payload: $payload) {
+    id
+    content
+    imgURL
+    createdAt
+    updatedAt
+    author {
+      id
+      username
+    }
+  }
+}
+    `);
+
+export const useEditPostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<EditPostMutation, TError, EditPostMutationVariables, TContext>) => {
+    
+    return useMutation<EditPostMutation, TError, EditPostMutationVariables, TContext>(
+      {
+    mutationKey: ['EditPost'],
+    mutationFn: (variables?: EditPostMutationVariables) => useCustomFetcher<EditPostMutation, EditPostMutationVariables>(EditPostDocument, variables)(),
     ...options
   }
     )};
