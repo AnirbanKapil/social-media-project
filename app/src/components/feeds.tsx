@@ -138,11 +138,11 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                 </div>    
             </div>
                 {showEditModal && (
-                <EditPostModal
-                postId={id}
-                initialContent={content}
-                initialImgURL={imgSrc}
-                onClose={() => setShowEditModal(false)}
+                  <EditPostModal
+                  postId={id}
+                  initialContent={content}
+                  initialImgURL={imgSrc}
+                  onClose={() => setShowEditModal(false)}
                 />
                 )} 
                 {showDeleteModal && (

@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useEditPostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
-
+import Image from "next/image";
 
 type Props = {
   postId: string,
@@ -17,7 +17,10 @@ type Props = {
 
 
 export default function EditPostModal ({postId,initialContent,initialImgURL,onClose} : Props) {
+    
     const [content, setContent] = useState(initialContent);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string | null>(initialImgURL ?? null);
     const editPostMutation = useEditPostMutation();
     const queryClient = useQueryClient();
     
@@ -37,7 +40,14 @@ export default function EditPostModal ({postId,initialContent,initialImgURL,onCl
         });
 
         onClose();
-    }
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+         const file = e.target.files?.[0];
+         if (!file) return;
+         setSelectedImage(file);
+        setPreview(URL.createObjectURL(file));
+    };
 
     return (
      <div
@@ -76,6 +86,19 @@ export default function EditPostModal ({postId,initialContent,initialImgURL,onCl
           </button>
         </div>
       </div>
+          {preview && (
+            <Image
+            src={preview}
+            alt="Post image"
+            className="mt-4 max-h-64 w-full rounded-xl object-cover"
+            />
+          )}
+          <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="mt-4"
+          />
      </div>
   );
 };
