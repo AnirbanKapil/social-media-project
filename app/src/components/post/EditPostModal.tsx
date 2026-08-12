@@ -26,12 +26,32 @@ export default function EditPostModal ({postId,initialContent,initialImgURL,onCl
     
     const handleEdit = async () => {
         if(!content.trim()) return;
+        
+        let imageUrl = initialImgURL ?? null; 
+
+        if(selectedImage){
+                const formData = new FormData();
+                formData.append("file",selectedImage)
+                
+                const uploadImg = await fetch("/api/img-upload",
+                   { method : "POST",
+                    body : formData }
+                );
+                
+                if(!uploadImg.ok){
+                    const errorData = await uploadImg.json()
+                    throw new Error(errorData.error || "Error uploading image")
+                };
+
+                const data = await uploadImg.json()
+                imageUrl = data.imageUrl
+            }
   
         await editPostMutation.mutateAsync({
            payload : { 
             postId,
             content,
-            imgURL : initialImgURL
+            imgURL : imageUrl
         }
         });
 
@@ -85,9 +105,10 @@ export default function EditPostModal ({postId,initialContent,initialImgURL,onCl
             {editPostMutation.isPending ? "Saving..." : "Save"}
           </button>
         </div>
-      </div>
           {preview && (
             <Image
+            height={50} 
+            width={50}
             src={preview}
             alt="Post image"
             className="mt-4 max-h-64 w-full rounded-xl object-cover"
@@ -99,6 +120,7 @@ export default function EditPostModal ({postId,initialContent,initialImgURL,onCl
           onChange={handleImageChange}
           className="mt-4"
           />
+      </div>
      </div>
   );
 };
