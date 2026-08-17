@@ -6,12 +6,18 @@ import { useCreatePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useGetCurrentUserQuery } from "@/lib/generated";
+import { CldImage } from 'next-cloudinary'
+
+
+
 
 
 export function Publish () {
 
     const [selectedFile,setSelectedFile] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+   
+
 
     const { data } = useGetCurrentUserQuery({});
     const user = data?.currUser
@@ -101,7 +107,31 @@ export function Publish () {
                 onChange={(e)=> setContent(e.target.value)}
                 className="w-full border-b border-slate-700 p-3 text-xl m-1" 
                 rows={3} 
-                placeholder="What's on your mind???"></textarea>
+                placeholder="What's on your mind???">
+                </textarea>
+                {previewUrl && (
+               <div style={{ position: 'relative', marginTop: '10px', }}>
+                 <CldImage
+                        width="1200"
+                        height="675"
+                        src={previewUrl}
+                        sizes="100vw"
+                        alt="transformed image"
+                        crop="fill"
+                        aspectRatio="16:9"
+                        gravity='auto'
+                        />
+                        <button 
+                        type="button"
+                        onClick={() => {
+                        setSelectedFile(null);
+                        setPreviewUrl(null);
+                }}
+                 style={{ position: 'absolute', top: '5px', right: '5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', cursor: 'pointer' }}>
+                ✕
+              </button>
+              </div>
+          )}
                 <div className="flex justify-between m-2">
                 <MdOutlinePermMedia className="text-xl items-center cursor-pointer" onClick={handleSelectImg}/>
                 <button 
@@ -112,26 +142,7 @@ export function Publish () {
                 </div>
                 </form>
             </div>
-               {previewUrl && (
-               <div style={{ position: 'relative', marginTop: '10px', width: '400px', height: '300px' }}>
-               <Image
-                fill
-                src={previewUrl} 
-                alt="Preview" 
-                style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} 
-               />
-              <button 
-               type="button"
-               onClick={() => {
-                setSelectedFile(null);
-                setPreviewUrl(null);
-              }}
-            style={{ position: 'absolute', top: '5px', right: '5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', cursor: 'pointer' }}
-        >
-            ✕
-          </button>
-            </div>
-          )}
+               
         </div>
     )
 }
