@@ -31,10 +31,18 @@ export default function ChatWindow({conversationId,conversations} : Props) {
    
   if (!conversationId) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        Select a conversation
-      </div>
-    );
+  <div className="relative min-h-screen w-full flex items-center justify-center">
+    <div className="absolute top-4 left-4">
+      <Link href="/dashboard" className="cursor-pointer flex flex-col items-center gap-1">
+        <IoMdArrowRoundBack size={24} className="text-slate-700" />
+        <span className="text-sm text-slate-500">Back to Dashboard</span>
+      </Link> 
+    </div>
+    <div className="text-center text-xl font-medium text-slate-800"> 
+      Start conversation
+    </div>
+  </div> 
+  );
   }
   
   if (!conversations) {
