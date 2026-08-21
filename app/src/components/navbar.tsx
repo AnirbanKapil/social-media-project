@@ -52,7 +52,12 @@ export function NavBar () {
             </div>
             <div>
                 <button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120" 
-                onClick={() => signOut({ callbackUrl: "/loggedoutuser" })}>Logout</button>
+                onClick={async () => {
+                await signOut({ redirect: false });
+                window.location.href = "/loggedoutuser";
+                }}>
+                  Logout
+                </button>
             </div>
         </div>
       ) 

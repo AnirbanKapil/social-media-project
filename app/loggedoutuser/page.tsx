@@ -87,12 +87,12 @@ export default function LoggedOutUserPage() {
               </Link>
 
               {/* Hard reload on landing page ensures everything re-mounts clean */}
-              <Link
+              <a
                 href="/"
                 className="w-full flex items-center justify-center px-4 py-3 rounded-xl text-sm font-medium text-slate-300 bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.08] hover:text-white transition-all duration-200"
               >
                 Go to Homepage
-              </Link>
+              </a>
             </div>
           </div>
         )}
