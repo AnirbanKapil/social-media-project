@@ -26,7 +26,7 @@ export default withAuth(
                  }
 
                 //  public routes
-                if(pathname === "/"){
+                if(pathname === "/" || pathname === "/loggedoutuser"){
                     return true
                 }
 

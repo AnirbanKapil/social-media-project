@@ -1,7 +1,7 @@
 "use client"
 import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 
 export function NavBar () {
@@ -52,9 +52,7 @@ export function NavBar () {
             </div>
             <div>
                 <button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120" 
-                onClick={async()=> {await signOut({redirect : false});
-                          router.push("/")        
-                         }}>Logout</button>
+                onClick={() => signOut({ callbackUrl: "/loggedoutuser" })}>Logout</button>
             </div>
         </div>
       ) 

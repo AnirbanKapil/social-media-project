@@ -181,6 +181,7 @@ export default function LandingPage() {
     if (user) {
       try {
         await signOut();
+        router.refresh(); 
       } catch (error) {
         console.error("Logout failed", error);
       }
