@@ -21,10 +21,10 @@ import { useGetCurrentUserQuery } from "@/lib/generated";
 import { useRef } from 'react';
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from 'next/link';
+import Image from 'next/image';
 
-/* ────────────────────────────────────────────────────────────────
-   SEO & Accessibility Helpers
-   ──────────────────────────────────────────────────────────────── */
+
 
 const prefersReducedMotion = () => {
   if (typeof window === 'undefined') return false;
@@ -41,9 +41,7 @@ const stagger = {
   animate: { transition: { staggerChildren: 0.08 } }
 };
 
-/* ────────────────────────────────────────────────────────────────
-   Inkwell Logo (unchanged icon set, refined SVG)
-   ──────────────────────────────────────────────────────────────── */
+
 
 const InkwellLogo = ({ className = "w-10 h-10", ariaLabel = "Inkwell logo" }: { className?: string; ariaLabel?: string }) => (
   <svg
@@ -93,9 +91,7 @@ const InkwellLogo = ({ className = "w-10 h-10", ariaLabel = "Inkwell logo" }: { 
   </svg>
 );
 
-/* ────────────────────────────────────────────────────────────────
-   Data
-   ──────────────────────────────────────────────────────────────── */
+
 
 const FEATURES = [
   {
@@ -158,9 +154,7 @@ const TESTIMONIALS = [
   }
 ];
 
-/* ────────────────────────────────────────────────────────────────
-   Main Component
-   ──────────────────────────────────────────────────────────────── */
+
 
 export default function LandingPage() {
   const router = useRouter();
@@ -192,7 +186,7 @@ export default function LandingPage() {
 
   return (
     <div ref={containerRef} className="min-h-screen bg-slate-950 text-slate-50 overflow-x-hidden">
-      {/* ─── JSON-LD Structured Data ─── */}
+      
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -211,13 +205,13 @@ export default function LandingPage() {
         }}
       />
 
-      {/* ─── Navigation ─── */}
+      
       <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50">
         <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between" aria-label="Main navigation">
-          <a href="/" className="flex items-center gap-2.5" aria-label="Inkwell Home">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="Inkwell Home">
             <InkwellLogo className="w-7 h-7 text-indigo-400" />
             <span className="text-lg font-bold tracking-tight">Inkwell</span>
-          </a>
+          </Link>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
             <a href="#features" className="hover:text-white transition-colors">Features</a>
@@ -232,7 +226,9 @@ export default function LandingPage() {
             >
               {user ? "Log out" : "Log in"}
             </button>
-            <button className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95">
+            <button
+              onClick={()=> router.push("/signup")}  
+              className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95">
               Get Started
             </button>
           </div>
@@ -347,7 +343,7 @@ export default function LandingPage() {
                         </p>
                         <div className="grid grid-cols-2 gap-2 mb-3">
                           <div className="aspect-square bg-slate-800 rounded-lg overflow-hidden">
-                            <img
+                            <Image
                               src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=400&fit=crop"
                               alt="Writing desk with notebook and pen"
                               className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
@@ -355,7 +351,7 @@ export default function LandingPage() {
                             />
                           </div>
                           <div className="aspect-square bg-slate-800 rounded-lg overflow-hidden">
-                            <img
+                            <Image
                               src="https://images.unsplash.com/photo-1517842645767-c639042777db?w=400&h=400&fit=crop"
                               alt="Coffee cup next to an open notebook"
                               className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"

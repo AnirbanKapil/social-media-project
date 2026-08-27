@@ -4,11 +4,12 @@ import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { typeDefs, resolvers, } from "@/graphql/schema";
 import { NextRequest } from 'next/server';
-
+import depthLimit from 'graphql-depth-limit';
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  validationRules: [depthLimit(4)],
 });
 
 // 4. Handler (Next.js App Router)
