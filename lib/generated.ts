@@ -324,7 +324,7 @@ export type UpdateProfileImageMutation = { updateProfileImage: { id: string, pro
 export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, likesCount: number, isLiked: boolean, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null } | null> };
+export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, likesCount: number, isLiked: boolean, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null> };
 
 export type GetCommentsQueryVariables = Exact<{
   postId: string;
@@ -687,6 +687,8 @@ export const GetAllPostsDocument = new TypedDocumentString(`
       id
       username
       profileImgUrl
+      firstName
+      lastName
     }
   }
 }

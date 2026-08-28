@@ -105,11 +105,11 @@ export default function UsersPage() {
            height={100}
        />
        ) : <div className="w-18 h-18 rounded-full bg-blue-300 m-3"></div>}
-       <button className="self-center bg-slate-200 text-black p-1 mx-9 rounded-lg hover:scale-110"
+       {!isOwnProfile && <button className="self-center bg-slate-200 text-black p-1 mx-9 rounded-lg hover:scale-110"
         onClick={handleSendMessage}   
        >
         Send Message
-       </button>
+       </button>}
       </div>  
         <div className="flex justify-between">
         <h1 className="font-extrabold text-3xl mx-5 my-4">{user?.username}</h1> 
@@ -132,7 +132,7 @@ export default function UsersPage() {
           content={post?.content || "No content available"} 
           user={user?.username || "Unknown User"}
           firstName={user?.firstName || ""}
-          lastname={user?.lastName || ""}
+          lastName={user?.lastName || ""}
           imgSrc={post?.imgURL}
           created={post?.createdAt || "unknown"}
           likesCount={post?.likesCount}

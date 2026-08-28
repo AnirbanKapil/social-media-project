@@ -16,6 +16,8 @@ export const GetAllPostsDocument = gql`
             id,
             username,
             profileImgUrl,
+            firstName,
+            lastName
         }
     }
   }

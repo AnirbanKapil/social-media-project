@@ -41,6 +41,8 @@ export default function FeedsPage () {
                         userImg={post?.author?.profileImgUrl} 
                         content={post?.content || "No content available"} 
                         user={post?.author?.username || "Unknown User"}
+                        firstName={post?.author?.firstName || ""}
+                        lastName={post?.author?.lastName || ""}
                         imgSrc={post?.imgURL}
                         created={post?.createdAt || "unknown"}
                         likesCount={post?.likesCount}
