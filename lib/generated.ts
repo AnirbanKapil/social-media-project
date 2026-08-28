@@ -355,7 +355,7 @@ export type GetUserByUsernameQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number } | null> | null } | null };
+export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number } | null> | null } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -856,6 +856,8 @@ export const GetUserByUsernameDocument = new TypedDocumentString(`
     id
     email
     username
+    firstName
+    lastName
     profileImgUrl
     isFollowing
     followersCount

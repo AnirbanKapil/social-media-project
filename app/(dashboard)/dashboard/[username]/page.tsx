@@ -88,7 +88,9 @@ export default function UsersPage() {
          </Link>
          
          <div>
-            <h1 className="font-bold">{user?.username}</h1> 
+            <h1 className="font-bold">{user?.username}</h1>
+            <h1>{user?.firstName}</h1>
+            <h1>{user?.lastName}</h1> 
             <p className="text-slate-600 mx-1">Posts {user?.posts?.length}</p>
          </div>
       </div>
@@ -129,6 +131,8 @@ export default function UsersPage() {
           id={post?.id || ""}
           content={post?.content || "No content available"} 
           user={user?.username || "Unknown User"}
+          firstName={user?.firstName || ""}
+          lastname={user?.lastName || ""}
           imgSrc={post?.imgURL}
           created={post?.createdAt || "unknown"}
           likesCount={post?.likesCount}

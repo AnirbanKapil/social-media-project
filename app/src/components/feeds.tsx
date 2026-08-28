@@ -18,9 +18,9 @@ import { BsThreeDots } from "react-icons/bs";
 import DeletePostModal from "./post/DeletePostModal";
 import EditPostModal from "./post/EditPostModal";
 
-export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount, onCommentClick} : 
+export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount,firstName, lastName, onCommentClick} : 
     {content : string, userImg? : string | null,
-     user : string, imgSrc : string | null |  undefined,
+     user : string, imgSrc : string | null |  undefined, firstName : string, lastName : string 
       created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string, commentsCount: number | undefined
       onCommentClick : () => void 
     }) {
@@ -75,7 +75,9 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     <div>
                       <Link href={`/dashboard/${user}`}
                        className="inline-block font-semibold cursor-pointer hover:scale-110 transition-transform duration-300">
-                       {user}
+                       <p>{firstName}</p>
+                       <p>{lastName}</p>
+                       <p>{user}</p>
                       </Link>
                     </div>
                     <div className="flex">
