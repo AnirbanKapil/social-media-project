@@ -2,10 +2,14 @@
 import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { motion } from 'framer-motion'
+import { useGetCurrentUserQuery } from "@/lib/generated";
+
 
 
 export function NavBar () {
     const router = useRouter();
+    const { data } = useGetCurrentUserQuery({});
+    const user = data?.currUser
       return(
         <div className="flex justify-between bg-slate-950/80 mx-48 my-3">
             <div className="flex gap-3 hover:transition-colors duration-300 cursor-pointer hover:scale-120">
@@ -51,13 +55,17 @@ export function NavBar () {
                 <span className="text-xl font-bold tracking-tight mt-2">Inkwell</span>
             </div>
             <div>
-                <button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120" 
+                {!user ? (<button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120"
+                  onClick={()=> {router.push("/api/auth/signin")}} >
+                  signIn
+                </button>) 
+                : (<button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120" 
                 onClick={async () => {
                 await signOut({ redirect: false });
                 window.location.href = "/loggedoutuser";
                 }}>
                   Logout
-                </button>
+                </button>)}
             </div>
         </div>
       ) 

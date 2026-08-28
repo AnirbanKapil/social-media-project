@@ -17,7 +17,9 @@ export default  function SignUp () {
     username : "",
     password : "",
     email : "",
-    profileImgUrl : ""
+    profileImgUrl : "",
+    firstName : "",
+    lastName : ""
   });
 
   const handleSubmit =async () =>{
@@ -42,6 +44,10 @@ export default  function SignUp () {
                  onChange={(e)=> setUser({...user , email : e.target.value})}/> 
                  <input className="m-2 p-3 border-b-2" type="password" placeholder="password" value={user.password} 
                  onChange={(e) => setUser({...user , password : e.target.value})}/> 
+                 <input className="m-2 p-3 border-b-2 " type="text" placeholder="firstName" value={user.firstName} 
+                 onChange={(e)=> setUser({...user , firstName : e.target.value})}/> 
+                 <input className="m-2 p-3 border-b-2 " type="text" placeholder="lastName" value={user.lastName} 
+                 onChange={(e)=> setUser({...user , lastName : e.target.value})}/> 
                    <CldUploadWidget
                      uploadPreset="profile-images"
                      options={{

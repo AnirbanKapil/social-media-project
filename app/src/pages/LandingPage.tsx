@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useRef } from 'react';
 import Image from 'next/image';
+import { NavBar } from '../components/navbar';
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
@@ -78,7 +79,9 @@ export default function LandingPage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#0a0a0f] text-[#f0f0f5] overflow-x-hidden selection:bg-indigo-500/30 selection:text-white flex items-center justify-center px-6 py-16">
+    <div>
+     <NavBar />  
+     <div ref={containerRef} className="min-h-screen bg-[#0a0a0f] text-[#f0f0f5] overflow-x-hidden selection:bg-indigo-500/30 selection:text-white flex items-center justify-center px-6 py-16">
       <div className="max-w-5xl w-full">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left: Copy */}
@@ -88,9 +91,44 @@ export default function LandingPage() {
               {...fadeIn(0)}
               className="flex items-center gap-2.5 mb-10"
             >
-              <div className="w-8 h-8 bg-[#f0f0f5] rounded-lg flex items-center justify-center">
-                <InkwellLogo className="w-5 h-5 text-[#0a0a0f]" />
-              </div>
+              <svg viewBox="0 0 100 100" className="w-10 h-10 text-indigo-400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <motion.path
+                    d="M50 10 C30 10, 15 25, 15 45 C15 65, 30 80, 50 80 C70 80, 85 65, 85 45 C85 25, 70 10, 50 10Z"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    fill="none"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 2, ease: "easeInOut" }}
+                  />
+                  <motion.path
+                    d="M50 80 L50 95"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1, delay: 1.5 }}
+                  />
+                  <motion.path
+                    d="M35 95 L65 95"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1, delay: 2 }}
+                  />
+                  <motion.path
+                    d="M50 35 L50 55 M40 45 L60 45"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 2.5 }}
+                  />
+                </svg>
               <span className="text-lg font-medium tracking-tight">Inkwell</span>
             </motion.div>
 
@@ -180,7 +218,6 @@ export default function LandingPage() {
                     <span className="text-[10px] font-medium text-[#666680]">S</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-medium text-[#f0f0f5]">Sarah Chen</span>
                     <span className="text-[10px] text-[#555566]">@sarahchen · 2h</span>
                   </div>
                 </div>
@@ -258,6 +295,7 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </div>
+     </div>
     </div>
   );
 }
