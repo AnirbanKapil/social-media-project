@@ -131,8 +131,6 @@ export default function UsersPage() {
           id={post?.id || ""}
           content={post?.content || "No content available"} 
           user={user?.username || "Unknown User"}
-          firstName={user?.firstName || ""}
-          lastName={user?.lastName || ""}
           imgSrc={post?.imgURL}
           created={post?.createdAt || "unknown"}
           likesCount={post?.likesCount}
