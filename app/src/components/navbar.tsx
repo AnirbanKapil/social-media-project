@@ -3,7 +3,7 @@ import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { motion } from 'framer-motion'
 import { useGetCurrentUserQuery } from "@/lib/generated";
-
+import Link from "next/link";
 
 
 export function NavBar () {
@@ -52,7 +52,7 @@ export function NavBar () {
                     transition={{ duration: 0.5, delay: 2.5 }}
                   />
                 </svg>
-                <span className="text-xl font-bold tracking-tight mt-2">Inkwell</span>
+                <Link href="/"><span className="text-xl font-bold tracking-tight mt-2">Inkwell</span></Link>
             </div>
             <div>
                 {!user ? (<button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120"

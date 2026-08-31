@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion, useMotionValue, useAnimationFrame } from 'framer-motion';
 import {
   Heart,
   MessageCircle,
@@ -8,9 +8,10 @@ import {
   Image as ImageIcon,
   ArrowRight
 } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { NavBar } from '../components/navbar';
+import Link from 'next/link';
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
@@ -78,11 +79,38 @@ export default function LandingPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
+  // ─── PHONE HOVER & SPINNER STATE ───
+  const [isPhoneHovered, setIsPhoneHovered] = useState(false);
+  const rotation = useMotionValue(0);
+
+  // Continuously rotate the border 360° over 4s when not hovered
+  useAnimationFrame((_, delta) => {
+    if (!isPhoneHovered && !reducedMotion) {
+      // delta is in ms. 360° per 4000ms
+      rotation.set(rotation.get() + (delta * 0.09));
+    }
+  });
+
   return (
     <div>
      <NavBar />  
-     <div ref={containerRef} className="min-h-screen bg-[#0a0a0f] text-[#f0f0f5] overflow-x-hidden selection:bg-indigo-500/30 selection:text-white flex items-center justify-center px-6 py-16">
-      <div className="max-w-5xl w-full">
+     <div ref={containerRef} className="relative min-h-screen bg-[#0a0a0f] text-[#f0f0f5] overflow-x-hidden selection:bg-indigo-500/30 selection:text-white flex items-center justify-center px-6 py-16">
+      
+      {/* ─── CENTRAL BRIGHT GLOW ─── */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] pointer-events-none z-0">
+        {/* Wide indigo bloom */}
+        <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-[150px]" />
+        {/* Mid purple bloom */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[120px]" />
+        {/* Bright white core */}
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-white/25 rounded-full blur-[90px]"
+          animate={reducedMotion ? {} : { opacity: [0.2, 0.4, 0.2], scale: [1, 1.15, 1] }}
+          transition={reducedMotion ? {} : { duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
+
+      <div className="relative max-w-5xl w-full z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left: Copy */}
           <motion.div style={!reducedMotion ? { y: heroY, opacity: heroOpacity } : {}}>
@@ -152,10 +180,10 @@ export default function LandingPage() {
               {...fadeIn(0.3)}
               className="flex flex-col sm:flex-row items-start sm:items-center gap-3"
             >
-              <button className="group px-6 py-3 bg-[#f0f0f5] hover:bg-white text-[#0a0a0f] font-medium rounded-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2 text-sm">
+              <Link href="/dashboard"><button className="group px-6 py-3 bg-[#f0f0f5] hover:bg-white text-[#0a0a0f] font-medium rounded-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2 text-sm">
                 Get started
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-              </button>
+              </button></Link>
               <button className="px-6 py-3 bg-transparent text-[#f0f0f5] font-medium rounded-lg border border-[#333340] hover:border-[#555566] transition-all text-sm">
                 Learn more
               </button>
@@ -197,98 +225,129 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="relative flex justify-center lg:justify-end"
           >
-            <div className="w-[260px] bg-[#12121a] rounded-[28px] border-2 border-[#22222e] p-4 shadow-2xl">
-              {/* Phone Header */}
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#1e1e28]">
-                <span className="text-xs font-medium text-[#888899]">For you</span>
-                <div className="flex items-center gap-2">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#555566]">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-                  </svg>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#555566]">
-                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-                  </svg>
-                </div>
-              </div>
+            {/* ─── HOVER INTERACTIVE WRAPPER ─── */}
+            <motion.div
+              className="relative cursor-pointer"
+              onHoverStart={() => setIsPhoneHovered(true)}
+              onHoverEnd={() => setIsPhoneHovered(false)}
+              whileHover={{ y: -12, scale: 1.04 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              {/* Rotating gradient border */}
+              {!reducedMotion && (
+                <motion.div
+                  className="absolute -inset-[2px] rounded-[30px] z-0"
+                  style={{
+                    background: 'conic-gradient(from 0deg, #6366f1, #a855f7, #ec4899, #f59e0b, #3b82f6, #6366f1)',
+                    rotate: rotation,
+                  }}
+                />
+              )}
+              {/* Blurred glow behind the border */}
+              {!reducedMotion && (
+                <motion.div
+                  className="absolute -inset-[4px] rounded-[32px] z-[-1] opacity-60 blur-lg"
+                  style={{
+                    background: 'conic-gradient(from 0deg, #6366f1, #a855f7, #ec4899, #f59e0b, #3b82f6, #6366f1)',
+                    rotate: rotation,
+                  }}
+                />
+              )}
 
-              {/* Post 1 */}
-              <div className="bg-[#15151f] rounded-xl p-3 mb-3 border border-[#1e1e28]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-[#2a2a3a] flex items-center justify-center">
-                    <span className="text-[10px] font-medium text-[#666680]">S</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-[#555566]">@sarahchen · 2h</span>
-                  </div>
-                </div>
-                <p className="text-[11px] text-[#b0b0c0] leading-relaxed mb-2">
-                  Just published my first short story! The writing experience here is absolutely magical ✨
-                </p>
-                <div className="grid grid-cols-2 gap-1.5 mb-2">
-                  <div className="aspect-square bg-[#1e1e2e] rounded-md overflow-hidden">
-                    <Image
-                      width={120}
-                      height={120}
-                      src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=400&fit=crop"
-                      alt="Writing desk with notebook"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="aspect-square bg-[#1e1e2e] rounded-md overflow-hidden">
-                    <Image
-                      width={120}
-                      height={120}
-                      src="https://images.unsplash.com/photo-1517842645767-c639042777db?w=400&h=400&fit=crop"
-                      alt="Coffee cup next to notebook"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+              {/* Phone inner */}
+              <div className="relative w-[260px] bg-[#12121a] rounded-[28px] border-2 border-[#1a1a24] p-4 shadow-2xl z-10">
+                {/* Phone Header */}
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#1e1e28]">
+                  <span className="text-xs font-medium text-[#888899]">For you</span>
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#555566]">
+                      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                    </svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#555566]">
+                      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                    </svg>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 text-[10px] text-[#555566]">
-                  <span className="flex items-center gap-1">
-                    <MessageCircle className="w-3 h-3" aria-hidden="true" /> 24
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-3 h-3" aria-hidden="true" /> 142
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Share2 className="w-3 h-3" aria-hidden="true" /> 12
-                  </span>
-                </div>
-              </div>
 
-              {/* Post 2 */}
-              <div className="bg-[#15151f] rounded-xl p-3 border border-[#1e1e28]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-[#2a2a3a] flex items-center justify-center">
-                    <span className="text-[10px] font-medium text-[#666680]">M</span>
+                {/* Post 1 */}
+                <div className="bg-[#15151f] rounded-xl p-3 mb-3 border border-[#1e1e28]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 rounded-full bg-[#2a2a3a] flex items-center justify-center">
+                      <span className="text-[10px] font-medium text-[#666680]">S</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-[#555566]">@sarahchen · 2h</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-medium text-[#f0f0f5]">Maya Chen</span>
-                    <span className="text-[10px] text-[#555566]">@mayac · 4h</span>
+                  <p className="text-[11px] text-[#b0b0c0] leading-relaxed mb-2">
+                    Just published my first short story! The writing experience here is absolutely magical ✨
+                  </p>
+                  <div className="grid grid-cols-2 gap-1.5 mb-2">
+                    <div className="aspect-square bg-[#1e1e2e] rounded-md overflow-hidden">
+                      <Image
+                        width={120}
+                        height={120}
+                        src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=400&fit=crop"
+                        alt="Writing desk with notebook"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="aspect-square bg-[#1e1e2e] rounded-md overflow-hidden">
+                      <Image
+                        width={120}
+                        height={120}
+                        src="https://images.unsplash.com/photo-1517842645767-c639042777db?w=400&h=400&fit=crop"
+                        alt="Coffee cup next to notebook"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 text-[10px] text-[#555566]">
+                    <span className="flex items-center gap-1">
+                      <MessageCircle className="w-3 h-3" aria-hidden="true" /> 24
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Heart className="w-3 h-3" aria-hidden="true" /> 142
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Share2 className="w-3 h-3" aria-hidden="true" /> 12
+                    </span>
                   </div>
                 </div>
-                <p className="text-[11px] text-[#b0b0c0] leading-relaxed mb-2">
-                  Golden hour hits different when you are chasing it.
-                </p>
-                <div className="w-full h-20 bg-[#1e1e2e] rounded-md flex items-center justify-center mb-2">
-                  <ImageIcon className="w-5 h-5 text-[#444455]" aria-hidden="true" />
-                </div>
-                <div className="flex items-center gap-4 text-[10px] text-[#555566]">
-                  <span className="flex items-center gap-1">
-                    <MessageCircle className="w-3 h-3" aria-hidden="true" /> 24
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-3 h-3" aria-hidden="true" /> 156
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Share2 className="w-3 h-3" aria-hidden="true" /> 8
-                  </span>
+
+                {/* Post 2 */}
+                <div className="bg-[#15151f] rounded-xl p-3 border border-[#1e1e28]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 rounded-full bg-[#2a2a3a] flex items-center justify-center">
+                      <span className="text-[10px] font-medium text-[#666680]">M</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-medium text-[#f0f0f5]">Maya Chen</span>
+                      <span className="text-[10px] text-[#555566]">@mayac · 4h</span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-[#b0b0c0] leading-relaxed mb-2">
+                    Golden hour hits different when you are chasing it.
+                  </p>
+                  <div className="w-full h-20 bg-[#1e1e2e] rounded-md flex items-center justify-center mb-2">
+                    <ImageIcon className="w-5 h-5 text-[#444455]" aria-hidden="true" />
+                  </div>
+                  <div className="flex items-center gap-4 text-[10px] text-[#555566]">
+                    <span className="flex items-center gap-1">
+                      <MessageCircle className="w-3 h-3" aria-hidden="true" /> 24
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Heart className="w-3 h-3" aria-hidden="true" /> 156
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Share2 className="w-3 h-3" aria-hidden="true" /> 8
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Decorative glow behind phone */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl -z-10" />
