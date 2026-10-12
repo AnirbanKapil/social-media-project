@@ -15,6 +15,7 @@ import { useDeletePostMutation } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import DeletePostModal from "./post/DeletePostModal";
 import EditPostModal from "./post/EditPostModal";
 import { useMemo } from "react";
@@ -40,7 +41,24 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
     const [showMenu, setShowMenu] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [carouselState, setCarouselState] = useState({ postId: id, imageIndex: 0 });
     const postImages = useMemo(() => imgSrcs ?? [], [imgSrcs]);
+    const activeImageIndex = carouselState.postId === id ? carouselState.imageIndex : 0;
+    const currentImageIndex = postImages.length ? activeImageIndex % postImages.length : 0;
+
+    const showPreviousImage = () => {
+        setCarouselState({
+            postId: id,
+            imageIndex: (currentImageIndex - 1 + postImages.length) % postImages.length,
+        });
+    };
+
+    const showNextImage = () => {
+        setCarouselState({
+            postId: id,
+            imageIndex: (currentImageIndex + 1) % postImages.length,
+        });
+    };
 
     const handleLikeToggle = async () => {
         try {
@@ -126,39 +144,58 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                       </Link>
                     )}
                     {postImages.length > 0 && (
-                      isDetailPage ? (
-                        <div className={`mt-3 grid gap-2 ${postImages.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
-                          {postImages.map((imageUrl, index) => (
+                      <div className="relative mt-3">
+                        {isDetailPage ? (
+                          <CldImage
+                            key={`${postImages[currentImageIndex]}-${currentImageIndex}`}
+                            className="h-auto max-h-[32rem] w-full rounded-md object-contain"
+                            alt={`Post image ${currentImageIndex + 1} of ${postImages.length}`}
+                            src={postImages[currentImageIndex]}
+                            width={1080}
+                            height={1080}
+                            crop="limit"
+                          />
+                        ) : (
+                          <Link href={`/dashboard/post/${id}`} aria-label="Open post">
                             <CldImage
-                              key={`${imageUrl}-${index}`}
-                              className="h-auto max-h-[32rem] w-full rounded-md object-cover"
-                              alt={`Post image ${index + 1}`}
-                              src={imageUrl}
+                              key={`${postImages[currentImageIndex]}-${currentImageIndex}`}
+                              className="h-auto max-h-[32rem] w-full rounded-md object-contain"
+                              alt={`Post image ${currentImageIndex + 1} of ${postImages.length}`}
+                              src={postImages[currentImageIndex]}
                               width={1080}
                               height={1080}
-                              crop="fill"
-                              gravity="auto"
+                              crop="limit"
                             />
-                          ))}
-                        </div>
-                      ) : (
-                        <Link href={`/dashboard/post/${id}`} aria-label="Open post">
-                          <div className={`mt-3 grid gap-2 ${postImages.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
-                            {postImages.map((imageUrl, index) => (
-                              <CldImage
-                                key={`${imageUrl}-${index}`}
-                                className="h-auto max-h-[32rem] w-full rounded-md object-cover"
-                                alt={`Post image ${index + 1}`}
-                                src={imageUrl}
-                                width={1080}
-                                height={1080}
-                                crop="fill"
-                                gravity="auto"
-                              />
-                            ))}
-                          </div>
-                        </Link>
-                      )
+                          </Link>
+                        )}
+                        {postImages.length > 1 && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={showPreviousImage}
+                              aria-label="Show previous image"
+                              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 p-2 text-white hover:bg-black"
+                            >
+                              <FiChevronLeft size={22} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={showNextImage}
+                              aria-label="Show next image"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 p-2 text-white hover:bg-black"
+                            >
+                              <FiChevronRight size={22} />
+                            </button>
+                            <div
+                              aria-live="polite"
+                              aria-atomic="true"
+                              className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-sm text-white"
+                            >
+                              {currentImageIndex + 1} / {postImages.length}
+                            </div>
+                          </>
+                        )}
+                      </div>
                     )}
                     
                 <div className="flex justify-between items-center mt-2 w-1/2">
