@@ -45,6 +45,12 @@ export const postTypeDefs = gql`
      postId: String!
   }
 
+  type PostPage {
+    posts: [Post!]!
+    nextCursor: String
+    hasMore: Boolean!
+  }
+
   type Mutation {
     createPost(payload: CreatePostPayload!): Post
     likePost(postId: String!): Post
@@ -54,7 +60,7 @@ export const postTypeDefs = gql`
   }
 
   type Query {
-    getAllPosts: [Post]!
+    getAllPosts(first: Int = 10, after: String): PostPage!
     getPostById(postId: String!): Post
   }
 `;

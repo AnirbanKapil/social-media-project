@@ -6,6 +6,7 @@ export const GetCommentsDocument = gql`
   getComments(postId: $postId) {
     id 
     content
+    postOwnerId
     author {
       id
       username

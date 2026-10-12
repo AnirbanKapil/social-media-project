@@ -5,6 +5,13 @@ import { useEffect, useRef, useState } from "react";
 import { useEditPostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
+import {
+  ALLOWED_IMAGE_MIME_TYPES,
+  IMAGE_FILE_ACCEPT,
+  MAX_IMAGE_SIZE_BYTES,
+  MAX_IMAGES_PER_POST,
+  MAX_TOTAL_IMAGE_BYTES,
+} from "@/lib/imageUploadLimits";
 
 type Props = {
   postId: string,
@@ -75,6 +82,31 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
          const files = Array.from(e.target.files ?? []);
          if (!files.length) return;
+         if (images.length + files.length > MAX_IMAGES_PER_POST) {
+           setError(`A post can contain at most ${MAX_IMAGES_PER_POST} images.`);
+           e.target.value = "";
+           return;
+         }
+         if (files.some((file) => !ALLOWED_IMAGE_MIME_TYPES.includes(
+           file.type as typeof ALLOWED_IMAGE_MIME_TYPES[number],
+         ))) {
+           setError("Only JPEG, PNG, WebP, and GIF images are supported.");
+           e.target.value = "";
+           return;
+         }
+         if (files.some((file) => file.size === 0 || file.size > MAX_IMAGE_SIZE_BYTES)) {
+           setError("Each image must be non-empty and no larger than 10 MB.");
+           e.target.value = "";
+           return;
+         }
+         const newTotal = images.reduce((total, image) => total + (image.file?.size ?? 0), 0)
+           + files.reduce((total, file) => total + file.size, 0);
+         if (newTotal > MAX_TOTAL_IMAGE_BYTES) {
+           setError("The total size of newly selected images cannot exceed 100 MB.");
+           e.target.value = "";
+           return;
+         }
+         setError(null);
          const newImages = files.map((file) => {
            const url = URL.createObjectURL(file);
            previewUrlsRef.current.add(url);
@@ -157,7 +189,7 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
         )}
           <input
           type="file"
-          accept="image/*"
+          accept={IMAGE_FILE_ACCEPT}
           multiple
           onChange={handleImageChange}
           className="mt-4"

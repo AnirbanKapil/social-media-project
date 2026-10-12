@@ -34,6 +34,7 @@ export type Comment = {
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   post: Post;
+  postOwnerId: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
 };
 
@@ -177,10 +178,17 @@ export type Post = {
   updatedAt: Scalars['String']['output'];
 };
 
+export type PostPage = {
+  __typename?: 'PostPage';
+  hasMore: Scalars['Boolean']['output'];
+  nextCursor?: Maybe<Scalars['String']['output']>;
+  posts: Array<Post>;
+};
+
 export type Query = {
   __typename?: 'Query';
   currUser?: Maybe<User>;
-  getAllPosts: Array<Maybe<Post>>;
+  getAllPosts: PostPage;
   getComments: Array<Comment>;
   getConversations: Array<Conversation>;
   getMessages: Array<Message>;
@@ -188,6 +196,12 @@ export type Query = {
   getUserByUsername?: Maybe<User>;
   searchUsers: Array<User>;
   users: Array<Maybe<User>>;
+};
+
+
+export type QueryGetAllPostsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -269,6 +283,13 @@ export type CreatePostMutationVariables = Exact<{
 
 export type CreatePostMutation = { createPost: { id: string, content: string, imgURL: string | null, imgURLs: Array<string>, author: { id: string, username: string, email: string } | null } | null };
 
+export type DeleteCommentMutationVariables = Exact<{
+  commentId: string;
+}>;
+
+
+export type DeleteCommentMutation = { deleteComment: boolean };
+
 export type DeletePostMutationVariables = Exact<{
   postId: string;
 }>;
@@ -332,17 +353,20 @@ export type UpdateProfileImageMutationVariables = Exact<{
 
 export type UpdateProfileImageMutation = { updateProfileImage: { id: string, profileImgUrl: string | null, profileImgPublicId: string | null } | null };
 
-export type GetAllPostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllPostsQueryVariables = Exact<{
+  first: number;
+  after?: string | null | undefined;
+}>;
 
 
-export type GetAllPostsQuery = { getAllPosts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null> };
+export type GetAllPostsQuery = { getAllPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null }> } };
 
 export type GetCommentsQueryVariables = Exact<{
   postId: string;
 }>;
 
 
-export type GetCommentsQuery = { getComments: Array<{ id: string, content: string, author: { id: string, username: string, profileImgUrl: string | null } }> };
+export type GetCommentsQuery = { getComments: Array<{ id: string, content: string, postOwnerId: string, author: { id: string, username: string, profileImgUrl: string | null } }> };
 
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -472,6 +496,25 @@ export const useCreatePostMutation = <
       {
     mutationKey: ['CreatePost'],
     mutationFn: (variables?: CreatePostMutationVariables) => useCustomFetcher<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const DeleteCommentDocument = new TypedDocumentString(`
+    mutation DeleteComment($commentId: String!) {
+  deleteComment(commentId: $commentId)
+}
+    `);
+
+export const useDeleteCommentMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteCommentMutation, TError, DeleteCommentMutationVariables, TContext>) => {
+
+    return useMutation<DeleteCommentMutation, TError, DeleteCommentMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteComment'],
+    mutationFn: (variables?: DeleteCommentMutationVariables) => useCustomFetcher<DeleteCommentMutation, DeleteCommentMutationVariables>(DeleteCommentDocument, variables)(),
     ...options
   }
     )};
@@ -694,23 +737,27 @@ export const useUpdateProfileImageMutation = <
     )};
 
 export const GetAllPostsDocument = new TypedDocumentString(`
-    query GetAllPosts {
-  getAllPosts {
-    id
-    content
-    imgURL
-    imgURLs
-    likesCount
-    isLiked
-    commentsCount
-    createdAt
-    author {
+    query GetAllPosts($first: Int!, $after: String) {
+  getAllPosts(first: $first, after: $after) {
+    posts {
       id
-      username
-      profileImgUrl
-      firstName
-      lastName
+      content
+      imgURL
+      imgURLs
+      likesCount
+      isLiked
+      commentsCount
+      createdAt
+      author {
+        id
+        username
+        profileImgUrl
+        firstName
+        lastName
+      }
     }
+    nextCursor
+    hasMore
   }
 }
     `);
@@ -719,25 +766,26 @@ export const useGetAllPostsQuery = <
       TData = GetAllPostsQuery,
       TError = unknown
     >(
-      variables?: GetAllPostsQueryVariables,
+      variables: GetAllPostsQueryVariables,
       options?: Omit<UseQueryOptions<GetAllPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAllPostsQuery, TError, TData>['queryKey'] }
     ) => {
     
     return useQuery<GetAllPostsQuery, TError, TData>(
       {
-    queryKey: variables === undefined ? ['GetAllPosts'] : ['GetAllPosts', variables],
+    queryKey: ['GetAllPosts', variables],
     queryFn: useCustomFetcher<GetAllPostsQuery, GetAllPostsQueryVariables>(GetAllPostsDocument, variables),
     ...options
   }
     )};
 
-useGetAllPostsQuery.getKey = (variables?: GetAllPostsQueryVariables) => variables === undefined ? ['GetAllPosts'] : ['GetAllPosts', variables];
+useGetAllPostsQuery.getKey = (variables: GetAllPostsQueryVariables) => ['GetAllPosts', variables];
 
 export const GetCommentsDocument = new TypedDocumentString(`
     query GetComments($postId: String!) {
   getComments(postId: $postId) {
     id
     content
+    postOwnerId
     author {
       id
       username

@@ -8,6 +8,7 @@ export const commentTypeDefs = gql`
     content: String!
     author: User!
     post: Post!
+    postOwnerId: String!
     createdAt: String!
     updatedAt: String!
   }

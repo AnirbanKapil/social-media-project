@@ -6,18 +6,51 @@ import { useCreatePostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
 import { useGetCurrentUserQuery } from "@/lib/generated";
+import {
+    ALLOWED_IMAGE_MIME_TYPES,
+    IMAGE_FILE_ACCEPT,
+    MAX_IMAGE_SIZE_BYTES,
+    MAX_IMAGES_PER_POST,
+    MAX_TOTAL_IMAGE_BYTES,
+} from "@/lib/imageUploadLimits";
 
 export function Publish () {
 
     const [selectedFiles,setSelectedFiles] = useState<File[]>([])
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const previewUrlsRef = useRef(new Set<string>());
+    const [uploadError, setUploadError] = useState<string | null>(null);
     const { data } = useGetCurrentUserQuery({});
     const user = data?.currUser
 
     const handleSelectImg = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files ?? []);
         if (!files.length) return;
+        if (selectedFiles.length + files.length > MAX_IMAGES_PER_POST) {
+            setUploadError(`You can attach at most ${MAX_IMAGES_PER_POST} images to a post.`);
+            e.target.value = "";
+            return;
+        }
+        const invalidFile = files.find((file) => !ALLOWED_IMAGE_MIME_TYPES.includes(
+            file.type as typeof ALLOWED_IMAGE_MIME_TYPES[number],
+        ));
+        if (invalidFile) {
+            setUploadError("Only JPEG, PNG, WebP, and GIF images are supported.");
+            e.target.value = "";
+            return;
+        }
+        if (files.some((file) => file.size === 0 || file.size > MAX_IMAGE_SIZE_BYTES)) {
+            setUploadError("Each image must be non-empty and no larger than 10 MB.");
+            e.target.value = "";
+            return;
+        }
+        if (selectedFiles.reduce((total, file) => total + file.size, 0)
+          + files.reduce((total, file) => total + file.size, 0) > MAX_TOTAL_IMAGE_BYTES) {
+            setUploadError("The total image size cannot exceed 100 MB.");
+            e.target.value = "";
+            return;
+        }
+        setUploadError(null);
         const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
         newPreviewUrls.forEach((url) => previewUrlsRef.current.add(url));
         setSelectedFiles((current) => [...current, ...files]);
@@ -68,12 +101,13 @@ export function Publish () {
             setContent("");
             setSelectedFiles([]);
             setPreviewUrls([]);
+            setUploadError(null);
             previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
             previewUrlsRef.current.clear();
             alert("Post created!");
         } catch (error) {
             const message = error instanceof Error ? error.message : "Unknown error";
-            alert(`Error creating post: ${message}`);
+            setUploadError(`Error creating post: ${message}`);
         }
     }
 
@@ -120,12 +154,13 @@ export function Publish () {
                         ))}
                     </div>
                 )}
+                {uploadError && <p role="alert" className="mx-2 text-sm text-red-400">{uploadError}</p>}
                 <div className="flex justify-between m-2">
                 <label className="cursor-pointer" aria-label="Add images">
                     <MdOutlinePermMedia className="text-xl items-center"/>
                     <input
                         type="file"
-                        accept="image/*"
+                        accept={IMAGE_FILE_ACCEPT}
                         multiple
                         onChange={handleSelectImg}
                         className="sr-only"

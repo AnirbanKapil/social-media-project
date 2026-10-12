@@ -1,26 +1,33 @@
 import { commentQueries } from "./queries";
+import prisma from "@/lib/prisma";
 
+type CommentResolverContext = {
+    prisma?: typeof prisma;
+    session?: { user?: { id?: string | null } | null } | null;
+};
 
 export const commentResolvers = {
     
     Comment: {
+
+        postOwnerId: (parent: { post: { authorId: string } }) => parent.post.authorId,
        
-        author: async (parent: any, _args : any, ctx : any) => {
+        author: async (parent: { authorId: string }, _args: unknown, ctx: CommentResolverContext) => {
 
-        const {prisma} = ctx;
+        const commentPrisma = ctx.prisma ?? prisma;
 
-        return await prisma.user.findUnique({
+        return await commentPrisma.user.findUnique({
             where : {
                 id : parent.authorId
             }
         });
         },
         
-        post: async (parent: any, _args : any, ctx : any) => {
+        post: async (parent: { postId: string }, _args: unknown, ctx: CommentResolverContext) => {
         
-        const {prisma} = ctx;
+        const commentPrisma = ctx.prisma ?? prisma;
         
-        return await prisma.post.findUnique({
+        return await commentPrisma.post.findUnique({
             where : {
                 id : parent.postId
             }
@@ -30,45 +37,52 @@ export const commentResolvers = {
 
     Mutation: {
 
-        createComment : async (parent : any, {postId, content}: {postId : string, content : string}, ctx : any) => {
-            if (!ctx?.session?.user) {
+        createComment : async (_parent: unknown, {postId, content}: {postId : string, content : string}, ctx: CommentResolverContext) => {
+            const userId = ctx.session?.user?.id;
+            if (!userId) {
              throw new Error("Not authenticated");
             };
              
-            const {prisma} = ctx;
+            const commentPrisma = ctx.prisma ?? prisma;
 
-            return await prisma.comment.create({
+            return await commentPrisma.comment.create({
                 data : {
                     postId,
                     content,
-                    authorId : ctx?.session?.user?.id
+                    authorId : userId
                     
                 }
              })
         },
 
-        deleteComment : async (parent : any, {commentId}: {commentId : string}, ctx : any) => {
-           if (!ctx?.session?.user) {
+        deleteComment : async (_parent: unknown, {commentId}: {commentId : string}, ctx: CommentResolverContext) => {
+           const userId = ctx.session?.user?.id;
+           if (!userId) {
              throw new Error("Not authenticated");
             };
             
-            const {prisma} = ctx;
+            const commentPrisma = ctx.prisma ?? prisma;
 
-            const comment = await prisma.comment.findUnique({
+            const comment = await commentPrisma.comment.findUnique({
                 where: {
                   id: commentId,
                  },
+                include: {
+                    post: {
+                        select: { authorId: true },
+                    },
+                },
             });
             
             if(!comment){
                 throw new Error("Comment not found");
             };
             
-            if(comment.authorId !== ctx?.session?.user.id){
-                throw new Error("Unauthorized")
+            if(comment.authorId !== userId && comment.post.authorId !== userId){
+                throw new Error("Unauthorized");
             };
 
-            await prisma.comment.delete({
+            await commentPrisma.comment.delete({
                 where : {
                     id : commentId
                 }
