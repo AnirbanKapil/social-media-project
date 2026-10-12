@@ -30,6 +30,7 @@ export function CommentSection ({postId} : Props) {
       setContent("");
       queryClient.invalidateQueries({queryKey: ["GetComments"],});
       queryClient.invalidateQueries({queryKey: ["GetAllPosts"],});
+      queryClient.invalidateQueries({queryKey: ["GetPostById", { postId }],});
     }
 
     return(
@@ -62,4 +63,3 @@ export function CommentSection ({postId} : Props) {
       </div>
     )
 };
-

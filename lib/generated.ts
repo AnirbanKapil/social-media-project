@@ -184,6 +184,7 @@ export type Query = {
   getComments: Array<Comment>;
   getConversations: Array<Conversation>;
   getMessages: Array<Message>;
+  getPostById?: Maybe<Post>;
   getUserByUsername?: Maybe<User>;
   searchUsers: Array<User>;
   users: Array<Maybe<User>>;
@@ -197,6 +198,11 @@ export type QueryGetCommentsArgs = {
 
 export type QueryGetMessagesArgs = {
   conversationId: Scalars['String']['input'];
+};
+
+
+export type QueryGetPostByIdArgs = {
+  postId: Scalars['String']['input'];
 };
 
 
@@ -354,6 +360,13 @@ export type GetMessagesQueryVariables = Exact<{
 
 
 export type GetMessagesQuery = { getMessages: Array<{ id: string, content: string, createdAt: string, sender: { id: string, username: string, profileImgUrl: string | null } }> };
+
+export type GetPostByIdQueryVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type GetPostByIdQuery = { getPostById: { id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null };
 
 export type GetUserByUsernameQueryVariables = Exact<{
   username: string;
@@ -860,6 +873,46 @@ export const useGetMessagesQuery = <
     )};
 
 useGetMessagesQuery.getKey = (variables: GetMessagesQueryVariables) => ['GetMessages', variables];
+
+export const GetPostByIdDocument = new TypedDocumentString(`
+    query GetPostById($postId: String!) {
+  getPostById(postId: $postId) {
+    id
+    content
+    imgURL
+    imgURLs
+    createdAt
+    likesCount
+    isLiked
+    commentsCount
+    author {
+      id
+      username
+      profileImgUrl
+      firstName
+      lastName
+    }
+  }
+}
+    `);
+
+export const useGetPostByIdQuery = <
+      TData = GetPostByIdQuery,
+      TError = unknown
+    >(
+      variables: GetPostByIdQueryVariables,
+      options?: Omit<UseQueryOptions<GetPostByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetPostByIdQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetPostByIdQuery, TError, TData>(
+      {
+    queryKey: ['GetPostById', variables],
+    queryFn: useCustomFetcher<GetPostByIdQuery, GetPostByIdQueryVariables>(GetPostByIdDocument, variables),
+    ...options
+  }
+    )};
+
+useGetPostByIdQuery.getKey = (variables: GetPostByIdQueryVariables) => ['GetPostById', variables];
 
 export const GetUserByUsernameDocument = new TypedDocumentString(`
     query GetUserByUsername($username: String!) {

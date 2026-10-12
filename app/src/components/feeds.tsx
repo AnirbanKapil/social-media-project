@@ -19,11 +19,11 @@ import DeletePostModal from "./post/DeletePostModal";
 import EditPostModal from "./post/EditPostModal";
 import { useMemo } from "react";
 
-export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, isLiked, id, commentsCount,firstName, lastName, onCommentClick} : 
+export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, isLiked, id, commentsCount,firstName, lastName, isDetailPage = false} : 
     {content : string, userImg? : string | null,
      user : string, imgSrcs : string[], firstName?: string, lastName?: string 
       created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string, commentsCount: number | undefined
-      onCommentClick?: () => void 
+      isDetailPage?: boolean
     }) {
     
     const { data } = useGetCurrentUserQuery({});
@@ -52,6 +52,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
             queryClient.invalidateQueries({queryKey: ["GetAllPosts"]});
             queryClient.invalidateQueries({ queryKey: ['GetUserByUsername', { username : user }] });
             queryClient.invalidateQueries({queryKey: ["GetCurrentUser"]});
+            queryClient.invalidateQueries({queryKey: ["GetPostById", { postId: id }]});
         } catch (error) {
             console.error("Failed to update like status:", error);
         }   
@@ -60,7 +61,8 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
     const handleDeletePost = async () => {
         try {
           await deletePostMutation.mutateAsync({postId : id});
-          queryClient.invalidateQueries({queryKey: ["GetAllPosts"]});  
+          queryClient.invalidateQueries({queryKey: ["GetAllPosts"]});
+          queryClient.invalidateQueries({queryKey: ["GetPostById", { postId: id }]});
         } catch (error) {
           console.error("Failed to delete post:", error);  
         }
@@ -116,27 +118,54 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                        }
                     </div>
                   </div>
-                    <p className="mt-2">{content}</p>
+                    {isDetailPage ? (
+                      <p className="mt-2">{content}</p>
+                    ) : (
+                      <Link href={`/dashboard/post/${id}`} className="mt-2 block">
+                        <p>{content}</p>
+                      </Link>
+                    )}
                     {postImages.length > 0 && (
-                      <div className={`mt-3 grid gap-2 ${postImages.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
-                        {postImages.map((imageUrl, index) => (
-                          <CldImage
-                            key={`${imageUrl}-${index}`}
-                            className="h-auto max-h-[32rem] w-full rounded-md object-cover"
-                            alt={`Post image ${index + 1}`}
-                            src={imageUrl}
-                            width={1080}
-                            height={1080}
-                            crop="fill"
-                            gravity="auto"
-                          />
-                        ))}
-                      </div>
+                      isDetailPage ? (
+                        <div className={`mt-3 grid gap-2 ${postImages.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+                          {postImages.map((imageUrl, index) => (
+                            <CldImage
+                              key={`${imageUrl}-${index}`}
+                              className="h-auto max-h-[32rem] w-full rounded-md object-cover"
+                              alt={`Post image ${index + 1}`}
+                              src={imageUrl}
+                              width={1080}
+                              height={1080}
+                              crop="fill"
+                              gravity="auto"
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <Link href={`/dashboard/post/${id}`} aria-label="Open post">
+                          <div className={`mt-3 grid gap-2 ${postImages.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+                            {postImages.map((imageUrl, index) => (
+                              <CldImage
+                                key={`${imageUrl}-${index}`}
+                                className="h-auto max-h-[32rem] w-full rounded-md object-cover"
+                                alt={`Post image ${index + 1}`}
+                                src={imageUrl}
+                                width={1080}
+                                height={1080}
+                                crop="fill"
+                                gravity="auto"
+                              />
+                            ))}
+                          </div>
+                        </Link>
+                      )
                     )}
                     
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="mt-0.5 cursor-pointer hover:scale-120 transition-transform duration-300">
-                        <button onClick={onCommentClick}><LuMessageCircle /></button>
+                        <Link href={isDetailPage ? "#comments" : `/dashboard/post/${id}#comments`} aria-label="View comments">
+                          <LuMessageCircle />
+                        </Link>
                     </div>
                     <p>{commentsCount}</p>
                     <div className="cursor-pointer hover:scale-120 transition-transform duration-300"><AiOutlineRetweet /></div>

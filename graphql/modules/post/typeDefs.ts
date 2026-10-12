@@ -55,5 +55,6 @@ export const postTypeDefs = gql`
 
   type Query {
     getAllPosts: [Post]!
+    getPostById(postId: String!): Post
   }
-`
+`;

@@ -62,6 +62,9 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
             await queryClient.invalidateQueries({
             queryKey: ["GetAllPosts"]
         });
+            await queryClient.invalidateQueries({
+            queryKey: ["GetPostById", { postId }]
+        });
 
             onClose();
         } catch (err) {

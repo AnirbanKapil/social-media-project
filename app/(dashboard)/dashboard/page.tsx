@@ -4,13 +4,8 @@ import { Publish } from "@/app/src/components/publish";
 import { Feeds } from "@/app/src/components/feeds";
 import { useGetAllPostsQuery } from "@/lib/generated";
 import { Loader } from "@/app/src/components/loader";
-import { CommentModal } from "@/app/src/components/comment/commentModal";
-import { useState } from "react";
 
 export default function FeedsPage () {
-    
-    const [selectedPostId, setSelectedPostId] = useState<string | undefined | null>(null); 
-
     const { data, isLoading, error } = useGetAllPostsQuery({},
       {
       staleTime: 1000 * 60, 
@@ -41,20 +36,15 @@ export default function FeedsPage () {
                         userImg={post?.author?.profileImgUrl} 
                         content={post?.content || "No content available"} 
                         user={post?.author?.username || "Unknown User"}
+                        firstName={post?.author?.firstName ?? undefined}
+                        lastName={post?.author?.lastName ?? undefined}
                         imgSrcs={post?.imgURLs ?? []}
                         created={post?.createdAt || "unknown"}
                         likesCount={post?.likesCount}
                         isLiked={post?.isLiked}
                         commentsCount={post?.commentsCount}
-                        onCommentClick={() => setSelectedPostId(post?.id)}
                         />
                      ))}
-                     {selectedPostId && (
-                      <CommentModal 
-                       postId={selectedPostId}
-                       onClose={() => setSelectedPostId(null)}
-                      />
-                     )}
                 </div>
     )
 }
