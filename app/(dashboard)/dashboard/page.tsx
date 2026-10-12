@@ -41,7 +41,7 @@ export default function FeedsPage () {
                         userImg={post?.author?.profileImgUrl} 
                         content={post?.content || "No content available"} 
                         user={post?.author?.username || "Unknown User"}
-                        imgSrc={post?.imgURL}
+                        imgSrcs={post?.imgURLs ?? []}
                         created={post?.createdAt || "unknown"}
                         likesCount={post?.likesCount}
                         isLiked={post?.isLiked}

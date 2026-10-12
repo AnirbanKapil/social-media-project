@@ -8,6 +8,7 @@ export const GetAllPostsDocument = gql`
         id, 
         content,
         imgURL,
+        imgURLs,
         likesCount
         isLiked
         commentsCount

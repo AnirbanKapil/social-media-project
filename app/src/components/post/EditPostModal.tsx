@@ -1,7 +1,7 @@
 "use client"
 
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useEditPostMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -9,30 +9,34 @@ import Image from "next/image";
 type Props = {
   postId: string,
   initialContent: string,
-  initialImgURL?: string | undefined | null,
+  initialImgURLs: string[],
   onClose: () => void;
 }
 
 
 
 
-export default function EditPostModal ({postId,initialContent,initialImgURL,onClose} : Props) {
+export default function EditPostModal ({postId,initialContent,initialImgURLs,onClose} : Props) {
     
     const [content, setContent] = useState(initialContent);
-    const [selectedImage, setSelectedImage] = useState<File | null>(null);
-    const [preview, setPreview] = useState<string | null>(initialImgURL ?? null);
+    const [images, setImages] = useState<{ url: string; file?: File }[]>(
+      initialImgURLs.map((url) => ({ url }))
+    );
+    const previewUrlsRef = useRef(new Set<string>());
+    const [error, setError] = useState<string | null>(null);
     const editPostMutation = useEditPostMutation();
     const queryClient = useQueryClient();
     
     const handleEdit = async () => {
         if(!content.trim()) return;
-        
-        let imageUrl = initialImgURL ?? null; 
 
-        if(selectedImage){
+        try {
+            const imageUrls = images.filter((image) => !image.file).map((image) => image.url);
+            const selectedImages = images.filter((image): image is { url: string; file: File } => !!image.file);
+
+            if(selectedImages.length){
                 const formData = new FormData();
-                formData.append("file",selectedImage)
-                
+                selectedImages.forEach(({ file }) => formData.append("files", file));
                 const uploadImg = await fetch("/api/img-upload",
                    { method : "POST",
                     body : formData }
@@ -44,30 +48,43 @@ export default function EditPostModal ({postId,initialContent,initialImgURL,onCl
                 };
 
                 const data = await uploadImg.json()
-                imageUrl = data.imageUrl
+                imageUrls.push(...data.images.map((image: { imageUrl: string }) => image.imageUrl));
             }
   
-        await editPostMutation.mutateAsync({
+            await editPostMutation.mutateAsync({
            payload : { 
             postId,
             content,
-            imgURL : imageUrl
+            imgURLs: imageUrls
         }
         });
 
-        queryClient.invalidateQueries({
+            await queryClient.invalidateQueries({
             queryKey: ["GetAllPosts"]
         });
 
-        onClose();
+            onClose();
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Unable to update post");
+        }
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-         const file = e.target.files?.[0];
-         if (!file) return;
-         setSelectedImage(file);
-        setPreview(URL.createObjectURL(file));
+         const files = Array.from(e.target.files ?? []);
+         if (!files.length) return;
+         const newImages = files.map((file) => {
+           const url = URL.createObjectURL(file);
+           previewUrlsRef.current.add(url);
+           return { url, file };
+         });
+         setImages((current) => [...current, ...newImages]);
+         e.target.value = "";
     };
+
+    useEffect(() => {
+      const previewUrls = previewUrlsRef.current;
+      return () => previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    }, []);
 
     return (
      <div
@@ -105,18 +122,40 @@ export default function EditPostModal ({postId,initialContent,initialImgURL,onCl
             {editPostMutation.isPending ? "Saving..." : "Save"}
           </button>
         </div>
-          {preview && (
-            <Image
-            height={50} 
-            width={50}
-            src={preview}
-            alt="Post image"
-            className="mt-4 max-h-64 w-full rounded-xl object-cover"
-            />
-          )}
+        {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
+        {images.length > 0 && (
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {images.map((image, index) => (
+              <div key={`${image.url}-${index}`} className="relative">
+                <Image
+                  height={300}
+                  width={400}
+                  src={image.url}
+                  alt={`Post image ${index + 1}`}
+                  className="h-40 w-full rounded-xl object-cover"
+                />
+                <button
+                  type="button"
+                  aria-label={`Remove image ${index + 1}`}
+                  onClick={() => {
+                    if (image.file) {
+                      URL.revokeObjectURL(image.url);
+                      previewUrlsRef.current.delete(image.url);
+                    }
+                    setImages((current) => current.filter((_, imageIndex) => imageIndex !== index));
+                  }}
+                  className="absolute right-2 top-2 rounded-full bg-red-600 px-2 text-white"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
           <input
           type="file"
           accept="image/*"
+          multiple
           onChange={handleImageChange}
           className="mt-4"
           />

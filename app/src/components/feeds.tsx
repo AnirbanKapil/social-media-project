@@ -17,12 +17,13 @@ import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import DeletePostModal from "./post/DeletePostModal";
 import EditPostModal from "./post/EditPostModal";
+import { useMemo } from "react";
 
-export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isLiked, id, commentsCount,firstName, lastName, onCommentClick} : 
+export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, isLiked, id, commentsCount,firstName, lastName, onCommentClick} : 
     {content : string, userImg? : string | null,
-     user : string, imgSrc : string | null |  undefined, firstName : string, lastName : string 
+     user : string, imgSrcs : string[], firstName?: string, lastName?: string 
       created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string, commentsCount: number | undefined
-      onCommentClick : () => void 
+      onCommentClick?: () => void 
     }) {
     
     const { data } = useGetCurrentUserQuery({});
@@ -39,6 +40,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
     const [showMenu, setShowMenu] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const postImages = useMemo(() => imgSrcs ?? [], [imgSrcs]);
 
     const handleLikeToggle = async () => {
         try {
@@ -115,15 +117,22 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                     </div>
                   </div>
                     <p className="mt-2">{content}</p>
-                    {imgSrc && <CldImage
-                    className="rounded-md"
-                    alt="image"
-                    src={imgSrc}
-                    width={1080}
-                    height={1080}
-                    crop="fill"
-                    gravity="auto"
-                    />}
+                    {postImages.length > 0 && (
+                      <div className={`mt-3 grid gap-2 ${postImages.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+                        {postImages.map((imageUrl, index) => (
+                          <CldImage
+                            key={`${imageUrl}-${index}`}
+                            className="h-auto max-h-[32rem] w-full rounded-md object-cover"
+                            alt={`Post image ${index + 1}`}
+                            src={imageUrl}
+                            width={1080}
+                            height={1080}
+                            crop="fill"
+                            gravity="auto"
+                          />
+                        ))}
+                      </div>
+                    )}
                     
                 <div className="flex justify-between items-center mt-2 w-1/2">
                     <div className="mt-0.5 cursor-pointer hover:scale-120 transition-transform duration-300">
@@ -143,7 +152,7 @@ export function Feeds ({content, userImg, user, imgSrc, created, likesCount, isL
                   <EditPostModal
                   postId={id}
                   initialContent={content}
-                  initialImgURL={imgSrc}
+                  initialImgURLs={postImages}
                   onClose={() => setShowEditModal(false)}
                 />
                 )} 

@@ -52,6 +52,7 @@ model Post {
   id      String  @id @default(cuid())
   content String
   imgURL  String?
+  imgURLs String[] @default([])
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String

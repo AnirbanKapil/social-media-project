@@ -12,7 +12,7 @@ const server = new ApolloServer({
   validationRules: [depthLimit(4)],
 });
 
-// 4. Handler (Next.js App Router)
+// Handler (Next.js App Router)
 const handler = startServerAndCreateNextHandler<NextRequest>(server,{
   context : async () => {
     const session = await getAuthSession();

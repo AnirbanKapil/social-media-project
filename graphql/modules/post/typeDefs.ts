@@ -5,18 +5,21 @@ export const postTypeDefs = gql`
   input CreatePostPayload {
     content: String!
     imgURL: String
+    imgURLs: [String!]
   }
   
   input EditPostPayload {
     postId: String!
     content: String
     imgURL: String
+    imgURLs: [String!]
   }
 
   type Post {
     id: String!
     content: String!
     imgURL: String
+    imgURLs: [String!]!
     createdAt: String!
     updatedAt: String!
     author: User 

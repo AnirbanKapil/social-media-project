@@ -14,6 +14,7 @@ export const GetUserDocument = gql`
         id
         content
         imgURL
+        imgURLs
         createdAt
         likesCount
         isLiked

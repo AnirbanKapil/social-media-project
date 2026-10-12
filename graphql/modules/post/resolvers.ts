@@ -6,6 +6,9 @@ import { postQueries } from "./queries";
 export const postResolvers= {
 
   Post: {
+     imgURLs: (parent: { imgURLs?: string[] | null; imgURL?: string | null }) =>
+       parent.imgURLs?.length ? parent.imgURLs : parent.imgURL ? [parent.imgURL] : [],
+
      likesCount: async(parent : any) => {
        return await prisma.like.count({
         where: {
@@ -50,7 +53,8 @@ export const postResolvers= {
         const post = await prisma.post.create({
             data: {
                 content : args.payload.content,
-                imgURL  : args.payload.imgURL || null,
+                imgURL  : args.payload.imgURLs?.[0] ?? args.payload.imgURL ?? null,
+                imgURLs : args.payload.imgURLs ?? (args.payload.imgURL ? [args.payload.imgURL] : []),
                 author  : {connect :{ id: ctx.session.user.id }}
             },
              include: {
@@ -113,7 +117,8 @@ export const postResolvers= {
           },
           data : {
              content : payload.content, 
-             imgURL  : payload.imgURL   
+             imgURL  : payload.imgURLs?.[0] ?? payload.imgURL ?? null,
+             imgURLs : payload.imgURLs ?? (payload.imgURL ? [payload.imgURL] : [])
           },
           include: {
                author: true,
@@ -180,4 +185,3 @@ export const postResolvers= {
    },
    Query: postQueries
 };
-

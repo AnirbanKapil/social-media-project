@@ -7,6 +7,7 @@ export const EditPostDocument = gql`
        id
        content
        imgURL
+       imgURLs
        createdAt
        updatedAt
        author {
