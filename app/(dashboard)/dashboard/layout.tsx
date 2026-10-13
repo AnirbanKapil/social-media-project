@@ -15,7 +15,7 @@ export default function DashboardLayout({children}: {children: React.ReactNode})
 
      return (
      <div>
-        <NavBar />
+        <NavBar showUserSearch />
         <div className="grid grid-cols-12 w-screen h-screen px-52 overflow-hidden">
             <div className="col-span-3 mt-10 sticky top-0 h-screen">
                <ul> 

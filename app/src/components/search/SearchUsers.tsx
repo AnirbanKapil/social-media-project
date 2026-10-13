@@ -23,22 +23,24 @@ export default function SearchUsers () {
     );
     
     return (
-        <div className="w-full rounded-2xl border border-gray-700 p-4 text-slate-200">
+        <div className="relative w-full text-slate-200">
            <input 
-            type="text"
+            type="search"
             value={keyword}
             placeholder="Search users by username"
+            aria-label="Search users by username"
             onChange={(e)=> setKeyword(e.target.value)}
-             className="w-full rounded-full border border-gray-700 bg-transparent px-4 py-2 outline-none"
+             className="w-full rounded-full border border-gray-700 bg-slate-900 px-4 py-2 outline-none focus:border-indigo-400"
            />
 
            {isLoading && (
-           <p className="mt-4 text-sm text-gray-400">
+           <p className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border border-gray-700 bg-slate-900 p-3 text-sm text-gray-400 shadow-xl">
            Searching...
            </p>
            )}
 
-           <div className="mt-4 space-y-3">
+           {(data?.searchUsers.length ?? 0) > 0 && (
+           <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 space-y-1 overflow-y-auto rounded-xl border border-gray-700 bg-slate-900 p-2 shadow-xl">
              {data?.searchUsers.map((user)=> (
                 <Link
                   key={user.id}
@@ -62,6 +64,7 @@ export default function SearchUsers () {
                </Link>
              ))}
            </div>
+           )}
         </div>
     );
 };

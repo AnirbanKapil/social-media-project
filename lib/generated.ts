@@ -510,7 +510,7 @@ export const useDeleteCommentMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<DeleteCommentMutation, TError, DeleteCommentMutationVariables, TContext>) => {
-
+    
     return useMutation<DeleteCommentMutation, TError, DeleteCommentMutationVariables, TContext>(
       {
     mutationKey: ['DeleteComment'],

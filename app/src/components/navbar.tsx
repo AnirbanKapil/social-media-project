@@ -4,15 +4,16 @@ import { useRouter } from "next/navigation"
 import { motion } from 'framer-motion'
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import Link from "next/link";
+import SearchUsers from "./search/SearchUsers";
 
 
-export function NavBar () {
+export function NavBar ({ showUserSearch = false }: { showUserSearch?: boolean }) {
     const router = useRouter();
     const { data } = useGetCurrentUserQuery({});
     const user = data?.currUser
       return(
-        <div className="flex justify-between bg-slate-950/80 mx-48 my-3">
-            <div className="flex gap-3 hover:transition-colors duration-300 cursor-pointer hover:scale-120">
+        <div className="mx-4 my-3 grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-3 bg-slate-950/80 px-4 py-2 md:mx-12 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)] lg:mx-48">
+            <div className="col-start-1 row-start-1 flex gap-3 hover:transition-colors duration-300 cursor-pointer hover:scale-120">
               
                 <svg viewBox="0 0 100 100" className="w-10 h-10 text-indigo-400" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <motion.path
@@ -54,7 +55,12 @@ export function NavBar () {
                 </svg>
                 <Link href="/"><span className="text-xl font-bold tracking-tight mt-2">Inkwell</span></Link>
             </div>
-            <div>
+            {showUserSearch && (
+                <div className="col-span-2 row-start-2 w-full max-w-xl justify-self-center md:col-span-1 md:col-start-2 md:row-start-1">
+                    <SearchUsers />
+                </div>
+            )}
+            <div className="col-start-2 row-start-1 md:col-start-3 md:justify-self-end">
                 {!user ? (<button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120"
                   onClick={()=> {router.push("/api/auth/signin")}} >
                   signIn
