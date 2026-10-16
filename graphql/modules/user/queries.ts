@@ -54,5 +54,35 @@ export const userQueries = {
       },
       take: 10,
     })
+  },
+
+  suggestedUsers: async (
+    _: any,
+    { limit = 5 }: { limit?: number },
+    { prisma, session }: any,
+  ) => {
+    const userId = session?.user?.id;
+    if (!userId) {
+      throw new Error("Not logged in");
+    }
+
+    const safeLimit = Number.isInteger(limit) && limit > 0 ? Math.min(limit, 20) : 5;
+
+    return await prisma.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+        followings: {
+          none: {
+            followerId: userId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: safeLimit,
+    });
   }
 }

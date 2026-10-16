@@ -195,6 +195,7 @@ export type Query = {
   getPostById?: Maybe<Post>;
   getUserByUsername?: Maybe<User>;
   searchUsers: Array<User>;
+  suggestedUsers: Array<User>;
   users: Array<Maybe<User>>;
 };
 
@@ -227,6 +228,11 @@ export type QueryGetUserByUsernameArgs = {
 
 export type QuerySearchUsersArgs = {
   keyword: Scalars['String']['input'];
+};
+
+
+export type QuerySuggestedUsersArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type User = {
@@ -391,6 +397,13 @@ export type GetPostByIdQueryVariables = Exact<{
 
 
 export type GetPostByIdQuery = { getPostById: { id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null };
+
+export type GetSuggestedUsersQueryVariables = Exact<{
+  limit?: number | null | undefined;
+}>;
+
+
+export type GetSuggestedUsersQuery = { suggestedUsers: Array<{ id: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null }> };
 
 export type GetUserByUsernameQueryVariables = Exact<{
   username: string;
@@ -961,6 +974,36 @@ export const useGetPostByIdQuery = <
     )};
 
 useGetPostByIdQuery.getKey = (variables: GetPostByIdQueryVariables) => ['GetPostById', variables];
+
+export const GetSuggestedUsersDocument = new TypedDocumentString(`
+    query GetSuggestedUsers($limit: Int) {
+  suggestedUsers(limit: $limit) {
+    id
+    username
+    firstName
+    lastName
+    profileImgUrl
+  }
+}
+    `);
+
+export const useGetSuggestedUsersQuery = <
+      TData = GetSuggestedUsersQuery,
+      TError = unknown
+    >(
+      variables?: GetSuggestedUsersQueryVariables,
+      options?: Omit<UseQueryOptions<GetSuggestedUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSuggestedUsersQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetSuggestedUsersQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetSuggestedUsers'] : ['GetSuggestedUsers', variables],
+    queryFn: useCustomFetcher<GetSuggestedUsersQuery, GetSuggestedUsersQueryVariables>(GetSuggestedUsersDocument, variables),
+    ...options
+  }
+    )};
+
+useGetSuggestedUsersQuery.getKey = (variables?: GetSuggestedUsersQueryVariables) => variables === undefined ? ['GetSuggestedUsers'] : ['GetSuggestedUsers', variables];
 
 export const GetUserByUsernameDocument = new TypedDocumentString(`
     query GetUserByUsername($username: String!) {
