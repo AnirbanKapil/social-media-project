@@ -221,6 +221,7 @@ export type Query = {
   getBookmarkedPosts: PostPage;
   getComments: Array<Comment>;
   getConversations: Array<Conversation>;
+  getMediaPosts: PostPage;
   getMessages: Array<Message>;
   getPostById?: Maybe<Post>;
   getUserByUsername?: Maybe<User>;
@@ -244,6 +245,12 @@ export type QueryGetBookmarkedPostsArgs = {
 
 export type QueryGetCommentsArgs = {
   postId: Scalars['String']['input'];
+};
+
+
+export type QueryGetMediaPostsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -455,6 +462,14 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
+
+export type GetMediaPostsQueryVariables = Exact<{
+  first: number;
+  after?: string | null | undefined;
+}>;
+
+
+export type GetMediaPostsQuery = { getMediaPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null }> } };
 
 export type GetMessagesQueryVariables = Exact<{
   conversationId: string;
@@ -1188,6 +1203,45 @@ export const useGetCurrentUserQuery = <
     )};
 
 useGetCurrentUserQuery.getKey = (variables?: GetCurrentUserQueryVariables) => variables === undefined ? ['GetCurrentUser'] : ['GetCurrentUser', variables];
+
+export const GetMediaPostsDocument = new TypedDocumentString(`
+    query GetMediaPosts($first: Int!, $after: String) {
+  getMediaPosts(first: $first, after: $after) {
+    posts {
+      id
+      content
+      imgURL
+      imgURLs
+      createdAt
+      author {
+        id
+        username
+        profileImgUrl
+      }
+    }
+    nextCursor
+    hasMore
+  }
+}
+    `);
+
+export const useGetMediaPostsQuery = <
+      TData = GetMediaPostsQuery,
+      TError = unknown
+    >(
+      variables: GetMediaPostsQueryVariables,
+      options?: Omit<UseQueryOptions<GetMediaPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMediaPostsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetMediaPostsQuery, TError, TData>(
+      {
+    queryKey: ['GetMediaPosts', variables],
+    queryFn: useCustomFetcher<GetMediaPostsQuery, GetMediaPostsQueryVariables>(GetMediaPostsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetMediaPostsQuery.getKey = (variables: GetMediaPostsQueryVariables) => ['GetMediaPosts', variables];
 
 export const GetMessagesDocument = new TypedDocumentString(`
     query GetMessages($conversationId: String!) {

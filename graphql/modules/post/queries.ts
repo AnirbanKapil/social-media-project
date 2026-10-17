@@ -59,6 +59,63 @@ export const postQueries = {
       return { posts, nextCursor, hasMore };
     },
 
+    getMediaPosts: async (
+      _parent: unknown,
+      { first = 10, after }: { first?: number; after?: string | null },
+    ) => {
+      if (!Number.isInteger(first) || first < 1 || first > 50) {
+        throw new Error("Page size must be between 1 and 50");
+      }
+
+      let cursorFilter = {};
+      if (after) {
+        try {
+          const cursor = JSON.parse(Buffer.from(after, "base64url").toString("utf8")) as {
+            createdAt?: string;
+            id?: string;
+          };
+          const createdAt = new Date(cursor.createdAt ?? "");
+          if (typeof cursor.id !== "string" || !cursor.id || Number.isNaN(createdAt.getTime())) {
+            throw new Error("Invalid cursor");
+          }
+          cursorFilter = {
+            OR: [
+              { createdAt: { lt: createdAt } },
+              { AND: [{ createdAt }, { id: { lt: cursor.id } }] },
+            ],
+          };
+        } catch {
+          throw new Error("Invalid post cursor");
+        }
+      }
+
+      const mediaFilter = {
+        OR: [
+          { imgURLs: { isEmpty: false } },
+          { imgURL: { not: null } },
+        ],
+      };
+
+      const rows = await prisma.post.findMany({
+        where: after ? { AND: [cursorFilter, mediaFilter] } : mediaFilter,
+        include: { author: true },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        take: first + 1,
+      });
+
+      const hasMore = rows.length > first;
+      const posts = hasMore ? rows.slice(0, first) : rows;
+      const lastPost = posts.at(-1);
+      const nextCursor = hasMore && lastPost
+        ? Buffer.from(JSON.stringify({
+            createdAt: lastPost.createdAt.toISOString(),
+            id: lastPost.id,
+          })).toString("base64url")
+        : null;
+
+      return { posts, nextCursor, hasMore };
+    },
+
     getBookmarkedPosts: async (
       _parent: unknown,
       { first = 10, after }: { first?: number; after?: string | null },
