@@ -135,6 +135,11 @@ export default function UsersPage() {
           created={post?.createdAt || "unknown"}
           likesCount={post?.likesCount}
           isLiked={post?.isLiked}
+          isBookmarked={post?.isBookmarked}
+          isReposted={post?.isReposted}
+          repostsCount={post?.repostsCount}
+          repostOf={post?.repostOf}
+          commentsCount={post?.commentsCount}
           />
         ))}
       </div>

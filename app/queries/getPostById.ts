@@ -10,6 +10,10 @@ export const GetPostByIdDocument = gql`
       createdAt
       likesCount
       isLiked
+      isBookmarked
+      isReposted
+      repostsCount
+      repostOfId
       commentsCount
       author {
         id
@@ -17,6 +21,25 @@ export const GetPostByIdDocument = gql`
         profileImgUrl
         firstName
         lastName
+      }
+      repostOf {
+        id
+        content
+        imgURLs
+        likesCount
+        isLiked
+        isBookmarked
+        isReposted
+        repostsCount
+        commentsCount
+        createdAt
+        author {
+          id
+          username
+          profileImgUrl
+          firstName
+          lastName
+        }
       }
     }
   }

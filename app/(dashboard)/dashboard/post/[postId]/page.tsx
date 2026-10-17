@@ -13,6 +13,7 @@ export default function PostDetailPage() {
   const commentsRef = useRef<HTMLElement>(null);
   const { data, isLoading, error } = useGetPostByIdQuery({ postId });
   const post = data?.getPostById;
+  const targetId = post?.repostOf?.id ?? post?.id;
 
   useEffect(() => {
     if (!isLoading && window.location.hash === "#comments") {
@@ -55,6 +56,10 @@ export default function PostDetailPage() {
         created={post.createdAt}
         likesCount={post.likesCount}
         isLiked={post.isLiked}
+        isBookmarked={post.isBookmarked}
+        isReposted={post.isReposted}
+        repostsCount={post.repostsCount}
+        repostOf={post.repostOf}
         commentsCount={post.commentsCount}
         isDetailPage
       />
@@ -64,7 +69,7 @@ export default function PostDetailPage() {
         className="scroll-mt-4 border-b border-gray-600 p-4"
       >
         <h2 className="mb-4 text-xl font-semibold">Comments</h2>
-        <CommentSection postId={post.id} />
+        <CommentSection postId={targetId ?? post.id} />
       </section>
     </div>
   );

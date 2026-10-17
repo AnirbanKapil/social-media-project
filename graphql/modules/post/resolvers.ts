@@ -32,6 +32,50 @@ export const postResolvers= {
         return !!like;
       },
 
+     isBookmarked: async(parent : any, arg : any, ctx : any) => {
+        if(!ctx.session?.user){
+            return
+        };
+        const bookmark = await prisma.bookmark.findUnique({
+          where: {
+            userId_postId: {
+              userId : ctx.session?.user?.id,
+              postId : parent.id
+            }
+          }
+        });
+        return !!bookmark;
+     },
+
+     repostsCount: async(parent : any) => {
+        return await prisma.post.count({
+          where: { repostOfId: parent.id }
+        });
+     },
+
+     isReposted: async(parent : any, arg : any, ctx : any) => {
+        if(!ctx.session?.user){
+            return
+        };
+        const repost = await prisma.post.findFirst({
+          where: {
+            authorId : ctx.session?.user?.id,
+            repostOfId : parent.id,
+          }
+        });
+        return !!repost;
+     },
+
+     repostOf: async(parent : any) => {
+        if(!parent.repostOfId){
+            return null;
+        }
+        return await prisma.post.findUnique({
+          where: { id: parent.repostOfId },
+          include: { author: true },
+        });
+     },
+
      commentsCount: async (parent: any, arg: any,ctx : any) => {
       const { prisma } = ctx;
       return await prisma.comment.count({
@@ -181,6 +225,80 @@ export const postResolvers= {
       });
 
       return post;
+    },
+
+    bookmarkPost : async (parent : any, {postId}: {postId : string}, ctx : any) => {
+      if(!ctx.session?.user){
+          throw new Error("Not authenticated!!")
+      };
+      const userId = ctx.session?.user?.id;
+
+      await prisma.bookmark.upsert({
+        where : {
+          userId_postId: { userId, postId },
+        },
+        update: {},
+        create: { userId, postId },
+      });
+
+      return await prisma.post.findUnique({ where: { id: postId } });
+    },
+
+    unbookmarkPost : async (parent : any, {postId} : {postId : string}, ctx : any) => {
+      if(!ctx.session?.user){
+          throw new Error("Not authenticated!!")
+      };
+      const userId = ctx.session?.user?.id;
+
+      try {
+        await prisma.bookmark.delete({
+          where: { userId_postId: { userId, postId } },
+        });
+      } catch (error) {
+        console.log(error)
+      }
+
+      return await prisma.post.findUnique({ where: { id: postId } });
+    },
+
+    repostPost : async (parent : any, {postId}: {postId : string}, ctx : any) => {
+      if(!ctx.session?.user){
+          throw new Error("Not authenticated!!")
+      };
+      const userId = ctx.session?.user?.id;
+
+      const source = await prisma.post.findUnique({ where: { id: postId } });
+      if(!source){
+        throw new Error("Post not found");
+      };
+
+      const targetId = source.repostOfId ?? source.id;
+
+      await prisma.post.upsert({
+        where : {
+          authorId_repostOfId: { authorId : userId, repostOfId : targetId },
+        },
+        update: {},
+        create: { content: "", authorId : userId, repostOfId : targetId },
+      });
+
+      return await prisma.post.findUnique({ where: { id: targetId } });
+    },
+
+    unrepostPost : async (parent : any, {postId} : {postId : string}, ctx : any) => {
+      if(!ctx.session?.user){
+          throw new Error("Not authenticated!!")
+      };
+      const userId = ctx.session?.user?.id;
+
+      const source = await prisma.post.findUnique({ where: { id: postId } });
+      const targetId = source?.repostOfId ?? postId;
+
+      await prisma.post.deleteMany({
+        where: { authorId : userId, repostOfId : targetId },
+      });
+
+      return await prisma.post.findUnique({ where: { id: targetId } });
     }
    },
    Query: postQueries

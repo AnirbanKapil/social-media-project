@@ -85,6 +85,7 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  bookmarkPost?: Maybe<Post>;
   createComment: Comment;
   createConversation?: Maybe<Conversation>;
   createPost?: Maybe<Post>;
@@ -94,10 +95,18 @@ export type Mutation = {
   followUser: Follows;
   likePost?: Maybe<Post>;
   removeProfileImage?: Maybe<User>;
+  repostPost?: Maybe<Post>;
   sendMessage: Message;
+  unbookmarkPost?: Maybe<Post>;
   unfollowUser?: Maybe<Follows>;
   unlikePost?: Maybe<Post>;
+  unrepostPost?: Maybe<Post>;
   updateProfileImage?: Maybe<User>;
+};
+
+
+export type MutationBookmarkPostArgs = {
+  postId: Scalars['String']['input'];
 };
 
 
@@ -142,9 +151,19 @@ export type MutationLikePostArgs = {
 };
 
 
+export type MutationRepostPostArgs = {
+  postId: Scalars['String']['input'];
+};
+
+
 export type MutationSendMessageArgs = {
   content: Scalars['String']['input'];
   conversationId: Scalars['String']['input'];
+};
+
+
+export type MutationUnbookmarkPostArgs = {
+  postId: Scalars['String']['input'];
 };
 
 
@@ -154,6 +173,11 @@ export type MutationUnfollowUserArgs = {
 
 
 export type MutationUnlikePostArgs = {
+  postId: Scalars['String']['input'];
+};
+
+
+export type MutationUnrepostPostArgs = {
   postId: Scalars['String']['input'];
 };
 
@@ -173,8 +197,13 @@ export type Post = {
   id: Scalars['String']['output'];
   imgURL?: Maybe<Scalars['String']['output']>;
   imgURLs: Array<Scalars['String']['output']>;
+  isBookmarked: Scalars['Boolean']['output'];
   isLiked: Scalars['Boolean']['output'];
+  isReposted: Scalars['Boolean']['output'];
   likesCount: Scalars['Int']['output'];
+  repostOf?: Maybe<Post>;
+  repostOfId?: Maybe<Scalars['String']['output']>;
+  repostsCount: Scalars['Int']['output'];
   updatedAt: Scalars['String']['output'];
 };
 
@@ -189,6 +218,7 @@ export type Query = {
   __typename?: 'Query';
   currUser?: Maybe<User>;
   getAllPosts: PostPage;
+  getBookmarkedPosts: PostPage;
   getComments: Array<Comment>;
   getConversations: Array<Conversation>;
   getMessages: Array<Message>;
@@ -201,6 +231,12 @@ export type Query = {
 
 
 export type QueryGetAllPostsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryGetBookmarkedPostsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -267,6 +303,13 @@ export type EditPostPayload = {
   postId: string;
 };
 
+export type BookmarkPostMutationVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type BookmarkPostMutation = { bookmarkPost: { id: string, isBookmarked: boolean, author: { id: string } | null } | null };
+
 export type CreateCommentMutationVariables = Exact<{
   postId: string;
   content: string;
@@ -329,6 +372,13 @@ export type LikePostMutationVariables = Exact<{
 
 export type LikePostMutation = { likePost: { id: string, isLiked: boolean, likesCount: number, author: { id: string } | null } | null };
 
+export type RepostPostMutationVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type RepostPostMutation = { repostPost: { id: string, isReposted: boolean, repostsCount: number, author: { id: string } | null } | null };
+
 export type SendMessageMutationVariables = Exact<{
   conversationId: string;
   content: string;
@@ -336,6 +386,13 @@ export type SendMessageMutationVariables = Exact<{
 
 
 export type SendMessageMutation = { sendMessage: { id: string, content: string, createdAt: string } };
+
+export type UnbookmarkPostMutationVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type UnbookmarkPostMutation = { unbookmarkPost: { id: string, isBookmarked: boolean, author: { id: string } | null } | null };
 
 export type UnfollowUserMutationVariables = Exact<{
   to: string;
@@ -351,6 +408,13 @@ export type UnlikePostMutationVariables = Exact<{
 
 export type UnlikePostMutation = { unlikePost: { id: string, isLiked: boolean, likesCount: number, author: { id: string } | null } | null };
 
+export type UnrepostPostMutationVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type UnrepostPostMutation = { unrepostPost: { id: string, isReposted: boolean, repostsCount: number, author: { id: string } | null } | null };
+
 export type UpdateProfileImageMutationVariables = Exact<{
   profileImgUrl: string;
   profileImgPublicId?: string | null | undefined;
@@ -365,7 +429,15 @@ export type GetAllPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllPostsQuery = { getAllPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null }> } };
+export type GetAllPostsQuery = { getAllPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
+
+export type GetBookmarkedPostsQueryVariables = Exact<{
+  first: number;
+  after?: string | null | undefined;
+}>;
+
+
+export type GetBookmarkedPostsQuery = { getBookmarkedPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
 
 export type GetCommentsQueryVariables = Exact<{
   postId: string;
@@ -382,7 +454,7 @@ export type GetConversationsQuery = { getConversations: Array<{ id: string, part
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number } | null> | null } | null };
+export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
 
 export type GetMessagesQueryVariables = Exact<{
   conversationId: string;
@@ -396,7 +468,7 @@ export type GetPostByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetPostByIdQuery = { getPostById: { id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null };
+export type GetPostByIdQuery = { getPostById: { id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null };
 
 export type GetSuggestedUsersQueryVariables = Exact<{
   limit?: number | null | undefined;
@@ -410,7 +482,7 @@ export type GetUserByUsernameQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, commentsCount: number } | null> | null } | null };
+export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -430,6 +502,31 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMeQuery = { currUser: { id: string, email: string } | null };
 
 
+
+export const BookmarkPostDocument = new TypedDocumentString(`
+    mutation BookmarkPost($postId: String!) {
+  bookmarkPost(postId: $postId) {
+    id
+    isBookmarked
+    author {
+      id
+    }
+  }
+}
+    `);
+
+export const useBookmarkPostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<BookmarkPostMutation, TError, BookmarkPostMutationVariables, TContext>) => {
+    
+    return useMutation<BookmarkPostMutation, TError, BookmarkPostMutationVariables, TContext>(
+      {
+    mutationKey: ['BookmarkPost'],
+    mutationFn: (variables?: BookmarkPostMutationVariables) => useCustomFetcher<BookmarkPostMutation, BookmarkPostMutationVariables>(BookmarkPostDocument, variables)(),
+    ...options
+  }
+    )};
 
 export const CreateCommentDocument = new TypedDocumentString(`
     mutation CreateComment($postId: String!, $content: String!) {
@@ -652,6 +749,32 @@ export const useLikePostMutation = <
   }
     )};
 
+export const RepostPostDocument = new TypedDocumentString(`
+    mutation RepostPost($postId: String!) {
+  repostPost(postId: $postId) {
+    id
+    isReposted
+    repostsCount
+    author {
+      id
+    }
+  }
+}
+    `);
+
+export const useRepostPostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<RepostPostMutation, TError, RepostPostMutationVariables, TContext>) => {
+    
+    return useMutation<RepostPostMutation, TError, RepostPostMutationVariables, TContext>(
+      {
+    mutationKey: ['RepostPost'],
+    mutationFn: (variables?: RepostPostMutationVariables) => useCustomFetcher<RepostPostMutation, RepostPostMutationVariables>(RepostPostDocument, variables)(),
+    ...options
+  }
+    )};
+
 export const SendMessageDocument = new TypedDocumentString(`
     mutation SendMessage($conversationId: String!, $content: String!) {
   sendMessage(conversationId: $conversationId, content: $content) {
@@ -671,6 +794,31 @@ export const useSendMessageMutation = <
       {
     mutationKey: ['SendMessage'],
     mutationFn: (variables?: SendMessageMutationVariables) => useCustomFetcher<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const UnbookmarkPostDocument = new TypedDocumentString(`
+    mutation UnbookmarkPost($postId: String!) {
+  unbookmarkPost(postId: $postId) {
+    id
+    isBookmarked
+    author {
+      id
+    }
+  }
+}
+    `);
+
+export const useUnbookmarkPostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UnbookmarkPostMutation, TError, UnbookmarkPostMutationVariables, TContext>) => {
+    
+    return useMutation<UnbookmarkPostMutation, TError, UnbookmarkPostMutationVariables, TContext>(
+      {
+    mutationKey: ['UnbookmarkPost'],
+    mutationFn: (variables?: UnbookmarkPostMutationVariables) => useCustomFetcher<UnbookmarkPostMutation, UnbookmarkPostMutationVariables>(UnbookmarkPostDocument, variables)(),
     ...options
   }
     )};
@@ -723,6 +871,32 @@ export const useUnlikePostMutation = <
   }
     )};
 
+export const UnrepostPostDocument = new TypedDocumentString(`
+    mutation UnrepostPost($postId: String!) {
+  unrepostPost(postId: $postId) {
+    id
+    isReposted
+    repostsCount
+    author {
+      id
+    }
+  }
+}
+    `);
+
+export const useUnrepostPostMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UnrepostPostMutation, TError, UnrepostPostMutationVariables, TContext>) => {
+    
+    return useMutation<UnrepostPostMutation, TError, UnrepostPostMutationVariables, TContext>(
+      {
+    mutationKey: ['UnrepostPost'],
+    mutationFn: (variables?: UnrepostPostMutationVariables) => useCustomFetcher<UnrepostPostMutation, UnrepostPostMutationVariables>(UnrepostPostDocument, variables)(),
+    ...options
+  }
+    )};
+
 export const UpdateProfileImageDocument = new TypedDocumentString(`
     mutation UpdateProfileImage($profileImgUrl: String!, $profileImgPublicId: String) {
   updateProfileImage(
@@ -759,6 +933,10 @@ export const GetAllPostsDocument = new TypedDocumentString(`
       imgURLs
       likesCount
       isLiked
+      isBookmarked
+      isReposted
+      repostsCount
+      repostOfId
       commentsCount
       createdAt
       author {
@@ -767,6 +945,25 @@ export const GetAllPostsDocument = new TypedDocumentString(`
         profileImgUrl
         firstName
         lastName
+      }
+      repostOf {
+        id
+        content
+        imgURLs
+        likesCount
+        isLiked
+        isBookmarked
+        isReposted
+        repostsCount
+        commentsCount
+        createdAt
+        author {
+          id
+          username
+          profileImgUrl
+          firstName
+          lastName
+        }
       }
     }
     nextCursor
@@ -792,6 +989,73 @@ export const useGetAllPostsQuery = <
     )};
 
 useGetAllPostsQuery.getKey = (variables: GetAllPostsQueryVariables) => ['GetAllPosts', variables];
+
+export const GetBookmarkedPostsDocument = new TypedDocumentString(`
+    query GetBookmarkedPosts($first: Int!, $after: String) {
+  getBookmarkedPosts(first: $first, after: $after) {
+    posts {
+      id
+      content
+      imgURL
+      imgURLs
+      likesCount
+      isLiked
+      isBookmarked
+      isReposted
+      repostsCount
+      repostOfId
+      commentsCount
+      createdAt
+      author {
+        id
+        username
+        profileImgUrl
+        firstName
+        lastName
+      }
+      repostOf {
+        id
+        content
+        imgURLs
+        likesCount
+        isLiked
+        isBookmarked
+        isReposted
+        repostsCount
+        commentsCount
+        createdAt
+        author {
+          id
+          username
+          profileImgUrl
+          firstName
+          lastName
+        }
+      }
+    }
+    nextCursor
+    hasMore
+  }
+}
+    `);
+
+export const useGetBookmarkedPostsQuery = <
+      TData = GetBookmarkedPostsQuery,
+      TError = unknown
+    >(
+      variables: GetBookmarkedPostsQueryVariables,
+      options?: Omit<UseQueryOptions<GetBookmarkedPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetBookmarkedPostsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetBookmarkedPostsQuery, TError, TData>(
+      {
+    queryKey: ['GetBookmarkedPosts', variables],
+    queryFn: useCustomFetcher<GetBookmarkedPostsQuery, GetBookmarkedPostsQueryVariables>(GetBookmarkedPostsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetBookmarkedPostsQuery.getKey = (variables: GetBookmarkedPostsQueryVariables) => ['GetBookmarkedPosts', variables];
 
 export const GetCommentsDocument = new TypedDocumentString(`
     query GetComments($postId: String!) {
@@ -878,7 +1142,30 @@ export const GetCurrentUserDocument = new TypedDocumentString(`
       createdAt
       likesCount
       isLiked
+      isBookmarked
+      isReposted
+      repostsCount
+      repostOfId
       commentsCount
+      repostOf {
+        id
+        content
+        imgURLs
+        likesCount
+        isLiked
+        isBookmarked
+        isReposted
+        repostsCount
+        commentsCount
+        createdAt
+        author {
+          id
+          username
+          profileImgUrl
+          firstName
+          lastName
+        }
+      }
     }
   }
 }
@@ -945,6 +1232,10 @@ export const GetPostByIdDocument = new TypedDocumentString(`
     createdAt
     likesCount
     isLiked
+    isBookmarked
+    isReposted
+    repostsCount
+    repostOfId
     commentsCount
     author {
       id
@@ -952,6 +1243,25 @@ export const GetPostByIdDocument = new TypedDocumentString(`
       profileImgUrl
       firstName
       lastName
+    }
+    repostOf {
+      id
+      content
+      imgURLs
+      likesCount
+      isLiked
+      isBookmarked
+      isReposted
+      repostsCount
+      commentsCount
+      createdAt
+      author {
+        id
+        username
+        profileImgUrl
+        firstName
+        lastName
+      }
     }
   }
 }
@@ -1025,7 +1335,30 @@ export const GetUserByUsernameDocument = new TypedDocumentString(`
       createdAt
       likesCount
       isLiked
+      isBookmarked
+      isReposted
+      repostsCount
+      repostOfId
       commentsCount
+      repostOf {
+        id
+        content
+        imgURLs
+        likesCount
+        isLiked
+        isBookmarked
+        isReposted
+        repostsCount
+        commentsCount
+        createdAt
+        author {
+          id
+          username
+          profileImgUrl
+          firstName
+          lastName
+        }
+      }
     }
   }
 }

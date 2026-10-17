@@ -12,6 +12,10 @@ export const GetAllPostsDocument = gql`
         imgURLs
         likesCount
         isLiked
+        isBookmarked
+        isReposted
+        repostsCount
+        repostOfId
         commentsCount
         createdAt
         author {
@@ -20,6 +24,25 @@ export const GetAllPostsDocument = gql`
           profileImgUrl
           firstName
           lastName
+        }
+        repostOf {
+          id
+          content
+          imgURLs
+          likesCount
+          isLiked
+          isBookmarked
+          isReposted
+          repostsCount
+          commentsCount
+          createdAt
+          author {
+            id
+            username
+            profileImgUrl
+            firstName
+            lastName
+          }
         }
       }
       nextCursor

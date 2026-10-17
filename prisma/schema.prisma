@@ -35,6 +35,8 @@ model User {
 
   likes      Like[] 
 
+  bookmarks  Bookmark[]
+
   comments   Comment[]
 }
 
@@ -59,10 +61,18 @@ model Post {
 
   likes   Like[]
 
+  bookmarks Bookmark[]
+
   comments  Comment[]
+
+  repostOfId String?
+  repostOf   Post?   @relation("Reposts", fields: [repostOfId], references: [id], onDelete: Cascade)
+  reposts    Post[]  @relation("Reposts")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([authorId, repostOfId])
 }
 
 model Conversation {
@@ -130,4 +140,14 @@ model Comment {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Bookmark {
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  createdAt DateTime @default(now())
+
+  @@id([userId, postId])
 }
