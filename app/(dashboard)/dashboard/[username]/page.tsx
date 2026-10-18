@@ -95,7 +95,7 @@ export default function UsersPage() {
          </div>
       </div>
       <div className="border-b border-slate-800 my-5">
-      <div className="flex">
+      <div className="flex flex-wrap items-center gap-3">
        {user?.profileImgUrl ? (
           <Image
            className="mx-4 rounded-full"
@@ -111,7 +111,7 @@ export default function UsersPage() {
         Send Message
        </button>}
       </div>  
-        <div className="flex justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-extrabold text-3xl mx-5 my-4">{user?.username}</h1> 
         {!isOwnProfile &&  (<button onClick={handleFollow}
         className="self-center block-inline mt-2 p-2 mx-3 cursor-pointer 
@@ -120,7 +120,7 @@ export default function UsersPage() {
         </button>
       )}
         </div> 
-        <div className="flex">
+        <div className="flex flex-wrap items-center gap-x-6">
         <p className="mx-4 my-6 text-slate-600">{user?.followersCount} Followers</p>
         <p className="mx-4 my-6 text-slate-600">{user?.followingCount} Following</p>
         </div>

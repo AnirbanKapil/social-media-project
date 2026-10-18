@@ -18,7 +18,7 @@ export default function DeletePostModal ({onClose, onDelete} : Props) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-[420px] rounded-2xl bg-black border border-gray-700 p-6"
+        className="mx-4 w-full max-w-[420px] rounded-2xl bg-black border border-gray-700 p-6"
       >
         <h2 className="text-xl font-semibold">
           Delete Post

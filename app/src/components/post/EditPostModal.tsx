@@ -128,7 +128,7 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
      >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-[500px] rounded-2xl border border-gray-700 bg-black p-6"
+        className="mx-4 max-h-[90vh] w-full max-w-[500px] overflow-y-auto rounded-2xl border border-gray-700 bg-black p-6"
       >
         <h2 className="text-xl font-semibold">
           Edit Post

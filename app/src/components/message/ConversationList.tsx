@@ -26,10 +26,10 @@ export default function ConversationList({selectedConversationId,setSelectedConv
    }
    
    if (error) {
-    return <div className="w-80 p-4">Error fetching conversations.</div>;
+    return <div className="w-full p-4">Error fetching conversations.</div>;
    }
   return (
-    <div className="sm:w-50 border-r border-gray-300 ">
+    <div className="h-full w-full overflow-y-auto lg:border-r lg:border-gray-300 ">
       {conversations.map((conv)=> {
         const otherParticipant = conv.participants.find(
           (participant) => participant.id !== curUserId

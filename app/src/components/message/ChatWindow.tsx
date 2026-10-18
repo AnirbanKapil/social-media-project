@@ -12,9 +12,10 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 type Props = {
   conversationId: string | null;
   conversations: GetConversationsQuery["getConversations"];
+  onBack?: () => void;
 };
 
-export default function ChatWindow({conversationId,conversations} : Props) {
+export default function ChatWindow({conversationId,conversations,onBack} : Props) {
   
   const {data : currentUserData} = useGetCurrentUserQuery();
   const {data , isLoading} = useGetMessagesQuery(
@@ -58,11 +59,20 @@ export default function ChatWindow({conversationId,conversations} : Props) {
   const otherParticipant = activeConversation?.participants.find((p)=> p.id !== currentUser?.id)
 
    return (
-    <div className="flex flex-col h-screen max-h-screen w-full pb-7 px-7 ">
+    <div className="flex h-full max-h-screen w-full flex-col px-3 pb-7 sm:px-7 ">
      <Link href="/dashboard"
-              className="cursor-pointer p-2">
+              className="hidden cursor-pointer p-2 lg:block">
               <IoMdArrowRoundBack size={24} />
-     </Link> 
+     </Link>
+     <button
+       type="button"
+       onClick={() => onBack?.()}
+       aria-label="Back to conversations"
+       className="flex cursor-pointer items-center gap-2 p-2 text-sm text-slate-400 lg:hidden"
+     >
+       <IoMdArrowRoundBack size={24} />
+       Back
+     </button> 
      {otherParticipant && (
       <div key={otherParticipant.id}>
         <ChatHeader username={otherParticipant.username}/>

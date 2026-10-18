@@ -18,17 +18,26 @@ export default function MessagesPage() {
 
   return (
     <div>
-     <div className="flex h-screen">
-        <ConversationList
-         conversations={data?.getConversations ?? []}
-         isLoading={isLoading}
-         error={error as Error | null}
-         selectedConversationId={selectedConversationId}
-         setSelectedConversationId={setSelectedConversationId}
-        />
-        <ChatWindow conversationId={selectedConversationId}
-         conversations={data?.getConversations ?? []}  
-         />
+     <div className="flex h-screen overflow-hidden">
+        <div
+          className={`${selectedConversationId ? "hidden lg:block" : "block"} h-full w-full lg:w-64 lg:shrink-0`}
+        >
+          <ConversationList
+           conversations={data?.getConversations ?? []}
+           isLoading={isLoading}
+           error={error as Error | null}
+           selectedConversationId={selectedConversationId}
+           setSelectedConversationId={setSelectedConversationId}
+          />
+        </div>
+        <div
+          className={`${selectedConversationId ? "flex" : "hidden lg:flex"} h-full min-w-0 flex-1`}
+        >
+          <ChatWindow conversationId={selectedConversationId}
+           conversations={data?.getConversations ?? []}
+           onBack={() => setSelectedConversationId(null)}
+           />
+        </div>
      </div>
     </div>
   );

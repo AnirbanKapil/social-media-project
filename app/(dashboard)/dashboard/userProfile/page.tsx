@@ -76,7 +76,7 @@ export default function ProfilePage() {
              </div>
           </div>
           <div className="border-b border-slate-800 my-5">
-           <div className="flex"> 
+           <div className="flex flex-wrap items-center gap-3"> 
             {user?.profileImgUrl ? (
              <Zoom>
               <div className="relative m-3">
@@ -122,10 +122,10 @@ export default function ProfilePage() {
                                          : "Remove Profile Pic"}
                                       </button>}
            </div>  
-           <div className="flex">
-            <h1 className="font-extrabold text-3xl mx-2 my-5">{user?.username}</h1>
-            <h3 className="mx-4 my-7 text-slate-600">Followers {user?.followersCount}</h3>
-            <h3 className="mx-4 my-7 text-slate-600">Following {user?.followingCount}</h3> 
+           <div className="mx-2 flex flex-wrap items-center gap-x-6 gap-y-1">
+            <h1 className="font-extrabold text-3xl my-5">{user?.username}</h1>
+            <h3 className="my-5 text-slate-600">Followers {user?.followersCount}</h3>
+            <h3 className="my-5 text-slate-600">Following {user?.followingCount}</h3> 
            </div>
           </div> 
           <div>

@@ -16,7 +16,7 @@ export function CommentModal ({postId, onClose} : Props) {
     className="fixed inset-0 backdrop-blur-sm bg-black/5 flex justify-center items-center z-50"
     onClick={onClose}
   >
-    <div className="relative">
+    <div className="relative mx-4 w-full max-w-[600px]">
       <button 
         onClick={onClose}
         className="absolute -top-12 -right-4 md:-right-12 rounded-full p-2 bg-black/30 hover:bg-white/10 text-white transition-colors"
@@ -24,7 +24,7 @@ export function CommentModal ({postId, onClose} : Props) {
       >
         <IoClose size={28} />
       </button>
-      <div className="flex h-[700px] w-[600px] flex-col overflow-hidden rounded-2xl border border-gray-700 bg-black"
+      <div className="flex h-[80vh] max-h-[700px] w-full flex-col overflow-hidden rounded-2xl border border-gray-700 bg-black"
         onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h2 className="text-xl font-semibold">Comments</h2>

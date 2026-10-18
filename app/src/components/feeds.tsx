@@ -299,7 +299,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                       </div>
                     )}
                     
-                <div className="relative flex justify-between items-center mt-2 w-1/2">
+                <div className="relative mt-3 flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-1 sm:w-1/2">
                     <div className="mt-0.5 cursor-pointer hover:scale-120 transition-transform duration-300">
                         <Link href={isDetailPage ? "#comments" : `/dashboard/post/${targetId}#comments`} aria-label="View comments">
                           <LuMessageCircle />
