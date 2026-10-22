@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { userQueries } from "./queries";
 import cloudinary from "@/lib/cloudinary";
+import { createNotification, deleteNotification } from "../notification/helpers";
 
 
 export const userResolvers = {
@@ -53,6 +54,13 @@ export const userResolvers = {
           following : { connect: {id : to} }
         }
       });
+
+      await createNotification({
+        type: "FOLLOW",
+        recipientId: to,
+        actorId: userId,
+      });
+
       return follow;  
     },
     
@@ -63,11 +71,19 @@ export const userResolvers = {
         }; 
       const userId = ctx.session?.user?.id
 
-      return await prisma.follows.delete({
+      const follow = await prisma.follows.delete({
         where:{
           followerId_followingId: {followerId : userId, followingId : to}
         }
-      })
+      });
+
+      await deleteNotification({
+        type: "FOLLOW",
+        recipientId: to,
+        actorId: userId,
+      });
+
+      return follow;
     },
 
     updateProfileImage : async (parent : any, {profileImgUrl, profileImgPublicId}: {profileImgUrl  : string, profileImgPublicId : string }, ctx : any) => {

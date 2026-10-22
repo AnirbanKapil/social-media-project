@@ -94,6 +94,8 @@ export type Mutation = {
   editPost: Post;
   followUser: Follows;
   likePost?: Maybe<Post>;
+  markAllNotificationsRead: Scalars['Boolean']['output'];
+  markNotificationRead: Scalars['Boolean']['output'];
   removeProfileImage?: Maybe<User>;
   repostPost?: Maybe<Post>;
   sendMessage: Message;
@@ -151,6 +153,11 @@ export type MutationLikePostArgs = {
 };
 
 
+export type MutationMarkNotificationReadArgs = {
+  notificationId: Scalars['String']['input'];
+};
+
+
 export type MutationRepostPostArgs = {
   postId: Scalars['String']['input'];
 };
@@ -185,6 +192,24 @@ export type MutationUnrepostPostArgs = {
 export type MutationUpdateProfileImageArgs = {
   profileImgPublicId?: InputMaybe<Scalars['String']['input']>;
   profileImgUrl: Scalars['String']['input'];
+};
+
+export type Notification = {
+  __typename?: 'Notification';
+  actor: User;
+  comment?: Maybe<Comment>;
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  post?: Maybe<Post>;
+  readAt?: Maybe<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
+};
+
+export type NotificationPage = {
+  __typename?: 'NotificationPage';
+  hasMore: Scalars['Boolean']['output'];
+  nextCursor?: Maybe<Scalars['String']['output']>;
+  notifications: Array<Notification>;
 };
 
 export type Post = {
@@ -223,10 +248,12 @@ export type Query = {
   getConversations: Array<Conversation>;
   getMediaPosts: PostPage;
   getMessages: Array<Message>;
+  getNotifications: NotificationPage;
   getPostById?: Maybe<Post>;
   getUserByUsername?: Maybe<User>;
   searchUsers: Array<User>;
   suggestedUsers: Array<User>;
+  unreadNotificationCount: Scalars['Int']['output'];
   users: Array<Maybe<User>>;
 };
 
@@ -256,6 +283,13 @@ export type QueryGetMediaPostsArgs = {
 
 export type QueryGetMessagesArgs = {
   conversationId: Scalars['String']['input'];
+};
+
+
+export type QueryGetNotificationsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  unreadOnly?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -379,6 +413,18 @@ export type LikePostMutationVariables = Exact<{
 
 export type LikePostMutation = { likePost: { id: string, isLiked: boolean, likesCount: number, author: { id: string } | null } | null };
 
+export type MarkAllNotificationsReadMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MarkAllNotificationsReadMutation = { markAllNotificationsRead: boolean };
+
+export type MarkNotificationReadMutationVariables = Exact<{
+  notificationId: string;
+}>;
+
+
+export type MarkNotificationReadMutation = { markNotificationRead: boolean };
+
 export type RepostPostMutationVariables = Exact<{
   postId: string;
 }>;
@@ -478,6 +524,15 @@ export type GetMessagesQueryVariables = Exact<{
 
 export type GetMessagesQuery = { getMessages: Array<{ id: string, content: string, createdAt: string, sender: { id: string, username: string, profileImgUrl: string | null } }> };
 
+export type GetNotificationsQueryVariables = Exact<{
+  first?: number | null | undefined;
+  after?: string | null | undefined;
+  unreadOnly?: boolean | null | undefined;
+}>;
+
+
+export type GetNotificationsQuery = { getNotifications: { nextCursor: string | null, hasMore: boolean, notifications: Array<{ id: string, type: string, readAt: string | null, createdAt: string, actor: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null }, post: { id: string, content: string, createdAt: string } | null, comment: { id: string, content: string } | null }> } };
+
 export type GetPostByIdQueryVariables = Exact<{
   postId: string;
 }>;
@@ -510,6 +565,11 @@ export type SearchUsersQueryVariables = Exact<{
 
 
 export type SearchUsersQuery = { searchUsers: Array<{ username: string, profileImgUrl: string | null, id: string }> };
+
+export type UnreadNotificationCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UnreadNotificationCountQuery = { unreadNotificationCount: number };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -760,6 +820,44 @@ export const useLikePostMutation = <
       {
     mutationKey: ['LikePost'],
     mutationFn: (variables?: LikePostMutationVariables) => useCustomFetcher<LikePostMutation, LikePostMutationVariables>(LikePostDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const MarkAllNotificationsReadDocument = new TypedDocumentString(`
+    mutation MarkAllNotificationsRead {
+  markAllNotificationsRead
+}
+    `);
+
+export const useMarkAllNotificationsReadMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MarkAllNotificationsReadMutation, TError, MarkAllNotificationsReadMutationVariables, TContext>) => {
+    
+    return useMutation<MarkAllNotificationsReadMutation, TError, MarkAllNotificationsReadMutationVariables, TContext>(
+      {
+    mutationKey: ['MarkAllNotificationsRead'],
+    mutationFn: (variables?: MarkAllNotificationsReadMutationVariables) => useCustomFetcher<MarkAllNotificationsReadMutation, MarkAllNotificationsReadMutationVariables>(MarkAllNotificationsReadDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const MarkNotificationReadDocument = new TypedDocumentString(`
+    mutation MarkNotificationRead($notificationId: String!) {
+  markNotificationRead(notificationId: $notificationId)
+}
+    `);
+
+export const useMarkNotificationReadMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MarkNotificationReadMutation, TError, MarkNotificationReadMutationVariables, TContext>) => {
+    
+    return useMutation<MarkNotificationReadMutation, TError, MarkNotificationReadMutationVariables, TContext>(
+      {
+    mutationKey: ['MarkNotificationRead'],
+    mutationFn: (variables?: MarkNotificationReadMutationVariables) => useCustomFetcher<MarkNotificationReadMutation, MarkNotificationReadMutationVariables>(MarkNotificationReadDocument, variables)(),
     ...options
   }
     )};
@@ -1276,6 +1374,55 @@ export const useGetMessagesQuery = <
 
 useGetMessagesQuery.getKey = (variables: GetMessagesQueryVariables) => ['GetMessages', variables];
 
+export const GetNotificationsDocument = new TypedDocumentString(`
+    query GetNotifications($first: Int, $after: String, $unreadOnly: Boolean) {
+  getNotifications(first: $first, after: $after, unreadOnly: $unreadOnly) {
+    notifications {
+      id
+      type
+      readAt
+      createdAt
+      actor {
+        id
+        username
+        profileImgUrl
+        firstName
+        lastName
+      }
+      post {
+        id
+        content
+        createdAt
+      }
+      comment {
+        id
+        content
+      }
+    }
+    nextCursor
+    hasMore
+  }
+}
+    `);
+
+export const useGetNotificationsQuery = <
+      TData = GetNotificationsQuery,
+      TError = unknown
+    >(
+      variables?: GetNotificationsQueryVariables,
+      options?: Omit<UseQueryOptions<GetNotificationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetNotificationsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetNotificationsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetNotifications'] : ['GetNotifications', variables],
+    queryFn: useCustomFetcher<GetNotificationsQuery, GetNotificationsQueryVariables>(GetNotificationsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetNotificationsQuery.getKey = (variables?: GetNotificationsQueryVariables) => variables === undefined ? ['GetNotifications'] : ['GetNotifications', variables];
+
 export const GetPostByIdDocument = new TypedDocumentString(`
     query GetPostById($postId: String!) {
   getPostById(postId: $postId) {
@@ -1492,6 +1639,30 @@ export const useSearchUsersQuery = <
     )};
 
 useSearchUsersQuery.getKey = (variables: SearchUsersQueryVariables) => ['SearchUsers', variables];
+
+export const UnreadNotificationCountDocument = new TypedDocumentString(`
+    query UnreadNotificationCount {
+  unreadNotificationCount
+}
+    `);
+
+export const useUnreadNotificationCountQuery = <
+      TData = UnreadNotificationCountQuery,
+      TError = unknown
+    >(
+      variables?: UnreadNotificationCountQueryVariables,
+      options?: Omit<UseQueryOptions<UnreadNotificationCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnreadNotificationCountQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<UnreadNotificationCountQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['UnreadNotificationCount'] : ['UnreadNotificationCount', variables],
+    queryFn: useCustomFetcher<UnreadNotificationCountQuery, UnreadNotificationCountQueryVariables>(UnreadNotificationCountDocument, variables),
+    ...options
+  }
+    )};
+
+useUnreadNotificationCountQuery.getKey = (variables?: UnreadNotificationCountQueryVariables) => variables === undefined ? ['UnreadNotificationCount'] : ['UnreadNotificationCount', variables];
 
 export const GetMeDocument = new TypedDocumentString(`
     query GetMe {

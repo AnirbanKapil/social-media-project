@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoHomeOutline } from "react-icons/io5";
 import { GoHash } from "react-icons/go";
-import { FaRegEnvelope, FaRegBookmark, FaRegUser } from "react-icons/fa";
+import { FaRegBell, FaRegEnvelope, FaRegBookmark, FaRegUser } from "react-icons/fa";
+import { NotificationBadge } from "./notifications/NotificationBadge";
 
 const mobileNavItems = [
   { title: "Home", icon: <IoHomeOutline />, link: "/dashboard" },
   { title: "Explore", icon: <GoHash />, link: "/dashboard/explore" },
+  { title: "Notifications", icon: <FaRegBell />, link: "/dashboard/notifications" },
   { title: "Messages", icon: <FaRegEnvelope />, link: "/messages" },
   { title: "Bookmarks", icon: <FaRegBookmark />, link: "/dashboard/bookmarks" },
   { title: "Profile", icon: <FaRegUser />, link: "/dashboard/userProfile" },
@@ -34,7 +36,10 @@ export function MobileNav() {
               isActive ? "text-indigo-400" : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            <span className="text-xl">{item.icon}</span>
+            <span className="relative text-xl">
+              {item.icon}
+              {item.link === "/dashboard/notifications" && <NotificationBadge />}
+            </span>
             <span>{item.title}</span>
           </Link>
         );

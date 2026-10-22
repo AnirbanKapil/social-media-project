@@ -3,12 +3,14 @@ import { GoHash } from "react-icons/go";
 import { FaRegBell , FaRegEnvelope , FaRegBookmark , FaRegUser } from "react-icons/fa";
 import { LuCircleDollarSign } from "react-icons/lu";
 import { SlOptions } from "react-icons/sl";
+import { NotificationBadge } from "./notifications/NotificationBadge";
 
 
 interface SideBarButtons {
     title : string,
     icon  : React.ReactNode,
-    link? : string
+    link? : string,
+    badge? : React.ReactNode
 
 }
 
@@ -27,7 +29,8 @@ export const SideBarMenuItems = () : SideBarButtons[] => { return  [
     {
         title : "Notifications",
         icon : <FaRegBell />,
-        link : "/dashboard/notifications"
+        link : "/dashboard/notifications",
+        badge : <NotificationBadge />
        },
        {
         title : "Messages",

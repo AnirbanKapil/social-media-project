@@ -1,5 +1,6 @@
 import { commentQueries } from "./queries";
 import prisma from "@/lib/prisma";
+import { createNotification } from "../notification/helpers";
 
 type CommentResolverContext = {
     prisma?: typeof prisma;
@@ -45,14 +46,33 @@ export const commentResolvers = {
              
             const commentPrisma = ctx.prisma ?? prisma;
 
-            return await commentPrisma.comment.create({
+            const post = await commentPrisma.post.findUnique({
+                where: { id: postId },
+                select: { id: true, authorId: true },
+            });
+
+            if (!post) {
+                throw new Error("Post not found");
+            }
+
+            const comment = await commentPrisma.comment.create({
                 data : {
                     postId,
                     content,
                     authorId : userId
                     
                 }
-             })
+             });
+
+            await createNotification({
+                type: "COMMENT",
+                recipientId: post.authorId,
+                actorId: userId,
+                postId: post.id,
+                commentId: comment.id,
+            });
+
+            return comment;
         },
 
         deleteComment : async (_parent: unknown, {commentId}: {commentId : string}, ctx: CommentResolverContext) => {

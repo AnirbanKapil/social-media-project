@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { postQueries } from "./queries";
+import { createNotification, deleteNotification } from "../notification/helpers";
 
 
 
@@ -178,6 +179,15 @@ export const postResolvers= {
       }; 
        const userId = ctx.session?.user?.id;
 
+       const existingLike = await prisma.like.findUnique({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+       });
+
        await prisma.like.upsert({
         where : {
           userId_postId: {
@@ -197,6 +207,15 @@ export const postResolvers= {
           id : postId
         }
        })
+
+       if (!existingLike && post) {
+         await createNotification({
+           type: "LIKE",
+           recipientId: post.authorId,
+           actorId: userId,
+           postId: post.id,
+         });
+       }
         
        return post;
     },
@@ -223,6 +242,15 @@ export const postResolvers= {
       const post = await prisma.post.findUnique({
       where: { id: postId },
       });
+
+      if (post) {
+        await deleteNotification({
+          type: "LIKE",
+          recipientId: post.authorId,
+          actorId: userId,
+          postId: post.id,
+        });
+      }
 
       return post;
     },
@@ -273,6 +301,15 @@ export const postResolvers= {
       };
 
       const targetId = source.repostOfId ?? source.id;
+      const original = source.repostOfId
+        ? await prisma.post.findUnique({ where: { id: targetId } })
+        : source;
+
+      const existingRepost = await prisma.post.findUnique({
+        where : {
+          authorId_repostOfId: { authorId : userId, repostOfId : targetId },
+        },
+      });
 
       await prisma.post.upsert({
         where : {
@@ -281,6 +318,15 @@ export const postResolvers= {
         update: {},
         create: { content: "", authorId : userId, repostOfId : targetId },
       });
+
+      if (!existingRepost && original) {
+        await createNotification({
+          type: "REPOST",
+          recipientId: original.authorId,
+          actorId: userId,
+          postId: original.id,
+        });
+      }
 
       return await prisma.post.findUnique({ where: { id: targetId } });
     },
@@ -297,6 +343,14 @@ export const postResolvers= {
       await prisma.post.deleteMany({
         where: { authorId : userId, repostOfId : targetId },
       });
+
+      if (source) {
+        await deleteNotification({
+          type: "REPOST",
+          actorId: userId,
+          postId: targetId,
+        });
+      }
 
       return await prisma.post.findUnique({ where: { id: targetId } });
     }
