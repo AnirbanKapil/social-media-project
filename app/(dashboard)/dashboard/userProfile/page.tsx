@@ -12,11 +12,13 @@ import "react-medium-image-zoom/dist/styles.css";
 import { useUpdateProfileImageMutation } from "@/lib/generated";
 import { CldUploadWidget } from "next-cloudinary";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 export default function ProfilePage() {
 
   const [isUploading, setIsUploading] = useState(false);
+  const queryClient = useQueryClient();
  
   const mutation = useUpdateProfileImageMutation();
   const removeProfileImageMutation = useRemoveProfileImageMutation();
@@ -48,6 +50,7 @@ export default function ProfilePage() {
           profileImgUrl : imageUrl,
           profileImgPublicId : imageId
         })
+        await queryClient.invalidateQueries({ queryKey: ["GetCurrentUser"] });
        } catch (error) {
         console.log(error)
        } finally {
@@ -58,6 +61,7 @@ export default function ProfilePage() {
     const removeProfilePic = async () => {
       try {
         await removeProfileImageMutation.mutateAsync({});
+        await queryClient.invalidateQueries({ queryKey: ["GetCurrentUser"] });
       } catch (error) {
          console.error(error);
       }
