@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSendMessageMutation } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
+import { Send } from "lucide-react";
 
 
 type Props = {
@@ -35,21 +36,28 @@ export default function MessageInput ({conversationId} : Props) {
     };
 
     return (
-        <div className="flex gap-2 p-4 border-t">
-           <input 
-            className="flex-1 border rounded-lg px-3 py-2 outline-none"
-            value={content}
-            onChange={(e)=> setContent(e.target.value)}
-            placeholder="Type a message..."
-           />
-           {content && <button
-            onClick={handleSend}
-            className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120">
-            Send
-           </button>
-           }
-           
-        </div>
-    )
-
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSend();
+        }}
+        className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#080b12] p-2 pl-4 shadow-lg shadow-black/10 focus-within:border-indigo-400/40"
+      >
+        <input
+          className="min-w-0 flex-1 bg-transparent py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500"
+          value={content}
+          onChange={(event) => setContent(event.target.value)}
+          placeholder="Write a message..."
+          aria-label="Write a message"
+        />
+        <button
+          type="submit"
+          disabled={!content.trim() || sendMessageMutation.isPending}
+          aria-label="Send message"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500 text-white transition-colors hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-white/[0.07] disabled:text-slate-500"
+        >
+          <Send size={17} />
+        </button>
+      </form>
+    );
 };
