@@ -1,4 +1,5 @@
 import { messageQueries } from "./queries"
+import { publishRealtimeEvent } from "@/lib/realtime-events";
 
 export const messageResolvers = {
     
@@ -147,6 +148,35 @@ export const messageResolvers = {
                 senderId : currentUserId
             }
         });
+
+        try {
+            const participants = await prisma.conversationParticipant.findMany({
+                where : {
+                    conversationId,
+                },
+                select : {
+                    userId: true,
+                },
+            });
+
+            await Promise.all(
+                participants
+                    .filter(({ userId }) => userId !== currentUserId)
+                    .map(({ userId }) =>
+                        publishRealtimeEvent({
+                            type: "message.created",
+                            recipientId: userId,
+                            recordId: message.id,
+                            conversationId,
+                        }),
+                    ),
+            );
+        } catch (error) {
+            console.error(
+                `Message "${message.id}" was saved, but realtime delivery could not be prepared:`,
+                error,
+            );
+        }
 
         return message;
      }

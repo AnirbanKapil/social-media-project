@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import type { NotificationType } from "@/app/generated/prisma/enums";
+import { publishRealtimeEvent } from "@/lib/realtime-events";
 
 type CreateNotificationInput = {
   type: NotificationType;
@@ -22,7 +23,7 @@ export async function createNotification(input: CreateNotificationInput) {
   }
 
   try {
-    return await prisma.notification.create({
+    const notification = await prisma.notification.create({
       data: {
         type: input.type,
         recipientId: input.recipientId,
@@ -31,6 +32,14 @@ export async function createNotification(input: CreateNotificationInput) {
         commentId: input.commentId ?? null,
       },
     });
+
+    await publishRealtimeEvent({
+      type: "notification.created",
+      recipientId: notification.recipientId,
+      recordId: notification.id,
+    });
+
+    return notification;
   } catch (error) {
     console.error("Failed to create notification:", error);
     return null;
