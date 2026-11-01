@@ -15,16 +15,19 @@ export type RealtimeEvent =
 
 export async function publishRealtimeEvent(
   event: RealtimeEvent,
-): Promise<boolean> {
+): Promise<number | null> {
   try {
     const channel = `realtime:user:${event.recipientId}`;
-    await getRedisClient().publish(channel, JSON.stringify(event));
-    return true;
+    const subscriberCount = await getRedisClient().publish(
+      channel,
+      JSON.stringify(event),
+    );
+    return subscriberCount;
   } catch (error) {
     console.error(
       `Failed to publish Redis event "${event.type}" for recipient "${event.recipientId}":`,
       error,
     );
-    return false;
+    return null;
   }
 }

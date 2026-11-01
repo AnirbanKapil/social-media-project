@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "codegen": "graphql-codegen --config codegen.ts --watch",
-    "dev:full": "concurrently \"npm run dev\" \"npm run codegen\""
+    "dev:full": "concurrently \"npm run dev\" \"npm run codegen\"",
+    "redis:check": "tsx scripts/check-redis.ts"
   },
   "dependencies": {
     "@apollo/server": "^5.5.0",
