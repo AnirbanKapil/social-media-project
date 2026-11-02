@@ -60,7 +60,12 @@ export function verifyRealtimeToken(token: string): RealtimeTokenPayload {
     throw new Error("Invalid realtime token signature");
   }
 
-  const payload = JSON.parse(decode(encodedPayload)) as RealtimeTokenPayload;
+  let payload: RealtimeTokenPayload;
+  try {
+    payload = JSON.parse(decode(encodedPayload)) as RealtimeTokenPayload;
+  } catch {
+    throw new Error("Invalid realtime token payload");
+  }
   if (
     typeof payload.userId !== "string" ||
     payload.userId.length === 0 ||
