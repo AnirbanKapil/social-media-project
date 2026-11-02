@@ -52,19 +52,29 @@ const subscriber = new Redis(redisUrl, {
 
 const connections = new Map<string, Set<SseResponse>>();
 let redisReady = false;
+let redisSubscribed = false;
 
 subscriber.on("ready", () => {
-  redisReady = true;
-  console.log("Realtime Redis subscriber is ready");
+  void subscriber.psubscribe("realtime:user:*").then(() => {
+    redisReady = true;
+    redisSubscribed = true;
+    console.log("Realtime Redis subscriber is ready and subscribed");
+  }).catch((error) => {
+    redisReady = false;
+    redisSubscribed = false;
+    console.error("Failed to subscribe to realtime Redis channels:", error);
+  });
 });
 
 subscriber.on("error", (error) => {
   redisReady = false;
+  redisSubscribed = false;
   console.error("Realtime Redis subscriber error:", error);
 });
 
 subscriber.on("end", () => {
   redisReady = false;
+  redisSubscribed = false;
   console.warn("Realtime Redis subscriber disconnected");
 });
 
@@ -86,8 +96,9 @@ function removeConnection(userId: string, response: SseResponse): void {
 
 app.get("/health", (_request, response) => {
   response.json({
-    status: redisReady ? "ok" : "degraded",
+    status: redisSubscribed ? "ok" : "degraded",
     redisReady,
+    redisSubscribed,
     connectedUsers: connections.size,
   });
 });
@@ -124,10 +135,6 @@ app.get("/events", (request, response) => {
   });
 });
 
-subscriber.psubscribe("realtime:user:*").catch((error) => {
-  console.error("Failed to subscribe to realtime Redis channels:", error);
-});
-
 subscriber.on("pmessage", (_pattern, channel, message) => {
   let event: RealtimeEvent;
   try {
@@ -144,6 +151,14 @@ subscriber.on("pmessage", (_pattern, channel, message) => {
     typeof event.recordId !== "string"
   ) {
     console.error(`Ignoring invalid realtime event from ${channel}`);
+    return;
+  }
+
+  const expectedChannel = `realtime:user:${event.recipientId}`;
+  if (channel !== expectedChannel) {
+    console.error(
+      `Ignoring realtime event whose channel "${channel}" does not match recipient "${event.recipientId}"`,
+    );
     return;
   }
 
