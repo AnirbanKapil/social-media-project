@@ -4,14 +4,20 @@ import ChatWindow from "../src/components/message/ChatWindow";
 import ConversationList from "../src/components/message/ConversationList";
 import { useState } from "react";
 import { useGetConversationsQuery } from "@/lib/generated";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 
 export default function MessagesPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const initialConversationId = searchParams.get("conversationId");
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(initialConversationId);
   const { data, isLoading, error } = useGetConversationsQuery();
+
+  const handleBack = () => {
+    setSelectedConversationId(null);
+    router.replace("/messages");
+  };
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden bg-[#080b12] px-4 py-5 text-slate-100 sm:px-7 sm:py-7 lg:px-10">
@@ -45,7 +51,7 @@ export default function MessagesPage() {
           <ChatWindow
             conversationId={selectedConversationId}
             conversations={data?.getConversations ?? []}
-            onBack={() => setSelectedConversationId(null)}
+            onBack={handleBack}
           />
         </div>
       </section>

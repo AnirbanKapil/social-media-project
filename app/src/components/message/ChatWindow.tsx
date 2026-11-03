@@ -9,7 +9,6 @@ import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
 import { GetConversationsQuery } from "@/lib/generated"
 import Link from "next/link";
-import { IoMdArrowRoundBack } from "react-icons/io";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 
 type Props = {
@@ -81,18 +80,7 @@ export default function ChatWindow({conversationId,conversations,onBack} : Props
 
   return (
     <div className="flex h-full min-h-0 w-full flex-col bg-[#0d111b]">
-      <div className="flex shrink-0 items-center border-b border-white/10 lg:hidden">
-        <button
-          type="button"
-          onClick={() => onBack?.()}
-          aria-label="Back to conversations"
-          className="flex items-center gap-2 px-4 py-3 text-sm text-slate-400 transition-colors hover:text-white"
-        >
-          <IoMdArrowRoundBack size={19} />
-          Inbox
-        </button>
-      </div>
-      {otherParticipant && <ChatHeader username={otherParticipant.username} />}
+      <ChatHeader username={otherParticipant?.username} onBack={onBack} />
 
       <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">
         {data?.getMessages.length ? (
