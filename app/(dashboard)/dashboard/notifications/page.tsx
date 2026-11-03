@@ -28,7 +28,6 @@ export default function NotificationsPage() {
   const markAll = useMarkAllNotificationsReadMutation();
 
   const { data: unreadData } = useUnreadNotificationCountQuery(undefined, {
-    refetchInterval: 5000,
     refetchOnWindowFocus: true,
   });
 
@@ -50,7 +49,6 @@ export default function NotificationsPage() {
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.getNotifications.nextCursor ?? undefined,
     staleTime: 1000 * 30,
-    refetchInterval: 5000,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });

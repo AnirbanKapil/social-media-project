@@ -4,7 +4,6 @@ import { useUnreadNotificationCountQuery } from "@/lib/generated";
 
 export function NotificationBadge() {
   const { data } = useUnreadNotificationCountQuery(undefined, {
-    refetchInterval: 5000,
     refetchOnWindowFocus: true,
   });
 

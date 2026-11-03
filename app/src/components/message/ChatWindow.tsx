@@ -25,7 +25,6 @@ export default function ChatWindow({conversationId,conversations,onBack} : Props
     },
     {
       enabled : !!conversationId,
-      refetchInterval: 5000,
     }
   )
   
