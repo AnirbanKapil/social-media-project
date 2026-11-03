@@ -1,5 +1,7 @@
 "use client"
 
+import { Fragment } from "react";
+import { toDate } from "../notifications/formatTime";
 import { useGetMessagesQuery } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { Loader } from "../loader";
@@ -15,6 +17,20 @@ type Props = {
   conversations: GetConversationsQuery["getConversations"];
   onBack?: () => void;
 };
+
+const dayNumber = (date: Date) =>
+  Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86_400_000;
+
+function formatDayLabel(date: Date) {
+  const diff = dayNumber(new Date()) - dayNumber(date);
+  if (diff === 0) return "Today";
+  if (diff === 1) return "Yesterday";
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: date.getFullYear() === new Date().getFullYear() ? undefined : "numeric",
+  });
+}
 
 export default function ChatWindow({conversationId,conversations,onBack} : Props) {
   
@@ -80,26 +96,42 @@ export default function ChatWindow({conversationId,conversations,onBack} : Props
 
       <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">
         {data?.getMessages.length ? (
-          data.getMessages.map((message) => {
+          data.getMessages.map((message, index) => {
             const isMine = message.sender.id === currentUser?.id;
+            const messageDate = toDate(message.createdAt);
+            const previousMessage =
+              index > 0 ? data.getMessages[index - 1] : null;
+            const showDayDivider =
+              !previousMessage ||
+              dayNumber(toDate(previousMessage.createdAt)) !== dayNumber(messageDate);
+
             return (
-              <div key={message.id} className={`mb-4 flex ${isMine ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 sm:max-w-[70%] ${
-                    isMine
-                      ? "rounded-br-md bg-indigo-500 text-white"
-                      : "rounded-bl-md border border-white/[0.07] bg-white/[0.055] text-slate-100"
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap break-words text-sm leading-6">{message.content}</p>
-                  <p className={`mt-1.5 text-right text-[11px] ${isMine ? "text-indigo-100/70" : "text-slate-500"}`}>
-                    {new Date(Number(message.createdAt)).toLocaleTimeString([], {
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
-                  </p>
+              <Fragment key={message.id}>
+                {showDayDivider && (
+                  <div className="my-4 flex items-center gap-3 text-[11px] uppercase tracking-wide text-slate-500">
+                    <span className="h-px flex-1 bg-white/10" />
+                    <span>{formatDayLabel(messageDate)}</span>
+                    <span className="h-px flex-1 bg-white/10" />
+                  </div>
+                )}
+                <div className={`mb-4 flex ${isMine ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 sm:max-w-[70%] ${
+                      isMine
+                        ? "rounded-br-md bg-indigo-500 text-white"
+                        : "rounded-bl-md border border-white/[0.07] bg-white/[0.055] text-slate-100"
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap break-words text-sm leading-6">{message.content}</p>
+                    <p className={`mt-1.5 text-right text-[11px] ${isMine ? "text-indigo-100/70" : "text-slate-500"}`}>
+                      {messageDate.toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Fragment>
             );
           })
         ) : (
