@@ -46,6 +46,28 @@ export function RealtimeProvider({
       ]);
     };
 
+    const handleConnectionRecovery = () => {
+      invalidateDatabaseQueries();
+    };
+
+    const handleWindowFocus = () => {
+      handleConnectionRecovery();
+    };
+
+    const handleVisibilityRecovery = () => {
+      if (document.visibilityState === "visible") {
+        handleConnectionRecovery();
+      }
+    };
+
+    const handleOnlineRecovery = () => {
+      invalidateDatabaseQueries();
+      if (eventSource?.readyState === EventSource.CLOSED) {
+        eventSource.close();
+        void connect();
+      }
+    };
+
     const connect = async () => {
       try {
         const response = await fetch("/api/realtime/token", {
@@ -159,9 +181,15 @@ export function RealtimeProvider({
     };
 
     void connect();
+    window.addEventListener("focus", handleWindowFocus);
+    window.addEventListener("online", handleOnlineRecovery);
+    document.addEventListener("visibilitychange", handleVisibilityRecovery);
 
     return () => {
       cancelled = true;
+      window.removeEventListener("focus", handleWindowFocus);
+      window.removeEventListener("online", handleOnlineRecovery);
+      document.removeEventListener("visibilitychange", handleVisibilityRecovery);
       eventSource?.close();
       if (reconnectTimer) {
         clearTimeout(reconnectTimer);

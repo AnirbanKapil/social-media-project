@@ -129,6 +129,7 @@ app.get("/events", (request, response) => {
   response.setHeader("Connection", "keep-alive");
   response.setHeader("X-Accel-Buffering", "no");
   response.flushHeaders();
+  response.write("retry: 5000\n");
   response.write(": connected\n\n");
 
   addConnection(userId, response);
@@ -174,6 +175,7 @@ subscriber.on("pmessage", (_pattern, channel, message) => {
     }
 
     connection.write(`event: ${event.type}\n`);
+    connection.write(`id: ${event.recordId}\n`);
     connection.write(`data: ${JSON.stringify(event)}\n\n`);
   }
 });
