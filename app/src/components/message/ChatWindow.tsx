@@ -1,9 +1,11 @@
 "use client"
 
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { toDate } from "../notifications/formatTime";
 import { useGetMessagesQuery } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
+import { useMarkConversationReadMutation } from "@/lib/generated";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "../loader";
 import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
@@ -44,6 +46,24 @@ export default function ChatWindow({conversationId,conversations,onBack} : Props
   )
   
   const currentUser = currentUserData?.currUser
+  const queryClient = useQueryClient();
+  const { mutate: markConversationRead } = useMarkConversationReadMutation();
+
+  const lastMessageId = data?.getMessages.at(-1)?.id;
+
+  useEffect(() => {
+    if (!conversationId) return;
+
+    markConversationRead(
+      { conversationId },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["UnreadMessageCount"] });
+          queryClient.invalidateQueries({ queryKey: ["GetConversations"] });
+        },
+      },
+    );
+  }, [conversationId, lastMessageId, markConversationRead, queryClient]);
    
   if (!conversationId) {
     return (

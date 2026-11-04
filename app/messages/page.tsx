@@ -2,7 +2,7 @@
 
 import ChatWindow from "../src/components/message/ChatWindow";
 import ConversationList from "../src/components/message/ConversationList";
-import { useState } from "react";
+import { useCallback } from "react";
 import { useGetConversationsQuery } from "@/lib/generated";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MessageCircle, ShieldCheck } from "lucide-react";
@@ -10,13 +10,21 @@ import { MessageCircle, ShieldCheck } from "lucide-react";
 export default function MessagesPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const initialConversationId = searchParams.get("conversationId");
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(initialConversationId);
+  const selectedConversationId = searchParams.get("conversationId");
   const { data, isLoading, error } = useGetConversationsQuery();
 
+  const selectConversation = useCallback(
+    (conversationId: string | null) => {
+      const target = conversationId
+        ? `/messages?conversationId=${encodeURIComponent(conversationId)}`
+        : "/messages";
+      router.replace(target, { scroll: false });
+    },
+    [router],
+  );
+
   const handleBack = () => {
-    setSelectedConversationId(null);
-    router.replace("/messages");
+    selectConversation(null);
   };
 
   return (
@@ -44,7 +52,7 @@ export default function MessagesPage() {
             isLoading={isLoading}
             error={error as Error | null}
             selectedConversationId={selectedConversationId}
-            setSelectedConversationId={setSelectedConversationId}
+            setSelectedConversationId={selectConversation}
           />
         </div>
         <div className={`${selectedConversationId ? "flex" : "hidden lg:flex"} h-full min-w-0 flex-1`}>

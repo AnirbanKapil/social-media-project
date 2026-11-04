@@ -10,6 +10,9 @@ type RealtimeEvent = {
   recipientId: string;
   recordId: string;
   conversationId?: string;
+  senderUsername?: string;
+  senderName?: string;
+  preview?: string;
 };
 
 const redisUrl = process.env.REDIS_URL;

@@ -4,6 +4,7 @@ import { FaRegBell , FaRegEnvelope , FaRegBookmark , FaRegUser } from "react-ico
 import { LuCircleDollarSign } from "react-icons/lu";
 import { SlOptions } from "react-icons/sl";
 import { NotificationBadge } from "./notifications/NotificationBadge";
+import { MessageBadge } from "./message/MessageBadge";
 
 
 interface SideBarButtons {
@@ -34,8 +35,9 @@ export const SideBarMenuItems = () : SideBarButtons[] => { return  [
        },
        {
         title : "Messages",
-        icon : <FaRegEnvelope />,
-        link : "/messages"
+        icon  : <FaRegEnvelope />,
+        link : "/messages",
+        badge : <MessageBadge />
        },
        {
         title : "Bookmarks",

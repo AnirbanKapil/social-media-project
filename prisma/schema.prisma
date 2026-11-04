@@ -131,6 +131,7 @@ model ConversationParticipant {
   userId String
 
   joinedAt DateTime @default(now())
+  lastReadAt DateTime?
 
   @@id([conversationId, userId])
 }

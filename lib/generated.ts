@@ -45,6 +45,7 @@ export type Conversation = {
   lastMessage?: Maybe<Message>;
   messages: Array<Message>;
   participants: Array<User>;
+  unreadCount: Scalars['Int']['output'];
   updatedAt: Scalars['String']['output'];
 };
 
@@ -95,6 +96,7 @@ export type Mutation = {
   followUser: Follows;
   likePost?: Maybe<Post>;
   markAllNotificationsRead: Scalars['Boolean']['output'];
+  markConversationRead: Scalars['Boolean']['output'];
   markNotificationRead: Scalars['Boolean']['output'];
   removeProfileImage?: Maybe<User>;
   repostPost?: Maybe<Post>;
@@ -150,6 +152,11 @@ export type MutationFollowUserArgs = {
 
 export type MutationLikePostArgs = {
   postId: Scalars['String']['input'];
+};
+
+
+export type MutationMarkConversationReadArgs = {
+  conversationId: Scalars['String']['input'];
 };
 
 
@@ -253,6 +260,7 @@ export type Query = {
   getUserByUsername?: Maybe<User>;
   searchUsers: Array<User>;
   suggestedUsers: Array<User>;
+  unreadMessageCount: Scalars['Int']['output'];
   unreadNotificationCount: Scalars['Int']['output'];
   users: Array<Maybe<User>>;
 };
@@ -418,6 +426,13 @@ export type MarkAllNotificationsReadMutationVariables = Exact<{ [key: string]: n
 
 export type MarkAllNotificationsReadMutation = { markAllNotificationsRead: boolean };
 
+export type MarkConversationReadMutationVariables = Exact<{
+  conversationId: string;
+}>;
+
+
+export type MarkConversationReadMutation = { markConversationRead: boolean };
+
 export type MarkNotificationReadMutationVariables = Exact<{
   notificationId: string;
 }>;
@@ -502,7 +517,7 @@ export type GetCommentsQuery = { getComments: Array<{ id: string, content: strin
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConversationsQuery = { getConversations: Array<{ id: string, participants: Array<{ id: string, username: string, profileImgUrl: string | null }>, lastMessage: { content: string, createdAt: string } | null }> };
+export type GetConversationsQuery = { getConversations: Array<{ id: string, unreadCount: number, participants: Array<{ id: string, username: string, profileImgUrl: string | null }>, lastMessage: { content: string, createdAt: string } | null }> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -565,6 +580,11 @@ export type SearchUsersQueryVariables = Exact<{
 
 
 export type SearchUsersQuery = { searchUsers: Array<{ username: string, profileImgUrl: string | null, id: string }> };
+
+export type UnreadMessageCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UnreadMessageCountQuery = { unreadMessageCount: number };
 
 export type UnreadNotificationCountQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -839,6 +859,25 @@ export const useMarkAllNotificationsReadMutation = <
       {
     mutationKey: ['MarkAllNotificationsRead'],
     mutationFn: (variables?: MarkAllNotificationsReadMutationVariables) => useCustomFetcher<MarkAllNotificationsReadMutation, MarkAllNotificationsReadMutationVariables>(MarkAllNotificationsReadDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const MarkConversationReadDocument = new TypedDocumentString(`
+    mutation MarkConversationRead($conversationId: String!) {
+  markConversationRead(conversationId: $conversationId)
+}
+    `);
+
+export const useMarkConversationReadMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MarkConversationReadMutation, TError, MarkConversationReadMutationVariables, TContext>) => {
+    
+    return useMutation<MarkConversationReadMutation, TError, MarkConversationReadMutationVariables, TContext>(
+      {
+    mutationKey: ['MarkConversationRead'],
+    mutationFn: (variables?: MarkConversationReadMutationVariables) => useCustomFetcher<MarkConversationReadMutation, MarkConversationReadMutationVariables>(MarkConversationReadDocument, variables)(),
     ...options
   }
     )};
@@ -1207,6 +1246,7 @@ export const GetConversationsDocument = new TypedDocumentString(`
     query GetConversations {
   getConversations {
     id
+    unreadCount
     participants {
       id
       username
@@ -1639,6 +1679,30 @@ export const useSearchUsersQuery = <
     )};
 
 useSearchUsersQuery.getKey = (variables: SearchUsersQueryVariables) => ['SearchUsers', variables];
+
+export const UnreadMessageCountDocument = new TypedDocumentString(`
+    query UnreadMessageCount {
+  unreadMessageCount
+}
+    `);
+
+export const useUnreadMessageCountQuery = <
+      TData = UnreadMessageCountQuery,
+      TError = unknown
+    >(
+      variables?: UnreadMessageCountQueryVariables,
+      options?: Omit<UseQueryOptions<UnreadMessageCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnreadMessageCountQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<UnreadMessageCountQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['UnreadMessageCount'] : ['UnreadMessageCount', variables],
+    queryFn: useCustomFetcher<UnreadMessageCountQuery, UnreadMessageCountQueryVariables>(UnreadMessageCountDocument, variables),
+    ...options
+  }
+    )};
+
+useUnreadMessageCountQuery.getKey = (variables?: UnreadMessageCountQueryVariables) => variables === undefined ? ['UnreadMessageCount'] : ['UnreadMessageCount', variables];
 
 export const UnreadNotificationCountDocument = new TypedDocumentString(`
     query UnreadNotificationCount {

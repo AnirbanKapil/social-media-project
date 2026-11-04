@@ -11,7 +11,7 @@ type Props = {
   isLoading: boolean;
   error: Error | null;
   selectedConversationId: string | null;
-  setSelectedConversationId: React.Dispatch<React.SetStateAction<string | null>>;
+  setSelectedConversationId: (conversationId: string | null) => void;
 };
 
 export default function ConversationList({
@@ -89,6 +89,7 @@ export default function ConversationList({
             const username = otherParticipant?.username ?? "Conversation";
             const initials = username.slice(0, 2).toUpperCase();
             const isSelected = selectedConversationId === conv.id;
+            const unreadCount = conv.unreadCount;
 
             return (
               <button
@@ -107,10 +108,22 @@ export default function ConversationList({
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium text-slate-100">{username}</span>
-                  <span className="mt-1 block truncate text-xs text-slate-400">
+                  <span
+                    className={`mt-1 block truncate text-xs ${
+                      unreadCount > 0 ? "font-medium text-slate-200" : "text-slate-400"
+                    }`}
+                  >
                     {conv.lastMessage?.content ?? "Start a conversation"}
                   </span>
                 </span>
+                {unreadCount > 0 && (
+                  <span
+                    aria-label={`${unreadCount} unread messages`}
+                    className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500 px-1.5 text-[11px] font-bold leading-none text-white"
+                  >
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </button>
             );
           })

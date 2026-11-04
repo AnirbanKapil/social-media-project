@@ -6,6 +6,9 @@ export type RealtimeEvent =
       recipientId: string;
       recordId: string;
       conversationId: string;
+      senderUsername?: string;
+      senderName?: string;
+      preview?: string;
     }
   | {
       type: "notification.created";

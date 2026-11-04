@@ -1,10 +1,33 @@
-import { messageQueries } from "./queries"
+import type { PrismaClient } from "@/app/generated/prisma/client";
+import { getUnreadCountForConversation, messageQueries } from "./queries"
 import { publishRealtimeEvent } from "@/lib/realtime-events";
+
+type ResolverContext = {
+  session?: { user?: { id?: string | null } | null } | null;
+  prisma: PrismaClient;
+};
 
 export const messageResolvers = {
     
     
     Conversation: {
+     unreadCount: async (
+       parent: { id: string; unreadCount?: number },
+       _args: unknown,
+       ctx: ResolverContext,
+     ) => {
+       if (typeof parent.unreadCount === "number") {
+         return parent.unreadCount;
+       }
+
+       const userId = ctx.session?.user?.id;
+       if (!userId) {
+         return 0;
+       }
+
+       return getUnreadCountForConversation(ctx.prisma, userId, parent.id);
+     },
+
      participants: async (parent: any, _args : any, ctx : any) => {
       const participants = await ctx.prisma.conversationParticipant.findMany({
       where: {
@@ -121,6 +144,44 @@ export const messageResolvers = {
             return conversation;
      },
 
+     markConversationRead : async (
+       _parent: unknown,
+       { conversationId }: { conversationId: string },
+       ctx: ResolverContext,
+     ) => {
+        const userId = ctx.session?.user?.id;
+        if (!userId) {
+             throw new Error("Not authenticated");
+           };
+        const { prisma } = ctx;
+
+        const participant = await prisma.conversationParticipant.findUnique({
+            where : {
+                conversationId_userId : {
+                     conversationId,
+                     userId
+                }
+            }
+        });
+        if (!participant) {
+          throw new Error("You are not a participant in this conversation.");
+        }
+
+        await prisma.conversationParticipant.update({
+            where : {
+                conversationId_userId : {
+                     conversationId,
+                     userId
+                }
+            },
+            data : {
+                lastReadAt : new Date()
+            }
+        });
+
+        return true;
+     },
+
      sendMessage : async (parent : any, { conversationId,content }: {conversationId : string, content: string }, ctx : any) => {
         if (!ctx?.session?.user) {
              throw new Error("Not authenticated");
@@ -159,6 +220,23 @@ export const messageResolvers = {
                 },
             });
 
+            const sender = await prisma.user.findUnique({
+                where : {
+                    id : currentUserId,
+                },
+                select : {
+                    username: true,
+                    firstName: true,
+                    lastName: true,
+                },
+            });
+
+            const senderName =
+                [sender?.firstName, sender?.lastName].filter(Boolean).join(" ") ||
+                sender?.username;
+            const preview =
+                content.length > 140 ? `${content.slice(0, 140)}...` : content;
+
             await Promise.all(
                 participants
                     .filter(({ userId }) => userId !== currentUserId)
@@ -168,6 +246,9 @@ export const messageResolvers = {
                             recipientId: userId,
                             recordId: message.id,
                             conversationId,
+                            senderUsername: sender?.username,
+                            senderName,
+                            preview,
                         }),
                     ),
             );

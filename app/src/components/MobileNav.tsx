@@ -6,6 +6,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { GoHash } from "react-icons/go";
 import { FaRegBell, FaRegEnvelope, FaRegBookmark, FaRegUser } from "react-icons/fa";
 import { NotificationBadge } from "./notifications/NotificationBadge";
+import { MessageBadge } from "./message/MessageBadge";
 
 const mobileNavItems = [
   { title: "Home", icon: <IoHomeOutline />, link: "/dashboard" },
@@ -39,6 +40,7 @@ export function MobileNav() {
             <span className="relative text-xl">
               {item.icon}
               {item.link === "/dashboard/notifications" && <NotificationBadge />}
+              {item.link === "/messages" && <MessageBadge />}
             </span>
             <span>{item.title}</span>
           </Link>

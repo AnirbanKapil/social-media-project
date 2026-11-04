@@ -6,6 +6,7 @@ export const GetConversationsDocument =  gql`
     query GetConversations {
        getConversations {
        id
+       unreadCount
        participants {
            id
            username

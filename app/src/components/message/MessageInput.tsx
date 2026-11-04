@@ -30,6 +30,9 @@ export default function MessageInput ({conversationId} : Props) {
           queryClient.invalidateQueries({
           queryKey: ["GetMessages"]
           });
+          queryClient.invalidateQueries({
+          queryKey: ["GetConversations"]
+          });
         } catch (error) {
             console.log(error)
         }

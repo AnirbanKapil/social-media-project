@@ -8,6 +8,7 @@ export const messageTypeDefs = gql`
     participants: [User!]!
     messages: [Message!]!
     lastMessage: Message
+    unreadCount: Int!
     createdAt: String!
     updatedAt: String!
   }
@@ -24,10 +25,12 @@ export const messageTypeDefs = gql`
   type Query {
     getConversations: [Conversation!]!
     getMessages(conversationId: String!): [Message!]!
+    unreadMessageCount: Int!
   }
 
   type Mutation {
     createConversation(userId: String) : Conversation
     sendMessage(conversationId: String! content: String!) : Message!
+    markConversationRead(conversationId: String!): Boolean!
   }
 `;

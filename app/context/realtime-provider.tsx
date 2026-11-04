@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "./toast-provider";
 
 type RealtimeTokenResponse = {
   token: string;
@@ -16,6 +17,7 @@ export function RealtimeProvider({
 }) {
   const { status } = useSession();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (status !== "authenticated") {
@@ -39,6 +41,7 @@ export function RealtimeProvider({
         queryClient.invalidateQueries({ queryKey: ["GetConversations"] }),
         queryClient.invalidateQueries({ queryKey: ["GetNotifications"] }),
         queryClient.invalidateQueries({ queryKey: ["UnreadNotificationCount"] }),
+        queryClient.invalidateQueries({ queryKey: ["UnreadMessageCount"] }),
       ]);
     };
 
@@ -74,10 +77,18 @@ export function RealtimeProvider({
         eventSource.onopen = invalidateDatabaseQueries;
 
         eventSource.addEventListener("message.created", (event) => {
-          let messagePayload: { conversationId?: string };
+          let messagePayload: {
+            conversationId?: string;
+            senderUsername?: string;
+            senderName?: string;
+            preview?: string;
+          };
           try {
             messagePayload = JSON.parse(event.data) as {
               conversationId?: string;
+              senderUsername?: string;
+              senderName?: string;
+              preview?: string;
             };
           } catch {
             console.error("Received an invalid message.created event");
@@ -89,13 +100,34 @@ export function RealtimeProvider({
             return;
           }
 
-          void queryClient.invalidateQueries({
-            queryKey: ["GetMessages", {
-              conversationId: messagePayload.conversationId,
-            }],
-          });
-          void queryClient.invalidateQueries({
-            queryKey: ["GetConversations"],
+          const conversationId = messagePayload.conversationId;
+
+          void Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: ["GetMessages", { conversationId }],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["GetConversations"] }),
+            queryClient.invalidateQueries({ queryKey: ["UnreadMessageCount"] }),
+          ]);
+
+          const activeConversationId =
+            typeof window === "undefined"
+              ? null
+              : new URLSearchParams(window.location.search).get("conversationId");
+
+          if (activeConversationId === conversationId) {
+            return;
+          }
+
+          const senderName =
+            messagePayload.senderName?.trim() ||
+            messagePayload.senderUsername?.trim() ||
+            "Someone";
+
+          showToast({
+            title: `${senderName} sent you a message`,
+            description: messagePayload.preview,
+            href: `/messages?conversationId=${encodeURIComponent(conversationId)}`,
           });
         });
 
@@ -135,7 +167,7 @@ export function RealtimeProvider({
       }
       invalidateDatabaseQueries();
     };
-  }, [queryClient, status]);
+  }, [queryClient, showToast, status]);
 
   return children;
 }
