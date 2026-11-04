@@ -58,6 +58,24 @@ export const notificationResolvers = {
 
       return true;
     },
+
+    markNotificationsSeen: async (
+      _parent: unknown,
+      _args: unknown,
+      ctx: NotificationResolverContext,
+    ) => {
+      const userId = ctx.session?.user?.id;
+      if (!userId) {
+        throw new Error("Not authenticated");
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { notificationsSeenAt: new Date() },
+      });
+
+      return true;
+    },
   },
 
   Query: notificationQueries,

@@ -98,6 +98,7 @@ export type Mutation = {
   markAllNotificationsRead: Scalars['Boolean']['output'];
   markConversationRead: Scalars['Boolean']['output'];
   markNotificationRead: Scalars['Boolean']['output'];
+  markNotificationsSeen: Scalars['Boolean']['output'];
   removeProfileImage?: Maybe<User>;
   repostPost?: Maybe<Post>;
   sendMessage: Message;
@@ -262,6 +263,7 @@ export type Query = {
   suggestedUsers: Array<User>;
   unreadMessageCount: Scalars['Int']['output'];
   unreadNotificationCount: Scalars['Int']['output'];
+  unseenNotificationCount: Scalars['Int']['output'];
   users: Array<Maybe<User>>;
 };
 
@@ -440,6 +442,11 @@ export type MarkNotificationReadMutationVariables = Exact<{
 
 export type MarkNotificationReadMutation = { markNotificationRead: boolean };
 
+export type MarkNotificationsSeenMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MarkNotificationsSeenMutation = { markNotificationsSeen: boolean };
+
 export type RepostPostMutationVariables = Exact<{
   postId: string;
 }>;
@@ -590,6 +597,11 @@ export type UnreadNotificationCountQueryVariables = Exact<{ [key: string]: never
 
 
 export type UnreadNotificationCountQuery = { unreadNotificationCount: number };
+
+export type UnseenNotificationCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UnseenNotificationCountQuery = { unseenNotificationCount: number };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -897,6 +909,25 @@ export const useMarkNotificationReadMutation = <
       {
     mutationKey: ['MarkNotificationRead'],
     mutationFn: (variables?: MarkNotificationReadMutationVariables) => useCustomFetcher<MarkNotificationReadMutation, MarkNotificationReadMutationVariables>(MarkNotificationReadDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const MarkNotificationsSeenDocument = new TypedDocumentString(`
+    mutation MarkNotificationsSeen {
+  markNotificationsSeen
+}
+    `);
+
+export const useMarkNotificationsSeenMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<MarkNotificationsSeenMutation, TError, MarkNotificationsSeenMutationVariables, TContext>) => {
+    
+    return useMutation<MarkNotificationsSeenMutation, TError, MarkNotificationsSeenMutationVariables, TContext>(
+      {
+    mutationKey: ['MarkNotificationsSeen'],
+    mutationFn: (variables?: MarkNotificationsSeenMutationVariables) => useCustomFetcher<MarkNotificationsSeenMutation, MarkNotificationsSeenMutationVariables>(MarkNotificationsSeenDocument, variables)(),
     ...options
   }
     )};
@@ -1727,6 +1758,30 @@ export const useUnreadNotificationCountQuery = <
     )};
 
 useUnreadNotificationCountQuery.getKey = (variables?: UnreadNotificationCountQueryVariables) => variables === undefined ? ['UnreadNotificationCount'] : ['UnreadNotificationCount', variables];
+
+export const UnseenNotificationCountDocument = new TypedDocumentString(`
+    query UnseenNotificationCount {
+  unseenNotificationCount
+}
+    `);
+
+export const useUnseenNotificationCountQuery = <
+      TData = UnseenNotificationCountQuery,
+      TError = unknown
+    >(
+      variables?: UnseenNotificationCountQueryVariables,
+      options?: Omit<UseQueryOptions<UnseenNotificationCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnseenNotificationCountQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<UnseenNotificationCountQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['UnseenNotificationCount'] : ['UnseenNotificationCount', variables],
+    queryFn: useCustomFetcher<UnseenNotificationCountQuery, UnseenNotificationCountQueryVariables>(UnseenNotificationCountDocument, variables),
+    ...options
+  }
+    )};
+
+useUnseenNotificationCountQuery.getKey = (variables?: UnseenNotificationCountQueryVariables) => variables === undefined ? ['UnseenNotificationCount'] : ['UnseenNotificationCount', variables];
 
 export const GetMeDocument = new TypedDocumentString(`
     query GetMe {

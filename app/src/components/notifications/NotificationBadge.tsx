@@ -1,13 +1,13 @@
 "use client";
 
-import { useUnreadNotificationCountQuery } from "@/lib/generated";
+import { useUnseenNotificationCountQuery } from "@/lib/generated";
 
 export function NotificationBadge() {
-  const { data } = useUnreadNotificationCountQuery(undefined, {
+  const { data } = useUnseenNotificationCountQuery(undefined, {
     refetchOnWindowFocus: true,
   });
 
-  const count = data?.unreadNotificationCount ?? 0;
+  const count = data?.unseenNotificationCount ?? 0;
 
   if (!count) {
     return null;

@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { FaRegBell } from "react-icons/fa";
 import { fetchGraphQL } from "@/lib/fetcher";
 import {
   GetNotificationsDocument,
   useMarkAllNotificationsReadMutation,
+  useMarkNotificationsSeenMutation,
   useUnreadNotificationCountQuery,
+  useUnseenNotificationCountQuery,
   type GetNotificationsQuery,
   type GetNotificationsQueryVariables,
 } from "@/lib/generated";
@@ -26,8 +28,15 @@ export default function NotificationsPage() {
   const [unreadOnly, setUnreadOnly] = useState(false);
   const queryClient = useQueryClient();
   const markAll = useMarkAllNotificationsReadMutation();
+  const { mutateAsync: markNotificationsSeen } =
+    useMarkNotificationsSeenMutation();
+  const markingSeen = useRef(false);
 
   const { data: unreadData } = useUnreadNotificationCountQuery(undefined, {
+    refetchOnWindowFocus: true,
+  });
+
+  const { data: unseenData } = useUnseenNotificationCountQuery(undefined, {
     refetchOnWindowFocus: true,
   });
 
@@ -89,6 +98,25 @@ export default function NotificationsPage() {
   }, [notifications]);
 
   const unreadCount = unreadData?.unreadNotificationCount ?? 0;
+  const unseenCount = unseenData?.unseenNotificationCount ?? 0;
+
+  useEffect(() => {
+    if (!data || unseenCount === 0 || markingSeen.current) return;
+
+    markingSeen.current = true;
+    void markNotificationsSeen({})
+      .then(() =>
+        queryClient.invalidateQueries({
+          queryKey: ["UnseenNotificationCount"],
+        }),
+      )
+      .catch((err) => {
+        console.error("Failed to mark notifications as seen:", err);
+      })
+      .finally(() => {
+        markingSeen.current = false;
+      });
+  }, [data, markNotificationsSeen, queryClient, unseenCount]);
 
   const handleMarkAll = async () => {
     try {

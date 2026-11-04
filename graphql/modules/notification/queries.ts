@@ -92,4 +92,34 @@ export const notificationQueries = {
       },
     });
   },
+
+  unseenNotificationCount: async (
+    _parent: unknown,
+    _args: unknown,
+    ctx: NotificationQueryContext,
+  ) => {
+    const userId = ctx.session?.user?.id;
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { notificationsSeenAt: true },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return prisma.notification.count({
+      where: {
+        recipientId: userId,
+        readAt: null,
+        ...(user.notificationsSeenAt
+          ? { createdAt: { gt: user.notificationsSeenAt } }
+          : {}),
+      },
+    });
+  },
 };

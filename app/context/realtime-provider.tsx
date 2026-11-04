@@ -41,6 +41,7 @@ export function RealtimeProvider({
         queryClient.invalidateQueries({ queryKey: ["GetConversations"] }),
         queryClient.invalidateQueries({ queryKey: ["GetNotifications"] }),
         queryClient.invalidateQueries({ queryKey: ["UnreadNotificationCount"] }),
+        queryClient.invalidateQueries({ queryKey: ["UnseenNotificationCount"] }),
         queryClient.invalidateQueries({ queryKey: ["UnreadMessageCount"] }),
       ]);
     };
@@ -136,6 +137,9 @@ export function RealtimeProvider({
             queryClient.invalidateQueries({ queryKey: ["GetNotifications"] }),
             queryClient.invalidateQueries({
               queryKey: ["UnreadNotificationCount"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["UnseenNotificationCount"],
             }),
           ]);
         });

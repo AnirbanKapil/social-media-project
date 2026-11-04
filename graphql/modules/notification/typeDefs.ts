@@ -20,10 +20,12 @@ export const notificationTypeDefs = gql`
   type Query {
     getNotifications(first: Int = 20, after: String, unreadOnly: Boolean = false): NotificationPage!
     unreadNotificationCount: Int!
+    unseenNotificationCount: Int!
   }
 
   type Mutation {
     markNotificationRead(notificationId: String!): Boolean!
     markAllNotificationsRead: Boolean!
+    markNotificationsSeen: Boolean!
   }
 `;

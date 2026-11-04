@@ -41,6 +41,8 @@ model User {
 
   notificationsReceived Notification[] @relation("NotificationRecipient")
   notificationsSent     Notification[] @relation("NotificationActor")
+
+  notificationsSeenAt DateTime?
 }
 
 enum NotificationType {
