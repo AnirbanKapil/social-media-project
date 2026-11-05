@@ -13,6 +13,13 @@ import {
     MAX_IMAGES_PER_POST,
     MAX_TOTAL_IMAGE_BYTES,
 } from "@/lib/imageUploadLimits";
+import {
+    POST_CONTENT_OR_IMAGE_MESSAGE,
+    postContentFormSchema,
+} from "@/lib/validation";
+import { useZodForm } from "@/lib/validation/useZodForm";
+import { FieldError } from "@/app/src/components/form/FieldError";
+import { useToast } from "@/app/context/toast-provider";
 
 export function Publish () {
 
@@ -70,11 +77,23 @@ export function Publish () {
 
     const [content, setContent] = useState("");
     const queryClient = useQueryClient();
+    const { showToast } = useToast();
+    const { errorFor, onBlur, clearError, applyErrors, submit, reset } =
+        useZodForm(postContentFormSchema);
 
     const {mutateAsync, isPending} = useCreatePostMutation();
 
     const handleSubmit = async (e : React.FormEvent) => {
         e.preventDefault();
+
+        const data = submit({ content });
+
+        if (!data) return;
+
+        if (!data.content && selectedFiles.length === 0) {
+            applyErrors({ content: POST_CONTENT_OR_IMAGE_MESSAGE });
+            return;
+        }
 
         try {
             const formData = new FormData();
@@ -96,15 +115,16 @@ export function Publish () {
                 imageUrls.push(...data.images.map((image: { imageUrl: string }) => image.imageUrl));
             }
 
-            await mutateAsync({payload : {content , imgURLs: imageUrls}});
+            await mutateAsync({payload : {content: data.content, imgURLs: imageUrls}});
             await queryClient.invalidateQueries({queryKey : ["GetAllPosts"]});
             setContent("");
             setSelectedFiles([]);
             setPreviewUrls([]);
             setUploadError(null);
+            reset();
             previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
             previewUrlsRef.current.clear();
-            alert("Post created!");
+            showToast({ title: "Post created", description: "Your post is now live." });
         } catch (error) {
             const message = error instanceof Error ? error.message : "Unknown error";
             setUploadError(`Error creating post: ${message}`);
@@ -126,11 +146,20 @@ export function Publish () {
                 <form onSubmit={handleSubmit}>
                 <textarea 
                 value={content}
-                onChange={(e)=> setContent(e.target.value)}
-                className="w-full border-b border-slate-700 p-3 text-xl m-1" 
+                onChange={(e)=> {
+                    setContent(e.target.value);
+                    clearError("content");
+                }}
+                onBlur={() => onBlur("content", { content })}
+                aria-invalid={!!errorFor("content")}
+                aria-describedby={errorFor("content") ? "publish-content-error" : undefined}
+                className={`w-full border-b p-3 text-xl m-1 ${
+                    errorFor("content") ? "border-red-500" : "border-slate-700"
+                }`}
                 rows={3} 
                 placeholder="What's on your mind???">
                 </textarea>
+                <FieldError id="publish-content-error" message={errorFor("content")} />
                 {previewUrls.length > 0 && (
                     <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                         {previewUrls.map((previewUrl, index) => (

@@ -37,7 +37,10 @@ export async function POST(req: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "Email already exists" },
+        {
+          message: "Email already exists",
+          errors: { email: ["An account with this email already exists"] },
+        },
         { status: 409 },
       );
     }
@@ -48,7 +51,10 @@ export async function POST(req: NextRequest) {
 
     if (existingUsername) {
       return NextResponse.json(
-        { message: "Username is already taken" },
+        {
+          message: "Username is already taken",
+          errors: { username: ["This username is already taken"] },
+        },
         { status: 409 },
       );
     }

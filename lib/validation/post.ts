@@ -16,6 +16,18 @@ const imageUrlsSchema = z
 
 const optionalImageUrlSchema = imageUrlSchema.optional();
 
+export const postContentSchema = z
+  .string()
+  .trim()
+  .max(MAX_POST_LENGTH, `Post must be at most ${MAX_POST_LENGTH} characters`);
+
+export const postContentFormSchema = z.object({
+  content: postContentSchema,
+});
+
+export const POST_CONTENT_OR_IMAGE_MESSAGE =
+  "Post must contain text or at least one image";
+
 function requireContentOrImage(data: {
   content?: string;
   imgURL?: string | null;
@@ -32,33 +44,24 @@ export const postIdArgsSchema = z.object({ postId: idSchema });
 
 export const createPostSchema = z
   .object({
-    content: z
-      .string()
-      .trim()
-      .max(MAX_POST_LENGTH, `Post must be at most ${MAX_POST_LENGTH} characters`)
-      .optional()
-      .default(""),
+    content: postContentSchema.optional().default(""),
     imgURL: optionalImageUrlSchema,
     imgURLs: imageUrlsSchema.optional(),
   })
   .refine(requireContentOrImage, {
-    message: "Post must contain text or at least one image",
+    message: POST_CONTENT_OR_IMAGE_MESSAGE,
     path: ["content"],
   });
 
 export const editPostSchema = z
   .object({
     postId: idSchema,
-    content: z
-      .string()
-      .trim()
-      .max(MAX_POST_LENGTH, `Post must be at most ${MAX_POST_LENGTH} characters`)
-      .optional(),
+    content: postContentSchema.optional(),
     imgURL: optionalImageUrlSchema.nullish(),
     imgURLs: imageUrlsSchema.optional(),
   })
   .refine(requireContentOrImage, {
-    message: "Post must contain text or at least one image",
+    message: POST_CONTENT_OR_IMAGE_MESSAGE,
     path: ["content"],
   });
 

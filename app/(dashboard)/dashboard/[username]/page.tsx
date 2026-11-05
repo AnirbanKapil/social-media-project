@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { useCreateConversationMutation } from "@/lib/generated";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/app/context/toast-provider";
 
 export default function UsersPage() {
 
@@ -36,6 +37,7 @@ export default function UsersPage() {
     const { mutateAsync: unfollowUser } = useUnfollowUserMutation();
    
     const queryClient = useQueryClient();
+   const { showToast } = useToast();
 
     if (isLoading) return <Loader />;
 
@@ -55,15 +57,23 @@ export default function UsersPage() {
     const isFollowing = user?.isFollowing
 
     const handleFollow = async () => {
-      if(isFollowing){
-        await unfollowUser({to : user?.id})
-      }else {
-        await followUser({to : user?.id})
-      }
+      if (!userId) return;
+      try {
+        if(isFollowing){
+          await unfollowUser({to : userId})
+        }else {
+          await followUser({to : userId})
+        }
 
-      queryClient.invalidateQueries({
-        queryKey: ["GetUserByUsername"]
-      })
+        queryClient.invalidateQueries({
+          queryKey: ["GetUserByUsername"]
+        })
+      } catch (err) {
+        showToast({
+          title: isFollowing ? "Could not unfollow user" : "Could not follow user",
+          description: err instanceof Error ? err.message : undefined,
+        });
+      }
     };
 
     const handleSendMessage = async () => {
@@ -74,8 +84,10 @@ export default function UsersPage() {
         });
         router.push(`/messages?conversationId=${conversation.createConversation?.id}`)
       } catch (error) {
-        console.log(error);
-        throw new Error("Something went wrong");
+        showToast({
+          title: "Could not start conversation",
+          description: error instanceof Error ? error.message : undefined,
+        });
       }
     };
   

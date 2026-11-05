@@ -8,9 +8,11 @@ import {
   useGetSuggestedUsersQuery,
   useFollowUserMutation,
 } from "@/lib/generated";
+import { useToast } from "@/app/context/toast-provider";
 
 export function WhoToFollow() {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   const { data, isLoading, error } = useGetSuggestedUsersQuery({ limit: 5 });
   const { mutateAsync: followUser, isPending } = useFollowUserMutation();
   const [removed, setRemoved] = useState<Set<string>>(new Set());
@@ -22,7 +24,10 @@ export function WhoToFollow() {
       queryClient.invalidateQueries({ queryKey: ["GetSuggestedUsers"] });
       queryClient.invalidateQueries({ queryKey: ["GetCurrentUser"] });
     } catch (err) {
-      console.error("Failed to follow user:", err);
+      showToast({
+        title: "Could not follow user",
+        description: err instanceof Error ? err.message : undefined,
+      });
     }
   };
 

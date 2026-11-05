@@ -13,12 +13,14 @@ import { useUpdateProfileImageMutation } from "@/lib/generated";
 import { CldUploadWidget } from "next-cloudinary";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/app/context/toast-provider";
 
 
 export default function ProfilePage() {
 
   const [isUploading, setIsUploading] = useState(false);
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
  
   const mutation = useUpdateProfileImageMutation();
   const removeProfileImageMutation = useRemoveProfileImageMutation();
@@ -41,18 +43,27 @@ export default function ProfilePage() {
 
     const user = data?.currUser;
     
-    const changeProfilePic = async (result : any) => {
+    const changeProfilePic = async (result : unknown) => {
        setIsUploading(true) 
        try {
-        const imageUrl = result?.info?.secure_url;
-        const imageId  = result?.info?.public_id
+        const info = (
+          result as { info?: { secure_url?: string; public_id?: string } } | null
+        )?.info;
+        const imageUrl = info?.secure_url;
+        const imageId = info?.public_id;
+        if (!imageUrl) {
+          throw new Error("Could not read the uploaded image");
+        }
         await mutation.mutateAsync({
           profileImgUrl : imageUrl,
           profileImgPublicId : imageId
         })
         await queryClient.invalidateQueries({ queryKey: ["GetCurrentUser"] });
        } catch (error) {
-        console.log(error)
+        showToast({
+          title: "Could not update profile picture",
+          description: error instanceof Error ? error.message : undefined,
+        });
        } finally {
          setIsUploading(false);
        }
@@ -63,7 +74,10 @@ export default function ProfilePage() {
         await removeProfileImageMutation.mutateAsync({});
         await queryClient.invalidateQueries({ queryKey: ["GetCurrentUser"] });
       } catch (error) {
-         console.error(error);
+         showToast({
+           title: "Could not remove profile picture",
+           description: error instanceof Error ? error.message : undefined,
+         });
       }
     }
     

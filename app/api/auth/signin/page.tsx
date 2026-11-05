@@ -4,6 +4,9 @@ import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
+import { FieldError } from '@/app/src/components/form/FieldError';
+import { credentialsSchema } from '@/lib/validation';
+import { useZodForm } from '@/lib/validation/useZodForm';
 
 export default function SignInPage() {
   const searchParams = useSearchParams();
@@ -13,19 +16,26 @@ export default function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { errorFor, onBlur, clearError, submit } = useZodForm(credentialsSchema);
 
-  
   const errorMessage = rawError ? decodeURIComponent(rawError) : null;
 
-  const handleCredentialsSubmit = async (e: any) => {
+  const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const data = submit({ email, password });
+    if (!data) return;
+
     setLoading(true);
-    await signIn('credentials', {
-      email,
-      password,
-      callbackUrl: '/dashboard',
-    });
-    setLoading(false);
+    try {
+      await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        callbackUrl: '/dashboard',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,21 +68,45 @@ export default function SignInPage() {
             <label className="block text-sm font-medium text-gray-700">Email Address</label>
             <input
               type="email"
-              required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                clearError('email');
+              }}
+              onBlur={() => onBlur('email', { email, password })}
+              aria-invalid={!!errorFor('email')}
+              aria-describedby={errorFor('email') ? 'signin-email-error' : undefined}
+              className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                errorFor('email') ? 'border-red-500' : 'border-gray-300 focus:border-blue-500'
+              }`}
               placeholder="you@example.com"
+            />
+            <FieldError
+              id="signin-email-error"
+              message={errorFor('email')}
+              className="mt-1 text-sm text-red-400"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
-              required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                clearError('password');
+              }}
+              onBlur={() => onBlur('password', { email, password })}
+              aria-invalid={!!errorFor('password')}
+              aria-describedby={errorFor('password') ? 'signin-password-error' : undefined}
+              className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                errorFor('password') ? 'border-red-500' : 'border-gray-300 focus:border-blue-500'
+              }`}
+            />
+            <FieldError
+              id="signin-password-error"
+              message={errorFor('password')}
+              className="mt-1 text-sm text-red-400"
             />
           </div>
           <button

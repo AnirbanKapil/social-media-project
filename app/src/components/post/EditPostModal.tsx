@@ -12,6 +12,15 @@ import {
   MAX_IMAGES_PER_POST,
   MAX_TOTAL_IMAGE_BYTES,
 } from "@/lib/imageUploadLimits";
+import { z } from "zod";
+import {
+  POST_CONTENT_OR_IMAGE_MESSAGE,
+  postContentSchema,
+} from "@/lib/validation";
+import { useZodForm } from "@/lib/validation/useZodForm";
+import { FieldError } from "@/app/src/components/form/FieldError";
+
+const editContentFormSchema = z.object({ content: postContentSchema });
 
 type Props = {
   postId: string,
@@ -33,9 +42,18 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
     const [error, setError] = useState<string | null>(null);
     const editPostMutation = useEditPostMutation();
     const queryClient = useQueryClient();
+    const { errorFor, onBlur, clearError, applyErrors, submit } =
+        useZodForm(editContentFormSchema);
     
     const handleEdit = async () => {
-        if(!content.trim()) return;
+        const data = submit({ content });
+
+        if (!data) return;
+
+        if (!data.content && images.length === 0) {
+            applyErrors({ content: POST_CONTENT_OR_IMAGE_MESSAGE });
+            return;
+        }
 
         try {
             const imageUrls = images.filter((image) => !image.file).map((image) => image.url);
@@ -61,7 +79,7 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
             await editPostMutation.mutateAsync({
            payload : { 
             postId,
-            content,
+            content: data.content,
             imgURLs: imageUrls
         }
         });
@@ -136,10 +154,19 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
 
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="mt-5 w-full resize-none rounded-xl border border-gray-700 bg-transparent p-4 outline-none"
+          onChange={(e) => {
+            setContent(e.target.value);
+            clearError("content");
+          }}
+          onBlur={() => onBlur("content", { content })}
+          aria-invalid={!!errorFor("content")}
+          aria-describedby={errorFor("content") ? "edit-post-content-error" : undefined}
+          className={`mt-5 w-full resize-none rounded-xl border bg-transparent p-4 outline-none ${
+            errorFor("content") ? "border-red-500" : "border-gray-700"
+          }`}
           rows={5}
         />
+        <FieldError id="edit-post-content-error" message={errorFor("content")} />
 
         <div className="mt-5 flex justify-end gap-3">
           <button

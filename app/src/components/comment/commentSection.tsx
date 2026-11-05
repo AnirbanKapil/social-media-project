@@ -6,7 +6,12 @@ import { useDeleteCommentMutation } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
+import { z } from "zod";
+import { commentContentSchema } from "@/lib/validation";
+import { useZodForm } from "@/lib/validation/useZodForm";
+import { FieldError } from "@/app/src/components/form/FieldError";
 
+const commentFormSchema = z.object({ content: commentContentSchema });
 
 type Props = {
   postId: string;
@@ -20,20 +25,24 @@ export function CommentSection ({postId} : Props) {
     const createCommentMutation = useCreateCommentMutation();
     const deleteCommentMutation = useDeleteCommentMutation();
     const { data: currentUserData } = useGetCurrentUserQuery({});
+    const { errorFor, onBlur, clearError, submit, reset } =
+      useZodForm(commentFormSchema);
 
     const queryClient = useQueryClient();
 
     if (isLoading) return <Loader />;
 
     const handleComment = async () => {
-       if (!content.trim()) return;
+      const data = submit({ content });
+      if (!data) return;
 
       try {
         await createCommentMutation.mutateAsync({
           postId,
-          content,
+          content: data.content,
         });
         setContent("");
+        reset();
         await queryClient.invalidateQueries({queryKey: ["GetComments"],});
         await queryClient.invalidateQueries({queryKey: ["GetAllPosts"],});
         await queryClient.invalidateQueries({queryKey: ["GetPostById", { postId }],});
@@ -90,8 +99,16 @@ export function CommentSection ({postId} : Props) {
         {error && <p role="alert" className="mb-2 text-sm text-red-400">{error}</p>}
         <div className="flex gap-3">
         <input value={content}
-         className="flex-1 rounded-full border border-gray-600 bg-transparent px-4 py-2 outline-none ml-1"
-         onChange={(e) => setContent(e.target.value)}
+         className={`flex-1 rounded-full border bg-transparent px-4 py-2 outline-none ml-1 ${
+           errorFor("content") ? "border-red-500" : "border-gray-600"
+         }`}
+         onChange={(e) => {
+           setContent(e.target.value);
+           clearError("content");
+         }}
+         onBlur={() => onBlur("content", { content })}
+         aria-invalid={!!errorFor("content")}
+         aria-describedby={errorFor("content") ? "comment-content-error" : undefined}
          onKeyDown={(e) => {
            if (e.key === "Enter") {
              e.preventDefault();
@@ -99,9 +116,10 @@ export function CommentSection ({postId} : Props) {
            }
          }}/>
          <button className="rounded-full mr-1 bg-blue-500 px-5 py-2 text-white disabled:opacity-50"
-          disabled={createCommentMutation.isPending || !content.trim()}
+          disabled={createCommentMutation.isPending}
           onClick={handleComment}>Comment</button>
         </div>
+        <FieldError id="comment-content-error" message={errorFor("content")} />
       </div>
     )
 };
