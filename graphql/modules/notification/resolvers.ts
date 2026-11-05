@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { notificationQueries } from "./queries";
+import { markNotificationReadSchema, parseInput } from "@/lib/validation";
 
 type NotificationResolverContext = {
   session?: { user?: { id?: string | null } | null } | null;
@@ -9,13 +10,15 @@ export const notificationResolvers = {
   Mutation: {
     markNotificationRead: async (
       _parent: unknown,
-      { notificationId }: { notificationId: string },
+      args: { notificationId: string },
       ctx: NotificationResolverContext,
     ) => {
       const userId = ctx.session?.user?.id;
       if (!userId) {
         throw new Error("Not authenticated");
       }
+
+      const { notificationId } = parseInput(markNotificationReadSchema, args);
 
       const notification = await prisma.notification.findFirst({
         where: {

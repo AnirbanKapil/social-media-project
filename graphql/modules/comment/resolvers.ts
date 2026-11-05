@@ -1,6 +1,11 @@
 import { commentQueries } from "./queries";
 import prisma from "@/lib/prisma";
 import { createNotification } from "../notification/helpers";
+import {
+  createCommentSchema,
+  deleteCommentArgsSchema,
+  parseInput,
+} from "@/lib/validation";
 
 type CommentResolverContext = {
     prisma?: typeof prisma;
@@ -38,11 +43,13 @@ export const commentResolvers = {
 
     Mutation: {
 
-        createComment : async (_parent: unknown, {postId, content}: {postId : string, content : string}, ctx: CommentResolverContext) => {
+        createComment : async (_parent: unknown, args: {postId : string, content : string}, ctx: CommentResolverContext) => {
             const userId = ctx.session?.user?.id;
             if (!userId) {
              throw new Error("Not authenticated");
             };
+
+            const { postId, content } = parseInput(createCommentSchema, args);
              
             const commentPrisma = ctx.prisma ?? prisma;
 
@@ -75,11 +82,13 @@ export const commentResolvers = {
             return comment;
         },
 
-        deleteComment : async (_parent: unknown, {commentId}: {commentId : string}, ctx: CommentResolverContext) => {
+        deleteComment : async (_parent: unknown, args: {commentId : string}, ctx: CommentResolverContext) => {
            const userId = ctx.session?.user?.id;
            if (!userId) {
              throw new Error("Not authenticated");
             };
+
+            const { commentId } = parseInput(deleteCommentArgsSchema, args);
             
             const commentPrisma = ctx.prisma ?? prisma;
 

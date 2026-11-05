@@ -1,6 +1,12 @@
 import prisma from "@/lib/prisma";
 import { postQueries } from "./queries";
 import { createNotification, deleteNotification } from "../notification/helpers";
+import {
+  createPostSchema,
+  editPostSchema,
+  parseInput,
+  postIdArgsSchema,
+} from "@/lib/validation";
 
 
 
@@ -94,12 +100,14 @@ export const postResolvers= {
         if(!ctx.session?.user){
             throw new Error("Not authenticated!!")
         }; 
+
+        const payload = parseInput(createPostSchema, args.payload);
             
         const post = await prisma.post.create({
             data: {
-                content : args.payload.content,
-                imgURL  : args.payload.imgURLs?.[0] ?? args.payload.imgURL ?? null,
-                imgURLs : args.payload.imgURLs ?? (args.payload.imgURL ? [args.payload.imgURL] : []),
+                content : payload.content,
+                imgURL  : payload.imgURLs?.[0] ?? payload.imgURL ?? null,
+                imgURLs : payload.imgURLs ?? (payload.imgURL ? [payload.imgURL] : []),
                 author  : {connect :{ id: ctx.session.user.id }}
             },
              include: {
@@ -109,10 +117,12 @@ export const postResolvers= {
         return post;
      },
 
-    deletePost : async (parent : any, {postId}: {postId : string}, ctx : any) => {
+    deletePost : async (parent : any, args : {postId : string}, ctx : any) => {
         if(!ctx.session?.user){
             throw new Error("Not authenticated!!")
         };
+
+        const { postId } = parseInput(postIdArgsSchema, args);
         
         const post = await prisma.post.findUnique({
           where : {
@@ -137,10 +147,12 @@ export const postResolvers= {
         return true;
     }, 
 
-    editPost : async (parent : any, { payload } : any, ctx : any) => {
+    editPost : async (parent : any, args : any, ctx : any) => {
         if(!ctx.session?.user){
             throw new Error("Not authenticated!!")
         };
+
+        const payload = parseInput(editPostSchema, args.payload);
 
         const post = await prisma.post.findUnique({
           where : {
@@ -173,10 +185,11 @@ export const postResolvers= {
         return updatePost;
     },
 
-    likePost : async (parent : any, {postId}: {postId : string}, ctx : any) => {
+    likePost : async (parent : any, args : {postId : string}, ctx : any) => {
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
       }; 
+       const { postId } = parseInput(postIdArgsSchema, args);
        const userId = ctx.session?.user?.id;
 
        const existingLike = await prisma.like.findUnique({
@@ -220,11 +233,12 @@ export const postResolvers= {
        return post;
     },
     
-    unlikePost : async (parent : any, {postId} : {postId : string}, ctx : any) => {
+    unlikePost : async (parent : any, args : {postId : string}, ctx : any) => {
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
       };
-      
+
+      const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
 
       try {
@@ -255,10 +269,11 @@ export const postResolvers= {
       return post;
     },
 
-    bookmarkPost : async (parent : any, {postId}: {postId : string}, ctx : any) => {
+    bookmarkPost : async (parent : any, args : {postId : string}, ctx : any) => {
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
       };
+      const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
 
       await prisma.bookmark.upsert({
@@ -272,10 +287,11 @@ export const postResolvers= {
       return await prisma.post.findUnique({ where: { id: postId } });
     },
 
-    unbookmarkPost : async (parent : any, {postId} : {postId : string}, ctx : any) => {
+    unbookmarkPost : async (parent : any, args : {postId : string}, ctx : any) => {
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
       };
+      const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
 
       try {
@@ -289,10 +305,11 @@ export const postResolvers= {
       return await prisma.post.findUnique({ where: { id: postId } });
     },
 
-    repostPost : async (parent : any, {postId}: {postId : string}, ctx : any) => {
+    repostPost : async (parent : any, args : {postId : string}, ctx : any) => {
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
       };
+      const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
 
       const source = await prisma.post.findUnique({ where: { id: postId } });
@@ -331,10 +348,11 @@ export const postResolvers= {
       return await prisma.post.findUnique({ where: { id: targetId } });
     },
 
-    unrepostPost : async (parent : any, {postId} : {postId : string}, ctx : any) => {
+    unrepostPost : async (parent : any, args : {postId : string}, ctx : any) => {
       if(!ctx.session?.user){
           throw new Error("Not authenticated!!")
       };
+      const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
 
       const source = await prisma.post.findUnique({ where: { id: postId } });

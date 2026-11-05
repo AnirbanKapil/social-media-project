@@ -1,5 +1,6 @@
 
 import type { Prisma, PrismaClient } from "@/app/generated/prisma/client";
+import { conversationIdArgsSchema, parseInput } from "@/lib/validation";
 
 type MessageQueryContext = {
     session?: { user?: { id?: string | null } | null } | null;
@@ -128,11 +129,12 @@ export const messageQueries = {
         }
     },
     
-    getMessages : async (_parent : unknown, { conversationId }: { conversationId: string }, ctx : MessageQueryContext) => {
+    getMessages : async (_parent : unknown, args: { conversationId: string }, ctx : MessageQueryContext) => {
         if (!ctx.session?.user?.id) {
           throw new Error("Not authenticated");
         }
 
+        const { conversationId } = parseInput(conversationIdArgsSchema, args);
         const { prisma } =  ctx ;
           
         try {

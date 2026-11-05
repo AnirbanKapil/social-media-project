@@ -1,5 +1,6 @@
 
 import prisma from "@/lib/prisma";
+import { getCommentsArgsSchema, parseInput } from "@/lib/validation";
 
 type CommentQueryContext = {
     prisma?: typeof prisma;
@@ -7,11 +8,12 @@ type CommentQueryContext = {
 };
 
 export const commentQueries = {
-    getComments : async (_parent: unknown, {postId}: {postId : string}, ctx: CommentQueryContext) => {
+    getComments : async (_parent: unknown, args: {postId : string}, ctx: CommentQueryContext) => {
         if (!ctx?.session?.user) {
           throw new Error("Not authenticated");
         };
 
+        const { postId } = parseInput(getCommentsArgsSchema, args);
         const commentPrisma = ctx.prisma ?? prisma;
         
         return commentPrisma.comment.findMany({

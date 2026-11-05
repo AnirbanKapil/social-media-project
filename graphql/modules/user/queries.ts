@@ -1,4 +1,11 @@
 
+import {
+  getUserByUsernameSchema,
+  parseInput,
+  searchUsersSchema,
+  suggestedUsersSchema,
+} from "@/lib/validation";
+
 export const userQueries = {
   
   users: async (_: any, __: any, { prisma , session }: any) => {
@@ -23,10 +30,11 @@ export const userQueries = {
   };
   },
 
-  getUserByUsername: async (_: any, { username }: { username: string }, { prisma, session }: any) => {
+  getUserByUsername: async (_: any, args: { username: string }, { prisma, session }: any) => {
     if (!session) {
     throw new Error("Not logged in");
     };
+    const { username } = parseInput(getUserByUsernameSchema, args);
     const user = await prisma.user.findUnique({
       where: { username },
       include: {Posts: true}
@@ -37,10 +45,12 @@ export const userQueries = {
     return {...user, posts: user.Posts || []};
   },
 
-  searchUsers: async (_: any, { keyword }: { keyword: string }, { prisma, session }: any) => {
+  searchUsers: async (_: any, args: { keyword: string }, { prisma, session }: any) => {
     if (!session) {
     throw new Error("Not logged in");
     };
+
+    const { keyword } = parseInput(searchUsersSchema, args);
 
     return await prisma.user.findMany({
       where: {
@@ -58,7 +68,7 @@ export const userQueries = {
 
   suggestedUsers: async (
     _: any,
-    { limit = 5 }: { limit?: number },
+    args: { limit?: number },
     { prisma, session }: any,
   ) => {
     const userId = session?.user?.id;
@@ -66,7 +76,7 @@ export const userQueries = {
       throw new Error("Not logged in");
     }
 
-    const safeLimit = Number.isInteger(limit) && limit > 0 ? Math.min(limit, 20) : 5;
+    const { limit: safeLimit } = parseInput(suggestedUsersSchema, args);
 
     return await prisma.user.findMany({
       where: {

@@ -1,6 +1,12 @@
 import type { PrismaClient } from "@/app/generated/prisma/client";
 import { getUnreadCountForConversation, messageQueries } from "./queries"
 import { publishRealtimeEvent } from "@/lib/realtime-events";
+import {
+  conversationIdArgsSchema,
+  createConversationSchema,
+  parseInput,
+  sendMessageSchema,
+} from "@/lib/validation";
 
 type ResolverContext = {
   session?: { user?: { id?: string | null } | null } | null;
@@ -82,10 +88,11 @@ export const messageResolvers = {
     
     Mutation: {
 
-     createConversation : async (parent : any, { userId }: { userId: string }, ctx : any) => {
+     createConversation : async (parent : any, args: { userId: string }, ctx : any) => {
            if (!ctx?.session?.user) {
              throw new Error("Not authenticated");
            }   
+           const { userId } = parseInput(createConversationSchema, args);
            const currentUserId = ctx?.session?.user?.id;
             
            if (currentUserId === userId) {
@@ -146,13 +153,15 @@ export const messageResolvers = {
 
      markConversationRead : async (
        _parent: unknown,
-       { conversationId }: { conversationId: string },
+       args: { conversationId: string },
        ctx: ResolverContext,
      ) => {
         const userId = ctx.session?.user?.id;
         if (!userId) {
              throw new Error("Not authenticated");
            };
+
+        const { conversationId } = parseInput(conversationIdArgsSchema, args);
         const { prisma } = ctx;
 
         const participant = await prisma.conversationParticipant.findUnique({
@@ -182,12 +191,13 @@ export const messageResolvers = {
         return true;
      },
 
-     sendMessage : async (parent : any, { conversationId,content }: {conversationId : string, content: string }, ctx : any) => {
+     sendMessage : async (parent : any, args: {conversationId : string, content: string }, ctx : any) => {
         if (!ctx?.session?.user) {
              throw new Error("Not authenticated");
            };   
         const currentUserId = ctx?.session?.user?.id;
 
+        const { conversationId, content } = parseInput(sendMessageSchema, args);
         const { prisma } = ctx;
 
         const participant = await prisma.conversationParticipant.findUnique({

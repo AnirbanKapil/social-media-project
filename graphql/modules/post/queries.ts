@@ -1,8 +1,15 @@
 
 import prisma from "@/lib/prisma";
+import {
+  parseInput,
+  postIdArgsSchema,
+  postPaginationSchema,
+} from "@/lib/validation";
 
 export const postQueries = {
-    getPostById: async (_parent: unknown, { postId }: { postId: string }) => {
+    getPostById: async (_parent: unknown, args: { postId: string }) => {
+      const { postId } = parseInput(postIdArgsSchema, args);
+
       return prisma.post.findUnique({
         where: { id: postId },
         include: { author: true },
@@ -11,11 +18,9 @@ export const postQueries = {
 
     getAllPosts: async (
       _parent: unknown,
-      { first = 10, after }: { first?: number; after?: string | null },
+      args: { first?: number; after?: string | null },
     ) => {
-      if (!Number.isInteger(first) || first < 1 || first > 50) {
-        throw new Error("Page size must be between 1 and 50");
-      }
+      const { first, after } = parseInput(postPaginationSchema, args);
 
       let cursorFilter = {};
       if (after) {
@@ -61,11 +66,9 @@ export const postQueries = {
 
     getMediaPosts: async (
       _parent: unknown,
-      { first = 10, after }: { first?: number; after?: string | null },
+      args: { first?: number; after?: string | null },
     ) => {
-      if (!Number.isInteger(first) || first < 1 || first > 50) {
-        throw new Error("Page size must be between 1 and 50");
-      }
+      const { first, after } = parseInput(postPaginationSchema, args);
 
       let cursorFilter = {};
       if (after) {
@@ -118,7 +121,7 @@ export const postQueries = {
 
     getBookmarkedPosts: async (
       _parent: unknown,
-      { first = 10, after }: { first?: number; after?: string | null },
+      args: { first?: number; after?: string | null },
       ctx: { session?: { user?: { id: string } } | null },
     ) => {
       if (!ctx.session?.user) {
@@ -126,9 +129,7 @@ export const postQueries = {
       }
       const userId = ctx.session.user.id;
 
-      if (!Number.isInteger(first) || first < 1 || first > 50) {
-        throw new Error("Page size must be between 1 and 50");
-      }
+      const { first, after } = parseInput(postPaginationSchema, args);
 
       let cursorFilter = {};
       if (after) {

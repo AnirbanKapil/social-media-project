@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
 import NextAuth from "next-auth";
+import { credentialsSchema } from "@/lib/validation";
 
 
 export const authOptions : NextAuthOptions = {
@@ -20,13 +21,15 @@ export const authOptions : NextAuthOptions = {
       password: { label: "Password", type: "password",}
     },
     async authorize(credentials : any) : Promise<any> {
-      if(!credentials.email || !credentials.password){
-        throw new Error("Email and password are required")
-      };
+      const parsed = credentialsSchema.safeParse(credentials);
+      if (!parsed.success) {
+        throw new Error(parsed.error.issues[0]?.message ?? "Invalid credentials");
+      }
+      const { email, password } = parsed.data;
       try {
         const user = await prisma.user.findFirst({
           where : {
-            email : credentials.email,
+            email: { equals: email, mode: "insensitive" },
           }
         })
         if(!user){
@@ -37,7 +40,7 @@ export const authOptions : NextAuthOptions = {
            throw new Error("Please sign in with Google");
            }
 
-        const isValid = await bcrypt.compare(credentials?.password,user?.password)
+        const isValid = await bcrypt.compare(password, user?.password)
 
         if(!isValid){
           throw new Error("Password incorrect")

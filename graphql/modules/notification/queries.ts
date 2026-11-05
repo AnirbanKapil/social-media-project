@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { getNotificationsSchema, parseInput } from "@/lib/validation";
 
 type NotificationQueryContext = {
   session?: { user?: { id?: string | null } | null } | null;
@@ -13,7 +14,7 @@ type GetNotificationsArgs = {
 export const notificationQueries = {
   getNotifications: async (
     _parent: unknown,
-    { first = 20, after, unreadOnly = false }: GetNotificationsArgs,
+    args: GetNotificationsArgs,
     ctx: NotificationQueryContext,
   ) => {
     const userId = ctx.session?.user?.id;
@@ -21,9 +22,7 @@ export const notificationQueries = {
       throw new Error("Not authenticated");
     }
 
-    if (!Number.isInteger(first) || first < 1 || first > 50) {
-      throw new Error("Page size must be between 1 and 50");
-    }
+    const { first, after, unreadOnly } = parseInput(getNotificationsSchema, args);
 
     let cursorFilter = {};
     if (after) {
