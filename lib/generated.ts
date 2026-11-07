@@ -529,7 +529,7 @@ export type GetConversationsQuery = { getConversations: Array<{ id: string, unre
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
+export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
 
 export type GetMediaPostsQueryVariables = Exact<{
   first: number;
@@ -1315,6 +1315,8 @@ export const GetCurrentUserDocument = new TypedDocumentString(`
     id
     email
     username
+    firstName
+    lastName
     profileImgUrl
     followersCount
     followingCount

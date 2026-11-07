@@ -16,6 +16,7 @@ import { useGetCurrentUserQuery } from "@/lib/generated";
 import { useCreateConversationMutation } from "@/lib/generated";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/app/context/toast-provider";
+import { getFullName } from "@/lib/displayName";
 
 export default function UsersPage() {
 
@@ -100,9 +101,8 @@ export default function UsersPage() {
          </Link>
          
          <div>
-            <h1 className="font-bold">{user?.username}</h1>
-            <h1>{user?.firstName}</h1>
-            <h1>{user?.lastName}</h1> 
+            <h1 className="font-bold">{getFullName(user)}</h1>
+            <p className="text-sm text-slate-500">@{user?.username}</p>
             <p className="text-slate-600 mx-1">Posts {user?.posts?.length}</p>
          </div>
       </div>
@@ -124,7 +124,10 @@ export default function UsersPage() {
        </button>}
       </div>  
         <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-extrabold text-3xl mx-5 my-4">{user?.username}</h1> 
+        <div className="mx-5 my-4">
+         <h1 className="font-extrabold text-3xl">{getFullName(user)}</h1>
+         <p className="text-slate-500">@{user?.username}</p>
+        </div> 
         {!isOwnProfile &&  (<button onClick={handleFollow}
         className="self-center block-inline mt-2 p-2 mx-3 cursor-pointer 
          hover:bg-blue-400 hover:scale-120 transition-transform duration-300 bg-blue-600 rounded-lg">
@@ -143,6 +146,8 @@ export default function UsersPage() {
           id={post?.id || ""}
           content={post?.content || "No content available"} 
           user={user?.username || "Unknown User"}
+          firstName={user?.firstName ?? undefined}
+          lastName={user?.lastName ?? undefined}
           imgSrcs={post?.imgURLs ?? []}
           created={post?.createdAt || "unknown"}
           likesCount={post?.likesCount}

@@ -14,6 +14,7 @@ import { CldUploadWidget } from "next-cloudinary";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/app/context/toast-provider";
+import { getFullName } from "@/lib/displayName";
 
 
 export default function ProfilePage() {
@@ -89,7 +90,8 @@ export default function ProfilePage() {
                <IoMdArrowRoundBack size={24} />
              </Link>
              <div>
-                <h1 className="font-bold">{user?.username}</h1> 
+                <h1 className="font-bold">{getFullName(user)}</h1>
+                <p className="text-sm text-slate-500">@{user?.username}</p>
                 <p className="text-slate-600 mx-1">Posts {user?.posts?.length}</p>
              </div>
           </div>
@@ -141,7 +143,10 @@ export default function ProfilePage() {
                                       </button>}
            </div>  
            <div className="mx-2 flex flex-wrap items-center gap-x-6 gap-y-1">
-            <h1 className="font-extrabold text-3xl my-5">{user?.username}</h1>
+            <div className="my-5">
+             <h1 className="font-extrabold text-3xl">{getFullName(user)}</h1>
+             <p className="text-slate-500">@{user?.username}</p>
+            </div>
             <h3 className="my-5 text-slate-600">Followers {user?.followersCount}</h3>
             <h3 className="my-5 text-slate-600">Following {user?.followingCount}</h3> 
            </div>
@@ -152,6 +157,8 @@ export default function ProfilePage() {
               id={post?.id || ""}
               content={post?.content || "No content available"} 
               user={user?.username || "Unknown User"}
+              firstName={user?.firstName ?? undefined}
+              lastName={user?.lastName ?? undefined}
               imgSrcs={post?.imgURLs ?? []}
               created={post?.createdAt || "unknown"}
               likesCount={post?.likesCount}

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useGetCurrentUserQuery } from "@/lib/generated";
+import { getFullName } from "@/lib/displayName";
 
 export function UserStatsCard() {
   const { data, isLoading, error } = useGetCurrentUserQuery({});
@@ -45,8 +46,10 @@ export function UserStatsCard() {
           <div className="h-14 w-14 rounded-full bg-blue-300" />
         )}
         <div className="min-w-0">
-          <p className="truncate font-bold">{user.username}</p>
-          <p className="truncate text-xs text-gray-500">{user.email}</p>
+          <p className="truncate font-bold">{getFullName(user)}</p>
+          {getFullName(user) !== user.username && (
+            <p className="truncate text-xs text-gray-500">@{user.username}</p>
+          )}
         </div>
       </Link>
 

@@ -23,6 +23,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import DeletePostModal from "./post/DeletePostModal";
 import EditPostModal from "./post/EditPostModal";
 import { useMemo } from "react";
+import { getFullName } from "@/lib/displayName";
 
 type RepostOriginal = {
   id: string;
@@ -70,8 +71,9 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
     const original = repostOf ?? null;
     const targetId = original?.id ?? id;
     const displayUser = original?.author?.username ?? user;
-    const displayFirstName = original ? original.author?.firstName ?? undefined : firstName;
-    const displayLastName = original ? original.author?.lastName ?? undefined : lastName;
+    const displayName = original
+      ? getFullName(original.author) || user
+      : getFullName({ firstName, lastName, username: user });
     const displayContent = original?.content ?? content;
     const displayCreated = original?.createdAt ?? created;
     const displayLikesCount = original ? original.likesCount : likesCount;
@@ -198,9 +200,10 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                     <div>
                       <Link href={`/dashboard/${displayUser}`}
                        className="inline-block font-semibold cursor-pointer hover:scale-110 transition-transform duration-300">
-                       <p>{displayFirstName}</p>
-                       <p>{displayLastName}</p>
-                       <p>{displayUser}</p>
+                       <p className="font-semibold leading-tight">{displayName}</p>
+                       {displayName !== displayUser && (
+                         <p className="text-xs text-slate-500">@{displayUser}</p>
+                       )}
                       </Link>
                     </div>
                     <div className="flex">

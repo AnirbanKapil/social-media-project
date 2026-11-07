@@ -7,6 +7,8 @@ export const GetUserDocument = gql`
       id
       email
       username
+      firstName
+      lastName
       profileImgUrl
       followersCount
       followingCount
