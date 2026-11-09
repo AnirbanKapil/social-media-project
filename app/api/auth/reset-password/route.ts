@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import {
   formatValidationErrors,
-  passwordSchema,
+  resetPasswordSchema,
 } from "@/lib/validation";
 import { consumeResetToken } from "@/lib/passwordReset";
-
-const resetPasswordSchema = z.object({
-  token: z
-    .string()
-    .trim()
-    .min(1, "Reset token is required")
-    .max(256, "Reset token is invalid"),
-  password: passwordSchema,
-});
 
 export async function POST(req: NextRequest) {
   let body: unknown;

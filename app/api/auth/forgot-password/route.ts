@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import prisma from "@/lib/prisma";
-import { emailSchema, formatValidationErrors } from "@/lib/validation";
+import {
+  forgotPasswordSchema,
+  formatValidationErrors,
+} from "@/lib/validation";
 import { isRateLimited, storeResetToken } from "@/lib/passwordReset";
 import { sendPasswordResetEmail } from "@/lib/email";
-
-const forgotPasswordSchema = z.object({
-  email: emailSchema,
-});
 
 const GENERIC_MESSAGE =
   "If an account with that email exists, a password reset link has been sent.";

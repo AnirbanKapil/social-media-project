@@ -20,6 +20,8 @@ export default withAuth(
                     pathname.startsWith("/api/auth") ||
                     pathname === "/signin" ||
                     pathname === "/signup" ||
+                    pathname === "/forgot-password" ||
+                    pathname === "/reset-password" ||
                     pathname.startsWith("/api/graphql")
                 ){
                     return true

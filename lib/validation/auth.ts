@@ -49,3 +49,26 @@ export const credentialsSchema = z.object({
   password: z.string().min(1, "Password is required").max(72),
   username: z.string().optional(),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: emailSchema,
+});
+
+export const resetPasswordSchema = z.object({
+  token: z
+    .string()
+    .trim()
+    .min(1, "Reset token is required")
+    .max(256, "Reset token is invalid"),
+  password: passwordSchema,
+});
+
+export const resetPasswordFormSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
