@@ -6,10 +6,16 @@ import { verifyRealtimeToken } from "./realtime-token";
 type SseResponse = import("express").Response;
 
 type RealtimeEvent = {
-  type: "message.created" | "notification.created";
+  type:
+    | "message.created"
+    | "notification.created"
+    | "conversation.updated"
+    | "conversation.member_added";
   recipientId: string;
-  recordId: string;
+  recordId?: string;
   conversationId?: string;
+  conversationName?: string;
+  actorName?: string;
   senderUsername?: string;
   senderName?: string;
   preview?: string;
@@ -148,11 +154,20 @@ subscriber.on("pmessage", (_pattern, channel, message) => {
     return;
   }
 
+  const requiresRecordId =
+    event.type === "message.created" || event.type === "notification.created";
+  const requiresConversationId =
+    event.type === "conversation.updated" ||
+    event.type === "conversation.member_added";
+
   if (
     (event.type !== "message.created" &&
-      event.type !== "notification.created") ||
+      event.type !== "notification.created" &&
+      event.type !== "conversation.updated" &&
+      event.type !== "conversation.member_added") ||
     typeof event.recipientId !== "string" ||
-    typeof event.recordId !== "string"
+    (requiresRecordId && typeof event.recordId !== "string") ||
+    (requiresConversationId && typeof event.conversationId !== "string")
   ) {
     console.error(`Ignoring invalid realtime event from ${channel}`);
     return;
@@ -175,7 +190,10 @@ subscriber.on("pmessage", (_pattern, channel, message) => {
     }
 
     connection.write(`event: ${event.type}\n`);
-    connection.write(`id: ${event.recordId}\n`);
+    const eventId = event.recordId ?? event.conversationId;
+    if (eventId) {
+      connection.write(`id: ${eventId}\n`);
+    }
     connection.write(`data: ${JSON.stringify(event)}\n\n`);
   }
 });

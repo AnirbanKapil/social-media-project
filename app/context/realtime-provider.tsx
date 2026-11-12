@@ -161,6 +161,48 @@ export function RealtimeProvider({
           ]);
         });
 
+        eventSource.addEventListener("conversation.member_added", (event) => {
+          let memberPayload: {
+            conversationId?: string;
+            conversationName?: string;
+            actorName?: string;
+          };
+          try {
+            memberPayload = JSON.parse(event.data) as {
+              conversationId?: string;
+              conversationName?: string;
+              actorName?: string;
+            };
+          } catch {
+            console.error("Received an invalid conversation.member_added event");
+            return;
+          }
+
+          if (!memberPayload.conversationId) {
+            console.error(
+              "conversation.member_added event is missing conversationId",
+            );
+            return;
+          }
+
+          const conversationId = memberPayload.conversationId;
+
+          void Promise.all([
+            queryClient.invalidateQueries({ queryKey: ["GetConversations"] }),
+            queryClient.invalidateQueries({ queryKey: ["GetMessages"] }),
+          ]);
+
+          const actorName = memberPayload.actorName?.trim() || "Someone";
+          const conversationName =
+            memberPayload.conversationName?.trim() || "a group";
+
+          showToast({
+            title: `${actorName} added you to ${conversationName}`,
+            description: "Open the group to start chatting.",
+            href: `/messages?conversationId=${encodeURIComponent(conversationId)}`,
+          });
+        });
+
         eventSource.addEventListener("notification.created", () => {
           void Promise.all([
             queryClient.invalidateQueries({ queryKey: ["GetNotifications"] }),
