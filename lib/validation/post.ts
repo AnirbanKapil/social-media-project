@@ -46,6 +46,11 @@ function requireContentOrImage(data: {
 
 export const postIdArgsSchema = z.object({ postId: idSchema });
 
+export const updatePostVisibilitySchema = z.object({
+  postId: idSchema,
+  visibility: postVisibilitySchema,
+});
+
 export const createPostSchema = z
   .object({
     content: postContentSchema.optional().default(""),

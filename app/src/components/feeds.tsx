@@ -24,9 +24,17 @@ import DeletePostModal from "./post/DeletePostModal";
 import EditPostModal from "./post/EditPostModal";
 import { useMemo } from "react";
 import { getFullName } from "@/lib/displayName";
-import { Lock, Users } from "lucide-react";
+import { Check, Lock, Users } from "lucide-react";
+import { useUpdatePostVisibilityMutation } from "@/lib/generated";
+import { useToast } from "@/app/context/toast-provider";
 
 type PostVisibility = "PUBLIC" | "FOLLOWERS" | "PRIVATE";
+
+const VISIBILITY_OPTIONS: { value: PostVisibility; label: string }[] = [
+    { value: "PUBLIC", label: "Everyone" },
+    { value: "FOLLOWERS", label: "Followers" },
+    { value: "PRIVATE", label: "Only me" },
+];
 
 type RepostOriginal = {
   id: string;
@@ -65,10 +73,12 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
     const {mutateAsync: unbookmarkPost} = useUnbookmarkPostMutation();
     const {mutateAsync: repostPost} = useRepostPostMutation();
     const {mutateAsync: unrepostPost} = useUnrepostPostMutation();
+    const updatePostVisibilityMutation = useUpdatePostVisibilityMutation();
 
     const deletePostMutation = useDeletePostMutation();
 
     const queryClient = useQueryClient();
+    const { showToast } = useToast();
 
     const currUser = data?.currUser;
 
@@ -120,6 +130,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
         queryClient.invalidateQueries({queryKey: ["GetCurrentUser"]});
         queryClient.invalidateQueries({queryKey: ["GetPostById", { postId: targetId }]});
         queryClient.invalidateQueries({queryKey: ["GetBookmarkedPosts"]});
+        queryClient.invalidateQueries({queryKey: ["GetMediaPosts"]});
     };
 
     const handleLikeToggle = async () => {
@@ -178,6 +189,36 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
         }
     };
     
+    const handleVisibilityChange = async (next: PostVisibility) => {
+        setShowMenu(false);
+
+        if (next === visibility) {
+            return;
+        }
+
+        const repostTotal = repostsCount ?? 0;
+        if (visibility === "PUBLIC" && next !== "PUBLIC" && repostTotal > 0) {
+            const confirmed = window.confirm(
+                `Changing this post's visibility will remove ${repostTotal} repost${repostTotal === 1 ? "" : "s"}. Continue?`,
+            );
+            if (!confirmed) return;
+        }
+
+        try {
+            await updatePostVisibilityMutation.mutateAsync({ postId: id, visibility: next });
+            invalidatePostCaches();
+            showToast({
+                title: "Visibility updated",
+                description: VISIBILITY_OPTIONS.find((option) => option.value === next)?.label,
+            });
+        } catch (error) {
+            showToast({
+                title: "Could not change visibility",
+                description: error instanceof Error ? error.message : undefined,
+            });
+        }
+    };
+
     const handleDeletePost = async () => {
         try {
           await deletePostMutation.mutateAsync({postId : id});
@@ -229,7 +270,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                           className="p-2 rounded-full hover:bg-gray-800">
                           <BsThreeDots size={18} /></button>
                           {showMenu && (
-                            <div className="absolute right-0 mt-2 w-40 rounded-lg border border-gray-700 bg-black shadow-lg">
+                            <div className="absolute right-0 z-20 mt-2 w-52 rounded-lg border border-gray-700 bg-black shadow-lg">
                               <button
                                onClick={() => {
                                setShowMenu(false);
@@ -239,6 +280,24 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                                >
                                 Edit Post
                               </button>
+                              <div className="border-t border-gray-700" />
+                              <p className="px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-slate-500">
+                                Visibility
+                              </p>
+                              {VISIBILITY_OPTIONS.map((option) => (
+                                <button
+                                 key={option.value}
+                                 onClick={() => void handleVisibilityChange(option.value)}
+                                 disabled={updatePostVisibilityMutation.isPending}
+                                 className="flex w-full items-center justify-between px-4 py-2 text-left hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                 <span>{option.label}</span>
+                                 {visibility === option.value && (
+                                   <Check size={16} className="text-blue-400" />
+                                 )}
+                                </button>
+                              ))}
+                              <div className="border-t border-gray-700" />
                               <button
                                onClick={()=> {
                                   setShowMenu(false);

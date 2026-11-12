@@ -177,6 +177,14 @@ export type UnrepostPostMutationVariables = Exact<{
 
 export type UnrepostPostMutation = { unrepostPost: { id: string, isReposted: boolean, repostsCount: number, author: { id: string } | null } | null };
 
+export type UpdatePostVisibilityMutationVariables = Exact<{
+  postId: string;
+  visibility: PostVisibility;
+}>;
+
+
+export type UpdatePostVisibilityMutation = { updatePostVisibility: { id: string, visibility: PostVisibility, author: { id: string } | null } };
+
 export type UpdateProfileImageMutationVariables = Exact<{
   profileImgUrl: string;
   profileImgPublicId?: string | null | undefined;
@@ -784,6 +792,31 @@ export const useUnrepostPostMutation = <
       {
     mutationKey: ['UnrepostPost'],
     mutationFn: (variables?: UnrepostPostMutationVariables) => useCustomFetcher<UnrepostPostMutation, UnrepostPostMutationVariables>(UnrepostPostDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const UpdatePostVisibilityDocument = new TypedDocumentString(`
+    mutation UpdatePostVisibility($postId: String!, $visibility: PostVisibility!) {
+  updatePostVisibility(postId: $postId, visibility: $visibility) {
+    id
+    visibility
+    author {
+      id
+    }
+  }
+}
+    `);
+
+export const useUpdatePostVisibilityMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdatePostVisibilityMutation, TError, UpdatePostVisibilityMutationVariables, TContext>) => {
+    
+    return useMutation<UpdatePostVisibilityMutation, TError, UpdatePostVisibilityMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdatePostVisibility'],
+    mutationFn: (variables?: UpdatePostVisibilityMutationVariables) => useCustomFetcher<UpdatePostVisibilityMutation, UpdatePostVisibilityMutationVariables>(UpdatePostVisibilityDocument, variables)(),
     ...options
   }
     )};

@@ -6,6 +6,7 @@ import {
   editPostSchema,
   parseInput,
   postIdArgsSchema,
+  updatePostVisibilitySchema,
 } from "@/lib/validation";
 import { buildVisiblePostWhere } from "./visibility";
 
@@ -201,6 +202,42 @@ export const postResolvers= {
         });
 
         return updatePost;
+    },
+
+    updatePostVisibility : async (_parent: unknown, args : {postId : string, visibility : "PUBLIC" | "FOLLOWERS" | "PRIVATE"}, ctx : { session?: { user?: { id: string } | null } | null }) => {
+        if(!ctx.session?.user){
+            throw new Error("Not authenticated!!")
+        };
+
+        const { postId, visibility } = parseInput(updatePostVisibilitySchema, args);
+
+        const post = await prisma.post.findFirst({
+          where: { id: postId, isHidden: false },
+        });
+
+        if(!post){
+          throw new Error("Post not found");
+        };
+
+        if (post.authorId !== ctx.session.user.id) {
+          throw new Error("Unauthorized");
+        };
+
+        if (post.repostOfId) {
+          throw new Error("Reposts use the original post's visibility");
+        }
+
+        if (post.visibility === "PUBLIC" && visibility !== "PUBLIC") {
+          await prisma.post.deleteMany({
+            where: { repostOfId: post.id },
+          });
+        }
+
+        return await prisma.post.update({
+          where: { id: post.id },
+          data: { visibility },
+          include: { author: true },
+        });
     },
 
     likePost : async (parent : any, args : {postId : string}, ctx : any) => {

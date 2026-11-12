@@ -64,6 +64,7 @@ export const postTypeDefs = gql`
     unrepostPost(postId: String!): Post
     deletePost(postId: String!): Boolean!
     editPost(payload: EditPostPayload!): Post!
+    updatePostVisibility(postId: String!, visibility: PostVisibility!): Post!
   }
 
   type Query {
