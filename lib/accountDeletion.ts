@@ -110,6 +110,46 @@ export async function finalizeAccountDeletion(userId: string): Promise<boolean> 
         ],
       },
     });
+    const ownedGroups = await tx.conversationParticipant.findMany({
+      where: {
+        userId,
+        role: "OWNER",
+        leftAt: null,
+        conversation: { isGroup: true },
+      },
+      select: { conversationId: true },
+    });
+
+    for (const { conversationId } of ownedGroups) {
+      const successors = await tx.conversationParticipant.findMany({
+        where: {
+          conversationId,
+          leftAt: null,
+          userId: { not: userId },
+        },
+        orderBy: { joinedAt: "asc" },
+        select: { userId: true, role: true },
+      });
+
+      if (successors.length === 0) {
+        await tx.conversation.delete({ where: { id: conversationId } });
+        continue;
+      }
+
+      const successor =
+        successors.find((member) => member.role === "ADMIN") ?? successors[0];
+
+      await tx.conversationParticipant.update({
+        where: {
+          conversationId_userId: {
+            conversationId,
+            userId: successor.userId,
+          },
+        },
+        data: { role: "OWNER" },
+      });
+    }
+
     await tx.conversationParticipant.deleteMany({ where: { userId } });
     await tx.user.update({
       where: { id: userId },

@@ -11,6 +11,11 @@ export type RealtimeEvent =
       preview?: string;
     }
   | {
+      type: "conversation.updated";
+      recipientId: string;
+      conversationId: string;
+    }
+  | {
       type: "notification.created";
       recipientId: string;
       recordId: string;

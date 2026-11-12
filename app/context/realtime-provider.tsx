@@ -154,6 +154,13 @@ export function RealtimeProvider({
           });
         });
 
+        eventSource.addEventListener("conversation.updated", () => {
+          void Promise.all([
+            queryClient.invalidateQueries({ queryKey: ["GetConversations"] }),
+            queryClient.invalidateQueries({ queryKey: ["GetMessages"] }),
+          ]);
+        });
+
         eventSource.addEventListener("notification.created", () => {
           void Promise.all([
             queryClient.invalidateQueries({ queryKey: ["GetNotifications"] }),

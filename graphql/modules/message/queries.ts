@@ -56,10 +56,11 @@ export async function getUnreadCountForConversation(
         select: {
             conversationId: true,
             lastReadAt: true,
+            leftAt: true,
         },
     });
 
-    if (!participant) return 0;
+    if (!participant || participant.leftAt) return 0;
 
     const counts = await getUnreadCountsByConversation(prisma, userId, [participant]);
     return counts.get(conversationId) ?? 0;
@@ -81,6 +82,7 @@ export const messageQueries = {
                 participants: {
                 some: {
                 userId,
+                leftAt: null,
             },
           },
          },
@@ -97,6 +99,7 @@ export const messageQueries = {
             const participations = await prisma.conversationParticipant.findMany({
                 where: {
                     userId,
+                    leftAt: null,
                     conversationId: {
                         in: conversations.map((conversation) => conversation.id),
                     },
@@ -130,12 +133,29 @@ export const messageQueries = {
     },
     
     getMessages : async (_parent : unknown, args: { conversationId: string }, ctx : MessageQueryContext) => {
-        if (!ctx.session?.user?.id) {
+        const userId = ctx.session?.user?.id;
+        if (!userId) {
           throw new Error("Not authenticated");
         }
 
         const { conversationId } = parseInput(conversationIdArgsSchema, args);
         const { prisma } =  ctx ;
+
+        const participant = await prisma.conversationParticipant.findUnique({
+            where: {
+                conversationId_userId: {
+                    conversationId,
+                    userId,
+                },
+            },
+            select: {
+                leftAt: true,
+            },
+        });
+
+        if (!participant || participant.leftAt) {
+          throw new Error("You are not a participant in this conversation.");
+        }
           
         try {
             return await prisma.message.findMany({
@@ -161,7 +181,7 @@ export const messageQueries = {
         const { prisma } = ctx;
 
         const participations: Participation[] = await prisma.conversationParticipant.findMany({
-            where: { userId },
+            where: { userId, leftAt: null },
             select: {
                 conversationId: true,
                 lastReadAt: true,
