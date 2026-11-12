@@ -16,6 +16,13 @@ export type RealtimeEvent =
       conversationId: string;
     }
   | {
+      type: "conversation.member_added";
+      recipientId: string;
+      conversationId: string;
+      conversationName?: string;
+      actorName?: string;
+    }
+  | {
       type: "notification.created";
       recipientId: string;
       recordId: string;

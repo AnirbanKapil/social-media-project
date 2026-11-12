@@ -134,6 +134,37 @@ async function notifyConversationUpdated(
   );
 }
 
+async function getActorDisplayName(
+  prisma: PrismaClient,
+  userId: string,
+): Promise<string | undefined> {
+  const actor = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { username: true, firstName: true, lastName: true },
+  });
+
+  return [actor?.firstName, actor?.lastName].filter(Boolean).join(" ") || actor?.username;
+}
+
+async function notifyMembersAdded(
+  conversationId: string,
+  conversationName: string | null,
+  actorName: string | undefined,
+  recipientIds: string[],
+) {
+  await Promise.all(
+    [...new Set(recipientIds)].map((recipientId) =>
+      publishRealtimeEvent({
+        type: "conversation.member_added",
+        recipientId,
+        conversationId,
+        conversationName: conversationName ?? undefined,
+        actorName,
+      }),
+    ),
+  );
+}
+
 async function assertActiveUsers(prisma: PrismaClient, userIds: string[]) {
   const users = await prisma.user.findMany({
     where: { id: { in: userIds }, accountStatus: "ACTIVE" },
@@ -387,7 +418,14 @@ export const messageResolvers = {
          },
        });
 
+       const actorName = await getActorDisplayName(prisma, currentUserId);
        await notifyConversationUpdated(conversation.id, memberIds);
+       await notifyMembersAdded(
+         conversation.id,
+         conversation.name,
+         actorName,
+         memberIds,
+       );
 
        return conversation;
      },
@@ -445,9 +483,16 @@ export const messageResolvers = {
          data: { updatedAt: new Date() },
        });
 
+       const actorName = await getActorDisplayName(prisma, currentUserId);
        await notifyConversationUpdated(
          conversationId,
          await activeMemberIds(prisma, conversationId),
+       );
+       await notifyMembersAdded(
+         conversationId,
+         conversation.name,
+         actorName,
+         toAdd,
        );
 
        return conversation;
