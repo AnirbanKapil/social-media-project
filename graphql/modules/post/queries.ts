@@ -1,31 +1,30 @@
 
-import type { Prisma } from "@/app/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import {
   parseInput,
   postIdArgsSchema,
   postPaginationSchema,
 } from "@/lib/validation";
+import { buildVisiblePostWhere } from "./visibility";
 
-const visiblePostFilter: Prisma.PostWhereInput = {
-  isHidden: false,
-  author: { accountStatus: "ACTIVE" },
-  OR: [
-    { repostOfId: null },
-    {
-      repostOf: {
-        is: { isHidden: false, author: { accountStatus: "ACTIVE" } },
-      },
-    },
-  ],
+type PostQueryContext = {
+  session?: { user?: { id: string } | null } | null;
 };
 
+function getViewerId(ctx: PostQueryContext): string | null {
+  return ctx.session?.user?.id ?? null;
+}
+
 export const postQueries = {
-    getPostById: async (_parent: unknown, args: { postId: string }) => {
+    getPostById: async (
+      _parent: unknown,
+      args: { postId: string },
+      ctx: PostQueryContext,
+    ) => {
       const { postId } = parseInput(postIdArgsSchema, args);
 
       return prisma.post.findFirst({
-        where: { id: postId, ...visiblePostFilter },
+        where: { id: postId, ...buildVisiblePostWhere(getViewerId(ctx)) },
         include: { author: true },
       });
     },
@@ -33,6 +32,7 @@ export const postQueries = {
     getAllPosts: async (
       _parent: unknown,
       args: { first?: number; after?: string | null },
+      ctx: PostQueryContext,
     ) => {
       const { first, after } = parseInput(postPaginationSchema, args);
 
@@ -59,7 +59,9 @@ export const postQueries = {
       }
 
       const rows = await prisma.post.findMany({
-        where: { AND: [visiblePostFilter, cursorFilter] },
+        where: {
+          AND: [buildVisiblePostWhere(getViewerId(ctx)), cursorFilter],
+        },
         include: { author: true },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: first + 1,
@@ -81,6 +83,7 @@ export const postQueries = {
     getMediaPosts: async (
       _parent: unknown,
       args: { first?: number; after?: string | null },
+      ctx: PostQueryContext,
     ) => {
       const { first, after } = parseInput(postPaginationSchema, args);
 
@@ -114,7 +117,9 @@ export const postQueries = {
       };
 
       const rows = await prisma.post.findMany({
-        where: { AND: [visiblePostFilter, mediaFilter, cursorFilter] },
+        where: {
+          AND: [buildVisiblePostWhere(getViewerId(ctx)), mediaFilter, cursorFilter],
+        },
         include: { author: true },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: first + 1,
@@ -136,7 +141,7 @@ export const postQueries = {
     getBookmarkedPosts: async (
       _parent: unknown,
       args: { first?: number; after?: string | null },
-      ctx: { session?: { user?: { id: string } } | null },
+      ctx: PostQueryContext,
     ) => {
       if (!ctx.session?.user) {
         throw new Error("Not authenticated!!");
@@ -170,7 +175,7 @@ export const postQueries = {
       const rows = await prisma.bookmark.findMany({
         where: {
           userId,
-          AND: [cursorFilter, { post: visiblePostFilter }],
+          AND: [cursorFilter, { post: buildVisiblePostWhere(userId) }],
         },
         include: { post: { include: { author: true } } },
         orderBy: [{ createdAt: "desc" }, { postId: "desc" }],

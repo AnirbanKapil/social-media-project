@@ -24,10 +24,14 @@ import DeletePostModal from "./post/DeletePostModal";
 import EditPostModal from "./post/EditPostModal";
 import { useMemo } from "react";
 import { getFullName } from "@/lib/displayName";
+import { Lock, Users } from "lucide-react";
+
+type PostVisibility = "PUBLIC" | "FOLLOWERS" | "PRIVATE";
 
 type RepostOriginal = {
   id: string;
   content: string;
+  visibility?: PostVisibility;
   imgURLs?: string[] | null;
   createdAt: string;
   likesCount: number;
@@ -45,12 +49,12 @@ type RepostOriginal = {
   } | null;
 };
 
-export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, isLiked, id, commentsCount,firstName, lastName, isDetailPage = false, isBookmarked, isReposted, repostsCount, repostOf} : 
+export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, isLiked, id, commentsCount,firstName, lastName, isDetailPage = false, isBookmarked, isReposted, repostsCount, repostOf, visibility = "PUBLIC"} : 
     {content : string, userImg? : string | null,
      user : string, imgSrcs : string[], firstName?: string, lastName?: string 
       created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string, commentsCount: number | undefined
       isDetailPage?: boolean, isBookmarked?: boolean, isReposted?: boolean, repostsCount?: number,
-      repostOf?: RepostOriginal | null
+      repostOf?: RepostOriginal | null, visibility?: PostVisibility
     }) {
     
     const { data } = useGetCurrentUserQuery({});
@@ -75,6 +79,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
       ? getFullName(original.author) || user
       : getFullName({ firstName, lastName, username: user });
     const displayContent = original?.content ?? content;
+    const displayVisibility = original?.visibility ?? visibility;
     const displayCreated = original?.createdAt ?? created;
     const displayLikesCount = original ? original.likesCount : likesCount;
     const displayIsLiked = original ? original.isLiked : isLiked;
@@ -206,7 +211,17 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                        )}
                       </Link>
                     </div>
-                    <div className="flex">
+                    <div className="flex items-center gap-2">
+                       {displayVisibility === "FOLLOWERS" && (
+                         <span className="mt-2 flex items-center gap-1 text-xs text-slate-400" title="Visible to followers only">
+                           <Users size={13} /> Followers
+                         </span>
+                       )}
+                       {displayVisibility === "PRIVATE" && (
+                         <span className="mt-2 flex items-center gap-1 text-xs text-slate-400" title="Visible only to you">
+                           <Lock size={13} /> Only me
+                         </span>
+                       )}
                        <p className="text-slate-400 text-xs mt-2">{new Date(Number(displayCreated)).toLocaleString()}</p>
                        {!original && currUser?.username === user && (
                          <div className="relative">
@@ -337,6 +352,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                   postId={id}
                   initialContent={content}
                   initialImgURLs={postImages}
+                  initialVisibility={visibility}
                   onClose={() => setShowEditModal(false)}
                 />
                 )} 

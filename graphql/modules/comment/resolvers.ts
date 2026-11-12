@@ -6,6 +6,7 @@ import {
   deleteCommentArgsSchema,
   parseInput,
 } from "@/lib/validation";
+import { buildVisiblePostWhere } from "../post/visibility";
 
 type CommentResolverContext = {
     prisma?: typeof prisma;
@@ -53,12 +54,15 @@ export const commentResolvers = {
              
             const commentPrisma = ctx.prisma ?? prisma;
 
-            const post = await commentPrisma.post.findUnique({
-                where: { id: postId },
+            const post = await commentPrisma.post.findFirst({
+                where: {
+                    id: postId,
+                    ...buildVisiblePostWhere(userId),
+                },
                 select: { id: true, authorId: true, isHidden: true },
             });
 
-            if (!post || post.isHidden) {
+            if (!post) {
                 throw new Error("Post not found");
             }
 

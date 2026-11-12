@@ -2,10 +2,17 @@ import { gql } from "graphql-tag";
 
 export const postTypeDefs = gql`
   
+  enum PostVisibility {
+    PUBLIC
+    FOLLOWERS
+    PRIVATE
+  }
+
   input CreatePostPayload {
     content: String!
     imgURL: String
     imgURLs: [String!]
+    visibility: PostVisibility
   }
   
   input EditPostPayload {
@@ -13,6 +20,7 @@ export const postTypeDefs = gql`
     content: String
     imgURL: String
     imgURLs: [String!]
+    visibility: PostVisibility
   }
 
   type Post {
@@ -22,6 +30,7 @@ export const postTypeDefs = gql`
     imgURLs: [String!]!
     createdAt: String!
     updatedAt: String!
+    visibility: PostVisibility!
     author: User 
     isLiked: Boolean!
     likesCount: Int!

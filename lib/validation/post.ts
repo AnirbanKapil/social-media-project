@@ -4,6 +4,10 @@ import { idSchema, paginationSchema } from "./common";
 export const MAX_POST_LENGTH = 500;
 export const MAX_POST_IMAGES = 10;
 
+export const POST_VISIBILITIES = ["PUBLIC", "FOLLOWERS", "PRIVATE"] as const;
+
+export const postVisibilitySchema = z.enum(POST_VISIBILITIES);
+
 const imageUrlSchema = z
   .string()
   .trim()
@@ -47,6 +51,7 @@ export const createPostSchema = z
     content: postContentSchema.optional().default(""),
     imgURL: optionalImageUrlSchema,
     imgURLs: imageUrlsSchema.optional(),
+    visibility: postVisibilitySchema.optional().default("PUBLIC"),
   })
   .refine(requireContentOrImage, {
     message: POST_CONTENT_OR_IMAGE_MESSAGE,
@@ -59,6 +64,7 @@ export const editPostSchema = z
     content: postContentSchema.optional(),
     imgURL: optionalImageUrlSchema.nullish(),
     imgURLs: imageUrlsSchema.optional(),
+    visibility: postVisibilitySchema.optional(),
   })
   .refine(requireContentOrImage, {
     message: POST_CONTENT_OR_IMAGE_MESSAGE,

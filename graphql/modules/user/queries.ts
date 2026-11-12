@@ -5,6 +5,7 @@ import {
   searchUsersSchema,
   suggestedUsersSchema,
 } from "@/lib/validation";
+import { buildVisiblePostWhere } from "../post/visibility";
 
 export const userQueries = {
   
@@ -37,7 +38,12 @@ export const userQueries = {
     const { username } = parseInput(getUserByUsernameSchema, args);
     const user = await prisma.user.findUnique({
       where: { username, accountStatus: "ACTIVE" },
-      include: { Posts: { where: { isHidden: false } } }
+      include: {
+        Posts: {
+          where: buildVisiblePostWhere(session.user.id),
+          orderBy: { createdAt: "desc" },
+        },
+      }
     });       
     if (!user) {
       throw new Error("User not found");

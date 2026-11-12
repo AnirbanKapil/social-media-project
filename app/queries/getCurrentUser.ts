@@ -15,6 +15,7 @@ export const GetUserDocument = gql`
       posts {
         id
         content
+        visibility
         imgURL
         imgURLs
         createdAt
@@ -28,6 +29,7 @@ export const GetUserDocument = gql`
         repostOf {
           id
           content
+          visibility
           imgURLs
           likesCount
           isLiked

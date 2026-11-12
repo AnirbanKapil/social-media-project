@@ -7,6 +7,7 @@ export const GetBookmarkedPostsDocument = gql`
       posts {
         id
         content
+        visibility
         imgURL
         imgURLs
         likesCount
@@ -27,6 +28,7 @@ export const GetBookmarkedPostsDocument = gql`
         repostOf {
           id
           content
+          visibility
           imgURLs
           likesCount
           isLiked

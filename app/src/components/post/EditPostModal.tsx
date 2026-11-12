@@ -22,19 +22,23 @@ import { FieldError } from "@/app/src/components/form/FieldError";
 
 const editContentFormSchema = z.object({ content: postContentSchema });
 
+type PostVisibility = "PUBLIC" | "FOLLOWERS" | "PRIVATE";
+
 type Props = {
   postId: string,
   initialContent: string,
   initialImgURLs: string[],
+  initialVisibility?: PostVisibility,
   onClose: () => void;
 }
 
 
 
 
-export default function EditPostModal ({postId,initialContent,initialImgURLs,onClose} : Props) {
+export default function EditPostModal ({postId,initialContent,initialImgURLs,initialVisibility = "PUBLIC",onClose} : Props) {
     
     const [content, setContent] = useState(initialContent);
+    const [visibility, setVisibility] = useState<PostVisibility>(initialVisibility);
     const [images, setImages] = useState<{ url: string; file?: File }[]>(
       initialImgURLs.map((url) => ({ url }))
     );
@@ -77,10 +81,11 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
             }
   
             await editPostMutation.mutateAsync({
-           payload : { 
+            payload : { 
             postId,
             content: data.content,
-            imgURLs: imageUrls
+            imgURLs: imageUrls,
+            visibility
         }
         });
 
@@ -167,6 +172,22 @@ export default function EditPostModal ({postId,initialContent,initialImgURLs,onC
           rows={5}
         />
         <FieldError id="edit-post-content-error" message={errorFor("content")} />
+
+        <div className="mt-4 flex items-center gap-3">
+          <label htmlFor="edit-post-visibility" className="text-sm text-slate-400">
+            Who can see this?
+          </label>
+          <select
+            id="edit-post-visibility"
+            value={visibility}
+            onChange={(e) => setVisibility(e.target.value as PostVisibility)}
+            className="rounded-lg border border-gray-700 bg-black px-3 py-1 text-sm text-white"
+          >
+            <option value="PUBLIC">Everyone</option>
+            <option value="FOLLOWERS">Followers</option>
+            <option value="PRIVATE">Only me</option>
+          </select>
+        </div>
 
         <div className="mt-5 flex justify-end gap-3">
           <button

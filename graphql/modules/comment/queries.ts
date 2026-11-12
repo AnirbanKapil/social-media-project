@@ -1,6 +1,7 @@
 
 import prisma from "@/lib/prisma";
 import { getCommentsArgsSchema, parseInput } from "@/lib/validation";
+import { buildVisiblePostWhere } from "../post/visibility";
 
 type CommentQueryContext = {
     prisma?: typeof prisma;
@@ -17,7 +18,10 @@ export const commentQueries = {
         const commentPrisma = ctx.prisma ?? prisma;
 
         const post = await commentPrisma.post.findFirst({
-            where: { id: postId, isHidden: false },
+            where: {
+                id: postId,
+                ...buildVisiblePostWhere(ctx.session?.user?.id ?? null),
+            },
             select: { id: true },
         });
         if (!post) {

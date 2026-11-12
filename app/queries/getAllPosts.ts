@@ -8,6 +8,7 @@ export const GetAllPostsDocument = gql`
       posts {
         id
         content
+        visibility
         imgURL
         imgURLs
         likesCount
@@ -28,6 +29,7 @@ export const GetAllPostsDocument = gql`
         repostOf {
           id
           content
+          visibility
           imgURLs
           likesCount
           isLiked

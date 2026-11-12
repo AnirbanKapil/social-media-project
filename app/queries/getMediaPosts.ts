@@ -7,6 +7,7 @@ export const GetMediaPostsDocument = gql`
       posts {
         id
         content
+        visibility
         imgURL
         imgURLs
         createdAt

@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getNotificationsSchema, parseInput } from "@/lib/validation";
+import { buildVisiblePostWhere } from "../post/visibility";
 
 type NotificationQueryContext = {
   session?: { user?: { id?: string | null } | null } | null;
@@ -56,7 +57,7 @@ export const notificationQueries = {
           {
             OR: [
               { postId: null },
-              { post: { is: { isHidden: false } } },
+              { post: { is: buildVisiblePostWhere(userId) } },
             ],
           },
         ],
@@ -102,7 +103,7 @@ export const notificationQueries = {
           {
             OR: [
               { postId: null },
-              { post: { is: { isHidden: false } } },
+              { post: { is: buildVisiblePostWhere(userId) } },
             ],
           },
         ],
@@ -138,7 +139,7 @@ export const notificationQueries = {
           {
             OR: [
               { postId: null },
-              { post: { is: { isHidden: false } } },
+              { post: { is: buildVisiblePostWhere(userId) } },
             ],
           },
         ],

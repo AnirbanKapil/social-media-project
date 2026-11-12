@@ -51,6 +51,7 @@ export default function BookmarksPage() {
           id={post?.id || ""}
           userImg={post?.author?.profileImgUrl}
           content={post?.content || "No content available"}
+          visibility={post?.visibility}
           user={post?.author?.username || "Unknown User"}
           firstName={post?.author?.firstName ?? undefined}
           lastName={post?.author?.lastName ?? undefined}

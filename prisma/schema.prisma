@@ -64,6 +64,12 @@ enum NotificationType {
   REPOST
 }
 
+enum PostVisibility {
+  PUBLIC
+  FOLLOWERS
+  PRIVATE
+}
+
 model Notification {
   id          String           @id @default(cuid())
   type        NotificationType
@@ -103,6 +109,7 @@ model Post {
   imgURL  String?
   imgURLs String[] @default([])
   isHidden Boolean @default(false)
+  visibility PostVisibility @default(PUBLIC)
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
@@ -123,6 +130,7 @@ model Post {
   updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([authorId, repostOfId])
+  @@index([visibility, createdAt])
 }
 
 model Conversation {

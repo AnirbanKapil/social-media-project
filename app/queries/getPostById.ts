@@ -5,6 +5,7 @@ export const GetPostByIdDocument = gql`
     getPostById(postId: $postId) {
       id
       content
+      visibility
       imgURL
       imgURLs
       createdAt
@@ -25,6 +26,7 @@ export const GetPostByIdDocument = gql`
       repostOf {
         id
         content
+        visibility
         imgURLs
         likesCount
         isLiked

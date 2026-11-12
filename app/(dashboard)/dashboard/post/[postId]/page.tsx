@@ -48,6 +48,7 @@ export default function PostDetailPage() {
       <Feeds
         id={post.id}
         content={post.content}
+        visibility={post.visibility}
         userImg={post.author?.profileImgUrl}
         user={post.author?.username ?? "Unknown User"}
         firstName={post.author?.firstName ?? undefined}

@@ -6,6 +6,7 @@ export const CreatePostDocument = gql`
     createPost(payload: $payload) {
       id
       content
+      visibility
       imgURL
       imgURLs
       author {

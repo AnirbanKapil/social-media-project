@@ -76,6 +76,7 @@ export function Publish () {
     };
 
     const [content, setContent] = useState("");
+    const [visibility, setVisibility] = useState<"PUBLIC" | "FOLLOWERS" | "PRIVATE">("PUBLIC");
     const queryClient = useQueryClient();
     const { showToast } = useToast();
     const { errorFor, onBlur, clearError, applyErrors, submit, reset } =
@@ -115,9 +116,10 @@ export function Publish () {
                 imageUrls.push(...data.images.map((image: { imageUrl: string }) => image.imageUrl));
             }
 
-            await mutateAsync({payload : {content: data.content, imgURLs: imageUrls}});
+            await mutateAsync({payload : {content: data.content, imgURLs: imageUrls, visibility}});
             await queryClient.invalidateQueries({queryKey : ["GetAllPosts"]});
             setContent("");
+            setVisibility("PUBLIC");
             setSelectedFiles([]);
             setPreviewUrls([]);
             setUploadError(null);
@@ -184,7 +186,8 @@ export function Publish () {
                     </div>
                 )}
                 {uploadError && <p role="alert" className="mx-2 text-sm text-red-400">{uploadError}</p>}
-                <div className="flex justify-between m-2">
+                <div className="flex justify-between items-center m-2">
+                <div className="flex items-center gap-3">
                 <label className="cursor-pointer" aria-label="Add images">
                     <MdOutlinePermMedia className="text-xl items-center"/>
                     <input
@@ -195,6 +198,17 @@ export function Publish () {
                         className="sr-only"
                     />
                 </label>
+                <select
+                    value={visibility}
+                    onChange={(e) => setVisibility(e.target.value as "PUBLIC" | "FOLLOWERS" | "PRIVATE")}
+                    aria-label="Post visibility"
+                    className="rounded-lg border border-slate-700 bg-black px-2 py-1 text-sm text-white"
+                >
+                    <option value="PUBLIC">Everyone</option>
+                    <option value="FOLLOWERS">Followers</option>
+                    <option value="PRIVATE">Only me</option>
+                </select>
+                </div>
                 <button 
                  type="submit" disabled={isPending} 
                 className="bg-blue-600 rounded-lg px-3 cursor-pointer disabled:opacity-50">

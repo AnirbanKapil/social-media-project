@@ -6,6 +6,7 @@ export const EditPostDocument = gql`
     editPost(payload: $payload) {
        id
        content
+       visibility
        imgURL
        imgURLs
        createdAt

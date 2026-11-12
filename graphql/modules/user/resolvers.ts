@@ -8,6 +8,7 @@ import {
   parseInput,
   updateProfileImageSchema,
 } from "@/lib/validation";
+import { buildVisiblePostWhere } from "../post/visibility";
 
 
 export const userResolvers = {
@@ -20,7 +21,10 @@ export const userResolvers = {
 
     posts: async (parent: { id: string }, _args: unknown, ctx: any) =>
       ctx.prisma.post.findMany({
-        where: { authorId: parent.id, isHidden: false, author: { accountStatus: "ACTIVE" } },
+        where: {
+          authorId: parent.id,
+          ...buildVisiblePostWhere(ctx.session?.user?.id ?? null),
+        },
         orderBy: { createdAt: "desc" },
       }),
 

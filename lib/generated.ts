@@ -4,8 +4,6 @@ type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
 import { useCustomFetcher } from './fetcher';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
 
           class TypedDocumentString<TResult, TVariables> extends String {
             private __apiType?: TResult;
@@ -17,335 +15,12 @@ export type InputMaybe<T> = Maybe<T>;
             return this.value;
           }
         }
-
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-};
-
-export type Comment = {
-  __typename?: 'Comment';
-  author: User;
-  content: Scalars['String']['output'];
-  createdAt: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  post: Post;
-  postOwnerId: Scalars['String']['output'];
-  updatedAt: Scalars['String']['output'];
-};
-
-export type Conversation = {
-  __typename?: 'Conversation';
-  createdAt: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  lastMessage?: Maybe<Message>;
-  messages: Array<Message>;
-  participants: Array<User>;
-  unreadCount: Scalars['Int']['output'];
-  updatedAt: Scalars['String']['output'];
-};
-
-export type CreatePostPayload = {
-  content: Scalars['String']['input'];
-  imgURL?: InputMaybe<Scalars['String']['input']>;
-  imgURLs?: InputMaybe<Array<Scalars['String']['input']>>;
-};
-
-export type EditPostPayload = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  imgURL?: InputMaybe<Scalars['String']['input']>;
-  imgURLs?: InputMaybe<Array<Scalars['String']['input']>>;
-  postId: Scalars['String']['input'];
-};
-
-export type Follows = {
-  __typename?: 'Follows';
-  followerId: Scalars['String']['output'];
-  followingId: Scalars['String']['output'];
-};
-
-export type Like = {
-  __typename?: 'Like';
-  postId: Scalars['String']['output'];
-  userId: Scalars['String']['output'];
-};
-
-export type Message = {
-  __typename?: 'Message';
-  content: Scalars['String']['output'];
-  conversation: Conversation;
-  createdAt: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  sender: User;
-  updatedAt: Scalars['String']['output'];
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  bookmarkPost?: Maybe<Post>;
-  createComment: Comment;
-  createConversation?: Maybe<Conversation>;
-  createPost?: Maybe<Post>;
-  deleteComment: Scalars['Boolean']['output'];
-  deletePost: Scalars['Boolean']['output'];
-  editPost: Post;
-  followUser: Follows;
-  likePost?: Maybe<Post>;
-  markAllNotificationsRead: Scalars['Boolean']['output'];
-  markConversationRead: Scalars['Boolean']['output'];
-  markNotificationRead: Scalars['Boolean']['output'];
-  markNotificationsSeen: Scalars['Boolean']['output'];
-  removeProfileImage?: Maybe<User>;
-  repostPost?: Maybe<Post>;
-  requestAccountDeletion: Scalars['String']['output'];
-  sendMessage: Message;
-  unbookmarkPost?: Maybe<Post>;
-  unfollowUser?: Maybe<Follows>;
-  unlikePost?: Maybe<Post>;
-  unrepostPost?: Maybe<Post>;
-  updateProfileImage?: Maybe<User>;
-};
-
-
-export type MutationBookmarkPostArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type MutationCreateCommentArgs = {
-  content: Scalars['String']['input'];
-  postId: Scalars['String']['input'];
-};
-
-
-export type MutationCreateConversationArgs = {
-  userId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationCreatePostArgs = {
-  payload: CreatePostPayload;
-};
-
-
-export type MutationDeleteCommentArgs = {
-  commentId: Scalars['String']['input'];
-};
-
-
-export type MutationDeletePostArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type MutationEditPostArgs = {
-  payload: EditPostPayload;
-};
-
-
-export type MutationFollowUserArgs = {
-  to: Scalars['String']['input'];
-};
-
-
-export type MutationLikePostArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type MutationMarkConversationReadArgs = {
-  conversationId: Scalars['String']['input'];
-};
-
-
-export type MutationMarkNotificationReadArgs = {
-  notificationId: Scalars['String']['input'];
-};
-
-
-export type MutationRepostPostArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type MutationSendMessageArgs = {
-  content: Scalars['String']['input'];
-  conversationId: Scalars['String']['input'];
-};
-
-
-export type MutationUnbookmarkPostArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type MutationUnfollowUserArgs = {
-  to: Scalars['String']['input'];
-};
-
-
-export type MutationUnlikePostArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type MutationUnrepostPostArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type MutationUpdateProfileImageArgs = {
-  profileImgPublicId?: InputMaybe<Scalars['String']['input']>;
-  profileImgUrl: Scalars['String']['input'];
-};
-
-export type Notification = {
-  __typename?: 'Notification';
-  actor: User;
-  comment?: Maybe<Comment>;
-  createdAt: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  post?: Maybe<Post>;
-  readAt?: Maybe<Scalars['String']['output']>;
-  type: Scalars['String']['output'];
-};
-
-export type NotificationPage = {
-  __typename?: 'NotificationPage';
-  hasMore: Scalars['Boolean']['output'];
-  nextCursor?: Maybe<Scalars['String']['output']>;
-  notifications: Array<Notification>;
-};
-
-export type Post = {
-  __typename?: 'Post';
-  author?: Maybe<User>;
-  comments: Array<Comment>;
-  commentsCount: Scalars['Int']['output'];
-  content: Scalars['String']['output'];
-  createdAt: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  imgURL?: Maybe<Scalars['String']['output']>;
-  imgURLs: Array<Scalars['String']['output']>;
-  isBookmarked: Scalars['Boolean']['output'];
-  isLiked: Scalars['Boolean']['output'];
-  isReposted: Scalars['Boolean']['output'];
-  likesCount: Scalars['Int']['output'];
-  repostOf?: Maybe<Post>;
-  repostOfId?: Maybe<Scalars['String']['output']>;
-  repostsCount: Scalars['Int']['output'];
-  updatedAt: Scalars['String']['output'];
-};
-
-export type PostPage = {
-  __typename?: 'PostPage';
-  hasMore: Scalars['Boolean']['output'];
-  nextCursor?: Maybe<Scalars['String']['output']>;
-  posts: Array<Post>;
-};
-
-export type Query = {
-  __typename?: 'Query';
-  currUser?: Maybe<User>;
-  getAllPosts: PostPage;
-  getBookmarkedPosts: PostPage;
-  getComments: Array<Comment>;
-  getConversations: Array<Conversation>;
-  getMediaPosts: PostPage;
-  getMessages: Array<Message>;
-  getNotifications: NotificationPage;
-  getPostById?: Maybe<Post>;
-  getUserByUsername?: Maybe<User>;
-  searchUsers: Array<User>;
-  suggestedUsers: Array<User>;
-  unreadMessageCount: Scalars['Int']['output'];
-  unreadNotificationCount: Scalars['Int']['output'];
-  unseenNotificationCount: Scalars['Int']['output'];
-  users: Array<Maybe<User>>;
-};
-
-
-export type QueryGetAllPostsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryGetBookmarkedPostsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryGetCommentsArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type QueryGetMediaPostsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryGetMessagesArgs = {
-  conversationId: Scalars['String']['input'];
-};
-
-
-export type QueryGetNotificationsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  unreadOnly?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryGetPostByIdArgs = {
-  postId: Scalars['String']['input'];
-};
-
-
-export type QueryGetUserByUsernameArgs = {
-  username: Scalars['String']['input'];
-};
-
-
-export type QuerySearchUsersArgs = {
-  keyword: Scalars['String']['input'];
-};
-
-
-export type QuerySuggestedUsersArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type User = {
-  __typename?: 'User';
-  createdAt: Scalars['String']['output'];
-  email: Scalars['String']['output'];
-  firstName?: Maybe<Scalars['String']['output']>;
-  followers?: Maybe<Array<Maybe<User>>>;
-  followersCount: Scalars['Int']['output'];
-  followingCount: Scalars['Int']['output'];
-  followings?: Maybe<Array<Maybe<User>>>;
-  id: Scalars['String']['output'];
-  isFollowing: Scalars['Boolean']['output'];
-  lastName?: Maybe<Scalars['String']['output']>;
-  posts?: Maybe<Array<Maybe<Post>>>;
-  profileImgPublicId?: Maybe<Scalars['String']['output']>;
-  profileImgUrl?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['String']['output'];
-  username: Scalars['String']['output'];
-};
-
+        
 export type CreatePostPayload = {
   content: string;
   imgURL?: string | null | undefined;
   imgURLs?: Array<string> | null | undefined;
+  visibility?: PostVisibility | null | undefined;
 };
 
 export type EditPostPayload = {
@@ -353,7 +28,13 @@ export type EditPostPayload = {
   imgURL?: string | null | undefined;
   imgURLs?: Array<string> | null | undefined;
   postId: string;
+  visibility?: PostVisibility | null | undefined;
 };
+
+export type PostVisibility =
+  | 'FOLLOWERS'
+  | 'PRIVATE'
+  | 'PUBLIC';
 
 export type BookmarkPostMutationVariables = Exact<{
   postId: string;
@@ -382,7 +63,7 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { createPost: { id: string, content: string, imgURL: string | null, imgURLs: Array<string>, author: { id: string, username: string, email: string } | null } | null };
+export type CreatePostMutation = { createPost: { id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, author: { id: string, username: string, email: string } | null } | null };
 
 export type DeleteCommentMutationVariables = Exact<{
   commentId: string;
@@ -408,7 +89,7 @@ export type EditPostMutationVariables = Exact<{
 }>;
 
 
-export type EditPostMutation = { editPost: { id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, updatedAt: string, author: { id: string, username: string } | null } };
+export type EditPostMutation = { editPost: { id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, updatedAt: string, author: { id: string, username: string } | null } };
 
 export type FollowUserMutationVariables = Exact<{
   to: string;
@@ -510,7 +191,7 @@ export type GetAllPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllPostsQuery = { getAllPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
+export type GetAllPostsQuery = { getAllPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
 
 export type GetBookmarkedPostsQueryVariables = Exact<{
   first: number;
@@ -518,7 +199,7 @@ export type GetBookmarkedPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetBookmarkedPostsQuery = { getBookmarkedPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
+export type GetBookmarkedPostsQuery = { getBookmarkedPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
 
 export type GetCommentsQueryVariables = Exact<{
   postId: string;
@@ -535,7 +216,7 @@ export type GetConversationsQuery = { getConversations: Array<{ id: string, unre
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
+export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
 
 export type GetMediaPostsQueryVariables = Exact<{
   first: number;
@@ -543,7 +224,7 @@ export type GetMediaPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetMediaPostsQuery = { getMediaPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null }> } };
+export type GetMediaPostsQuery = { getMediaPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null }> } };
 
 export type GetMessagesQueryVariables = Exact<{
   conversationId: string;
@@ -566,7 +247,7 @@ export type GetPostByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetPostByIdQuery = { getPostById: { id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null };
+export type GetPostByIdQuery = { getPostById: { id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null };
 
 export type GetSuggestedUsersQueryVariables = Exact<{
   limit?: number | null | undefined;
@@ -580,7 +261,7 @@ export type GetUserByUsernameQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
+export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -632,7 +313,7 @@ export const useBookmarkPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<BookmarkPostMutation, TError, BookmarkPostMutationVariables, TContext>) => {
-
+    
     return useMutation<BookmarkPostMutation, TError, BookmarkPostMutationVariables, TContext>(
       {
     mutationKey: ['BookmarkPost'],
@@ -660,7 +341,7 @@ export const useCreateCommentMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<CreateCommentMutation, TError, CreateCommentMutationVariables, TContext>) => {
-
+    
     return useMutation<CreateCommentMutation, TError, CreateCommentMutationVariables, TContext>(
       {
     mutationKey: ['CreateComment'],
@@ -685,7 +366,7 @@ export const useCreateConversationMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<CreateConversationMutation, TError, CreateConversationMutationVariables, TContext>) => {
-
+    
     return useMutation<CreateConversationMutation, TError, CreateConversationMutationVariables, TContext>(
       {
     mutationKey: ['CreateConversation'],
@@ -699,6 +380,7 @@ export const CreatePostDocument = new TypedDocumentString(`
   createPost(payload: $payload) {
     id
     content
+    visibility
     imgURL
     imgURLs
     author {
@@ -714,7 +396,7 @@ export const useCreatePostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<CreatePostMutation, TError, CreatePostMutationVariables, TContext>) => {
-
+    
     return useMutation<CreatePostMutation, TError, CreatePostMutationVariables, TContext>(
       {
     mutationKey: ['CreatePost'],
@@ -733,7 +415,7 @@ export const useDeleteCommentMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<DeleteCommentMutation, TError, DeleteCommentMutationVariables, TContext>) => {
-
+    
     return useMutation<DeleteCommentMutation, TError, DeleteCommentMutationVariables, TContext>(
       {
     mutationKey: ['DeleteComment'],
@@ -752,7 +434,7 @@ export const useDeletePostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<DeletePostMutation, TError, DeletePostMutationVariables, TContext>) => {
-
+    
     return useMutation<DeletePostMutation, TError, DeletePostMutationVariables, TContext>(
       {
     mutationKey: ['DeletePost'],
@@ -775,7 +457,7 @@ export const useRemoveProfileImageMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<RemoveProfileImageMutation, TError, RemoveProfileImageMutationVariables, TContext>) => {
-
+    
     return useMutation<RemoveProfileImageMutation, TError, RemoveProfileImageMutationVariables, TContext>(
       {
     mutationKey: ['RemoveProfileImage'],
@@ -789,6 +471,7 @@ export const EditPostDocument = new TypedDocumentString(`
   editPost(payload: $payload) {
     id
     content
+    visibility
     imgURL
     imgURLs
     createdAt
@@ -805,7 +488,7 @@ export const useEditPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<EditPostMutation, TError, EditPostMutationVariables, TContext>) => {
-
+    
     return useMutation<EditPostMutation, TError, EditPostMutationVariables, TContext>(
       {
     mutationKey: ['EditPost'],
@@ -827,7 +510,7 @@ export const useFollowUserMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<FollowUserMutation, TError, FollowUserMutationVariables, TContext>) => {
-
+    
     return useMutation<FollowUserMutation, TError, FollowUserMutationVariables, TContext>(
       {
     mutationKey: ['FollowUser'],
@@ -853,7 +536,7 @@ export const useLikePostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<LikePostMutation, TError, LikePostMutationVariables, TContext>) => {
-
+    
     return useMutation<LikePostMutation, TError, LikePostMutationVariables, TContext>(
       {
     mutationKey: ['LikePost'],
@@ -872,7 +555,7 @@ export const useMarkAllNotificationsReadMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<MarkAllNotificationsReadMutation, TError, MarkAllNotificationsReadMutationVariables, TContext>) => {
-
+    
     return useMutation<MarkAllNotificationsReadMutation, TError, MarkAllNotificationsReadMutationVariables, TContext>(
       {
     mutationKey: ['MarkAllNotificationsRead'],
@@ -891,7 +574,7 @@ export const useMarkConversationReadMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<MarkConversationReadMutation, TError, MarkConversationReadMutationVariables, TContext>) => {
-
+    
     return useMutation<MarkConversationReadMutation, TError, MarkConversationReadMutationVariables, TContext>(
       {
     mutationKey: ['MarkConversationRead'],
@@ -910,7 +593,7 @@ export const useMarkNotificationReadMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<MarkNotificationReadMutation, TError, MarkNotificationReadMutationVariables, TContext>) => {
-
+    
     return useMutation<MarkNotificationReadMutation, TError, MarkNotificationReadMutationVariables, TContext>(
       {
     mutationKey: ['MarkNotificationRead'],
@@ -929,7 +612,7 @@ export const useMarkNotificationsSeenMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<MarkNotificationsSeenMutation, TError, MarkNotificationsSeenMutationVariables, TContext>) => {
-
+    
     return useMutation<MarkNotificationsSeenMutation, TError, MarkNotificationsSeenMutationVariables, TContext>(
       {
     mutationKey: ['MarkNotificationsSeen'],
@@ -955,7 +638,7 @@ export const useRepostPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<RepostPostMutation, TError, RepostPostMutationVariables, TContext>) => {
-
+    
     return useMutation<RepostPostMutation, TError, RepostPostMutationVariables, TContext>(
       {
     mutationKey: ['RepostPost'],
@@ -974,7 +657,7 @@ export const useRequestAccountDeletionMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<RequestAccountDeletionMutation, TError, RequestAccountDeletionMutationVariables, TContext>) => {
-
+    
     return useMutation<RequestAccountDeletionMutation, TError, RequestAccountDeletionMutationVariables, TContext>(
       {
     mutationKey: ['RequestAccountDeletion'],
@@ -997,7 +680,7 @@ export const useSendMessageMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<SendMessageMutation, TError, SendMessageMutationVariables, TContext>) => {
-
+    
     return useMutation<SendMessageMutation, TError, SendMessageMutationVariables, TContext>(
       {
     mutationKey: ['SendMessage'],
@@ -1022,7 +705,7 @@ export const useUnbookmarkPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UnbookmarkPostMutation, TError, UnbookmarkPostMutationVariables, TContext>) => {
-
+    
     return useMutation<UnbookmarkPostMutation, TError, UnbookmarkPostMutationVariables, TContext>(
       {
     mutationKey: ['UnbookmarkPost'],
@@ -1044,7 +727,7 @@ export const useUnfollowUserMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UnfollowUserMutation, TError, UnfollowUserMutationVariables, TContext>) => {
-
+    
     return useMutation<UnfollowUserMutation, TError, UnfollowUserMutationVariables, TContext>(
       {
     mutationKey: ['UnfollowUser'],
@@ -1070,7 +753,7 @@ export const useUnlikePostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UnlikePostMutation, TError, UnlikePostMutationVariables, TContext>) => {
-
+    
     return useMutation<UnlikePostMutation, TError, UnlikePostMutationVariables, TContext>(
       {
     mutationKey: ['UnlikePost'],
@@ -1096,7 +779,7 @@ export const useUnrepostPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UnrepostPostMutation, TError, UnrepostPostMutationVariables, TContext>) => {
-
+    
     return useMutation<UnrepostPostMutation, TError, UnrepostPostMutationVariables, TContext>(
       {
     mutationKey: ['UnrepostPost'],
@@ -1122,7 +805,7 @@ export const useUpdateProfileImageMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UpdateProfileImageMutation, TError, UpdateProfileImageMutationVariables, TContext>) => {
-
+    
     return useMutation<UpdateProfileImageMutation, TError, UpdateProfileImageMutationVariables, TContext>(
       {
     mutationKey: ['UpdateProfileImage'],
@@ -1137,6 +820,7 @@ export const GetAllPostsDocument = new TypedDocumentString(`
     posts {
       id
       content
+      visibility
       imgURL
       imgURLs
       likesCount
@@ -1157,6 +841,7 @@ export const GetAllPostsDocument = new TypedDocumentString(`
       repostOf {
         id
         content
+        visibility
         imgURLs
         likesCount
         isLiked
@@ -1187,7 +872,7 @@ export const useGetAllPostsQuery = <
       variables: GetAllPostsQueryVariables,
       options?: Omit<UseQueryOptions<GetAllPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAllPostsQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetAllPostsQuery, TError, TData>(
       {
     queryKey: ['GetAllPosts', variables],
@@ -1204,6 +889,7 @@ export const GetBookmarkedPostsDocument = new TypedDocumentString(`
     posts {
       id
       content
+      visibility
       imgURL
       imgURLs
       likesCount
@@ -1224,6 +910,7 @@ export const GetBookmarkedPostsDocument = new TypedDocumentString(`
       repostOf {
         id
         content
+        visibility
         imgURLs
         likesCount
         isLiked
@@ -1254,7 +941,7 @@ export const useGetBookmarkedPostsQuery = <
       variables: GetBookmarkedPostsQueryVariables,
       options?: Omit<UseQueryOptions<GetBookmarkedPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetBookmarkedPostsQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetBookmarkedPostsQuery, TError, TData>(
       {
     queryKey: ['GetBookmarkedPosts', variables],
@@ -1287,7 +974,7 @@ export const useGetCommentsQuery = <
       variables: GetCommentsQueryVariables,
       options?: Omit<UseQueryOptions<GetCommentsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetCommentsQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetCommentsQuery, TError, TData>(
       {
     queryKey: ['GetComments', variables],
@@ -1323,7 +1010,7 @@ export const useGetConversationsQuery = <
       variables?: GetConversationsQueryVariables,
       options?: Omit<UseQueryOptions<GetConversationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetConversationsQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetConversationsQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetConversations'] : ['GetConversations', variables],
@@ -1348,6 +1035,7 @@ export const GetCurrentUserDocument = new TypedDocumentString(`
     posts {
       id
       content
+      visibility
       imgURL
       imgURLs
       createdAt
@@ -1361,6 +1049,7 @@ export const GetCurrentUserDocument = new TypedDocumentString(`
       repostOf {
         id
         content
+        visibility
         imgURLs
         likesCount
         isLiked
@@ -1389,7 +1078,7 @@ export const useGetCurrentUserQuery = <
       variables?: GetCurrentUserQueryVariables,
       options?: Omit<UseQueryOptions<GetCurrentUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetCurrentUserQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetCurrentUserQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetCurrentUser'] : ['GetCurrentUser', variables],
@@ -1406,6 +1095,7 @@ export const GetMediaPostsDocument = new TypedDocumentString(`
     posts {
       id
       content
+      visibility
       imgURL
       imgURLs
       createdAt
@@ -1428,7 +1118,7 @@ export const useGetMediaPostsQuery = <
       variables: GetMediaPostsQueryVariables,
       options?: Omit<UseQueryOptions<GetMediaPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMediaPostsQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetMediaPostsQuery, TError, TData>(
       {
     queryKey: ['GetMediaPosts', variables],
@@ -1461,7 +1151,7 @@ export const useGetMessagesQuery = <
       variables: GetMessagesQueryVariables,
       options?: Omit<UseQueryOptions<GetMessagesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMessagesQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetMessagesQuery, TError, TData>(
       {
     queryKey: ['GetMessages', variables],
@@ -1510,7 +1200,7 @@ export const useGetNotificationsQuery = <
       variables?: GetNotificationsQueryVariables,
       options?: Omit<UseQueryOptions<GetNotificationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetNotificationsQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetNotificationsQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetNotifications'] : ['GetNotifications', variables],
@@ -1526,6 +1216,7 @@ export const GetPostByIdDocument = new TypedDocumentString(`
   getPostById(postId: $postId) {
     id
     content
+    visibility
     imgURL
     imgURLs
     createdAt
@@ -1546,6 +1237,7 @@ export const GetPostByIdDocument = new TypedDocumentString(`
     repostOf {
       id
       content
+      visibility
       imgURLs
       likesCount
       isLiked
@@ -1573,7 +1265,7 @@ export const useGetPostByIdQuery = <
       variables: GetPostByIdQueryVariables,
       options?: Omit<UseQueryOptions<GetPostByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetPostByIdQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetPostByIdQuery, TError, TData>(
       {
     queryKey: ['GetPostById', variables],
@@ -1603,7 +1295,7 @@ export const useGetSuggestedUsersQuery = <
       variables?: GetSuggestedUsersQueryVariables,
       options?: Omit<UseQueryOptions<GetSuggestedUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSuggestedUsersQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetSuggestedUsersQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetSuggestedUsers'] : ['GetSuggestedUsers', variables],
@@ -1629,6 +1321,7 @@ export const GetUserByUsernameDocument = new TypedDocumentString(`
     posts {
       id
       content
+      visibility
       imgURL
       imgURLs
       createdAt
@@ -1642,6 +1335,7 @@ export const GetUserByUsernameDocument = new TypedDocumentString(`
       repostOf {
         id
         content
+        visibility
         imgURLs
         likesCount
         isLiked
@@ -1670,7 +1364,7 @@ export const useGetUserByUsernameQuery = <
       variables: GetUserByUsernameQueryVariables,
       options?: Omit<UseQueryOptions<GetUserByUsernameQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetUserByUsernameQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetUserByUsernameQuery, TError, TData>(
       {
     queryKey: ['GetUserByUsername', variables],
@@ -1699,7 +1393,7 @@ export const useGetUsersQuery = <
       variables?: GetUsersQueryVariables,
       options?: Omit<UseQueryOptions<GetUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetUsersQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetUsersQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetUsers'] : ['GetUsers', variables],
@@ -1727,7 +1421,7 @@ export const useSearchUsersQuery = <
       variables: SearchUsersQueryVariables,
       options?: Omit<UseQueryOptions<SearchUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<SearchUsersQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<SearchUsersQuery, TError, TData>(
       {
     queryKey: ['SearchUsers', variables],
@@ -1751,7 +1445,7 @@ export const useUnreadMessageCountQuery = <
       variables?: UnreadMessageCountQueryVariables,
       options?: Omit<UseQueryOptions<UnreadMessageCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnreadMessageCountQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<UnreadMessageCountQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['UnreadMessageCount'] : ['UnreadMessageCount', variables],
@@ -1775,7 +1469,7 @@ export const useUnreadNotificationCountQuery = <
       variables?: UnreadNotificationCountQueryVariables,
       options?: Omit<UseQueryOptions<UnreadNotificationCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnreadNotificationCountQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<UnreadNotificationCountQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['UnreadNotificationCount'] : ['UnreadNotificationCount', variables],
@@ -1799,7 +1493,7 @@ export const useUnseenNotificationCountQuery = <
       variables?: UnseenNotificationCountQueryVariables,
       options?: Omit<UseQueryOptions<UnseenNotificationCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnseenNotificationCountQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<UnseenNotificationCountQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['UnseenNotificationCount'] : ['UnseenNotificationCount', variables],
@@ -1826,7 +1520,7 @@ export const useGetMeQuery = <
       variables?: GetMeQueryVariables,
       options?: Omit<UseQueryOptions<GetMeQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMeQuery, TError, TData>['queryKey'] }
     ) => {
-
+    
     return useQuery<GetMeQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetMe'] : ['GetMe', variables],

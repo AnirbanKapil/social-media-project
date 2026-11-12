@@ -15,7 +15,6 @@ const config: CodegenConfig = {
   generates: {
     "lib/generated.ts": {
       plugins: [
-        "typescript",
         "typescript-operations",
         "typescript-react-query",
         {

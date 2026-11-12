@@ -7,6 +7,7 @@ import {
   parseInput,
   postIdArgsSchema,
 } from "@/lib/validation";
+import { buildVisiblePostWhere } from "./visibility";
 
 
 
@@ -73,15 +74,14 @@ export const postResolvers= {
         return !!repost;
      },
 
-     repostOf: async(parent : any) => {
+     repostOf: async(parent : any, _args : any, ctx : any) => {
         if(!parent.repostOfId){
             return null;
         }
         return await prisma.post.findFirst({
           where: {
             id: parent.repostOfId,
-            isHidden: false,
-            author: { accountStatus: "ACTIVE" },
+            ...buildVisiblePostWhere(ctx.session?.user?.id ?? null),
           },
           include: { author: true },
         });
@@ -112,6 +112,7 @@ export const postResolvers= {
                 content : payload.content,
                 imgURL  : payload.imgURLs?.[0] ?? payload.imgURL ?? null,
                 imgURLs : payload.imgURLs ?? (payload.imgURL ? [payload.imgURL] : []),
+                visibility : payload.visibility,
                 author  : {connect :{ id: ctx.session.user.id }}
             },
              include: {
@@ -174,6 +175,16 @@ export const postResolvers= {
         throw new Error("Unauthorized");
         };
 
+        if (
+          payload.visibility &&
+          payload.visibility !== "PUBLIC" &&
+          post.visibility === "PUBLIC"
+        ) {
+          await prisma.post.deleteMany({
+            where: { repostOfId: post.id },
+          });
+        }
+
         const updatePost = await prisma.post.update({
           where : {
              id : payload.postId,
@@ -181,7 +192,8 @@ export const postResolvers= {
           data : {
              content : payload.content, 
              imgURL  : payload.imgURLs?.[0] ?? payload.imgURL ?? null,
-             imgURLs : payload.imgURLs ?? (payload.imgURL ? [payload.imgURL] : [])
+             imgURLs : payload.imgURLs ?? (payload.imgURL ? [payload.imgURL] : []),
+             visibility : payload.visibility,
           },
           include: {
                author: true,
@@ -199,7 +211,7 @@ export const postResolvers= {
        const userId = ctx.session?.user?.id;
 
        const post = await prisma.post.findFirst({
-        where: { id: postId, isHidden: false },
+        where: { id: postId, ...buildVisiblePostWhere(userId) },
        });
        if (!post) {
          throw new Error("Post not found");
@@ -248,7 +260,7 @@ export const postResolvers= {
       const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
       const post = await prisma.post.findFirst({
-        where: { id: postId, isHidden: false },
+        where: { id: postId, ...buildVisiblePostWhere(userId) },
       });
       if (!post) {
         throw new Error("Post not found");
@@ -285,7 +297,7 @@ export const postResolvers= {
       const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
       const post = await prisma.post.findFirst({
-        where: { id: postId, isHidden: false },
+        where: { id: postId, ...buildVisiblePostWhere(userId) },
       });
       if (!post) {
         throw new Error("Post not found");
@@ -318,7 +330,7 @@ export const postResolvers= {
       }
 
       return await prisma.post.findFirst({
-        where: { id: postId, isHidden: false },
+        where: { id: postId, ...buildVisiblePostWhere(userId) },
       });
     },
 
@@ -330,7 +342,7 @@ export const postResolvers= {
       const userId = ctx.session?.user?.id;
 
       const source = await prisma.post.findFirst({
-        where: { id: postId, isHidden: false },
+        where: { id: postId, ...buildVisiblePostWhere(userId) },
       });
       if(!source){
         throw new Error("Post not found");
@@ -339,11 +351,14 @@ export const postResolvers= {
       const targetId = source.repostOfId ?? source.id;
       const original = source.repostOfId
         ? await prisma.post.findFirst({
-            where: { id: targetId, isHidden: false },
+            where: { id: targetId, ...buildVisiblePostWhere(userId) },
           })
         : source;
       if (!original) {
         throw new Error("Post not found");
+      }
+      if (original.visibility !== "PUBLIC") {
+        throw new Error("Only public posts can be reposted");
       }
 
       const existingRepost = await prisma.post.findUnique({
@@ -357,7 +372,7 @@ export const postResolvers= {
           authorId_repostOfId: { authorId : userId, repostOfId : targetId },
         },
         update: {},
-        create: { content: "", authorId : userId, repostOfId : targetId },
+        create: { content: "", authorId : userId, repostOfId : targetId, visibility: "PUBLIC" },
       });
 
       if (!existingRepost && original) {
@@ -370,7 +385,7 @@ export const postResolvers= {
       }
 
       return await prisma.post.findFirst({
-        where: { id: targetId, isHidden: false },
+        where: { id: targetId, ...buildVisiblePostWhere(userId) },
       });
     },
 
@@ -397,7 +412,7 @@ export const postResolvers= {
       }
 
       return await prisma.post.findFirst({
-        where: { id: targetId, isHidden: false },
+        where: { id: targetId, ...buildVisiblePostWhere(userId) },
       });
     }
    },
