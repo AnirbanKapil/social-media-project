@@ -16,6 +16,11 @@ import { useCustomFetcher } from './fetcher';
           }
         }
         
+export type ConversationRole =
+  | 'ADMIN'
+  | 'MEMBER'
+  | 'OWNER';
+
 export type CreatePostPayload = {
   content: string;
   imgURL?: string | null | undefined;
@@ -35,6 +40,14 @@ export type PostVisibility =
   | 'FOLLOWERS'
   | 'PRIVATE'
   | 'PUBLIC';
+
+export type AddGroupMembersMutationVariables = Exact<{
+  conversationId: string;
+  userIds: Array<string> | string;
+}>;
+
+
+export type AddGroupMembersMutation = { addGroupMembers: { id: string, memberCount: number } };
 
 export type BookmarkPostMutationVariables = Exact<{
   postId: string;
@@ -58,6 +71,14 @@ export type CreateConversationMutationVariables = Exact<{
 
 export type CreateConversationMutation = { createConversation: { id: string, participants: Array<{ id: string, username: string }> } | null };
 
+export type CreateGroupConversationMutationVariables = Exact<{
+  name: string;
+  participantIds: Array<string> | string;
+}>;
+
+
+export type CreateGroupConversationMutation = { createGroupConversation: { id: string, isGroup: boolean, name: string | null, myRole: ConversationRole | null, memberCount: number } };
+
 export type CreatePostMutationVariables = Exact<{
   payload: CreatePostPayload;
 }>;
@@ -71,6 +92,13 @@ export type DeleteCommentMutationVariables = Exact<{
 
 
 export type DeleteCommentMutation = { deleteComment: boolean };
+
+export type DeleteGroupMutationVariables = Exact<{
+  conversationId: string;
+}>;
+
+
+export type DeleteGroupMutation = { deleteGroup: boolean };
 
 export type DeletePostMutationVariables = Exact<{
   postId: string;
@@ -97,6 +125,13 @@ export type FollowUserMutationVariables = Exact<{
 
 
 export type FollowUserMutation = { followUser: { followerId: string, followingId: string } };
+
+export type LeaveGroupMutationVariables = Exact<{
+  conversationId: string;
+}>;
+
+
+export type LeaveGroupMutation = { leaveGroup: boolean };
 
 export type LikePostMutationVariables = Exact<{
   postId: string;
@@ -129,6 +164,22 @@ export type MarkNotificationsSeenMutationVariables = Exact<{ [key: string]: neve
 
 export type MarkNotificationsSeenMutation = { markNotificationsSeen: boolean };
 
+export type RemoveGroupMemberMutationVariables = Exact<{
+  conversationId: string;
+  userId: string;
+}>;
+
+
+export type RemoveGroupMemberMutation = { removeGroupMember: boolean };
+
+export type RenameGroupMutationVariables = Exact<{
+  conversationId: string;
+  name: string;
+}>;
+
+
+export type RenameGroupMutation = { renameGroup: { id: string, name: string | null } };
+
 export type RepostPostMutationVariables = Exact<{
   postId: string;
 }>;
@@ -148,6 +199,23 @@ export type SendMessageMutationVariables = Exact<{
 
 
 export type SendMessageMutation = { sendMessage: { id: string, content: string, createdAt: string } };
+
+export type SetMemberRoleMutationVariables = Exact<{
+  conversationId: string;
+  userId: string;
+  role: ConversationRole;
+}>;
+
+
+export type SetMemberRoleMutation = { setMemberRole: boolean };
+
+export type TransferOwnershipMutationVariables = Exact<{
+  conversationId: string;
+  userId: string;
+}>;
+
+
+export type TransferOwnershipMutation = { transferOwnership: boolean };
 
 export type UnbookmarkPostMutationVariables = Exact<{
   postId: string;
@@ -219,7 +287,7 @@ export type GetCommentsQuery = { getComments: Array<{ id: string, content: strin
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConversationsQuery = { getConversations: Array<{ id: string, unreadCount: number, participants: Array<{ id: string, username: string, profileImgUrl: string | null }>, lastMessage: { content: string, createdAt: string } | null }> };
+export type GetConversationsQuery = { getConversations: Array<{ id: string, isGroup: boolean, name: string | null, myRole: ConversationRole | null, memberCount: number, unreadCount: number, participants: Array<{ id: string, username: string, profileImgUrl: string | null }>, members: Array<{ role: ConversationRole, user: { id: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null } }>, lastMessage: { id: string, content: string, createdAt: string, sender: { id: string, username: string } } | null }> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -239,7 +307,7 @@ export type GetMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetMessagesQuery = { getMessages: Array<{ id: string, content: string, createdAt: string, sender: { id: string, username: string, profileImgUrl: string | null } }> };
+export type GetMessagesQuery = { getMessages: Array<{ id: string, content: string, createdAt: string, sender: { id: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null } }> };
 
 export type GetNotificationsQueryVariables = Exact<{
   first?: number | null | undefined;
@@ -304,6 +372,28 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMeQuery = { currUser: { id: string, email: string } | null };
 
 
+
+export const AddGroupMembersDocument = new TypedDocumentString(`
+    mutation AddGroupMembers($conversationId: String!, $userIds: [String!]!) {
+  addGroupMembers(conversationId: $conversationId, userIds: $userIds) {
+    id
+    memberCount
+  }
+}
+    `);
+
+export const useAddGroupMembersMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<AddGroupMembersMutation, TError, AddGroupMembersMutationVariables, TContext>) => {
+    
+    return useMutation<AddGroupMembersMutation, TError, AddGroupMembersMutationVariables, TContext>(
+      {
+    mutationKey: ['AddGroupMembers'],
+    mutationFn: (variables?: AddGroupMembersMutationVariables) => useCustomFetcher<AddGroupMembersMutation, AddGroupMembersMutationVariables>(AddGroupMembersDocument, variables)(),
+    ...options
+  }
+    )};
 
 export const BookmarkPostDocument = new TypedDocumentString(`
     mutation BookmarkPost($postId: String!) {
@@ -383,6 +473,31 @@ export const useCreateConversationMutation = <
   }
     )};
 
+export const CreateGroupConversationDocument = new TypedDocumentString(`
+    mutation CreateGroupConversation($name: String!, $participantIds: [String!]!) {
+  createGroupConversation(name: $name, participantIds: $participantIds) {
+    id
+    isGroup
+    name
+    myRole
+    memberCount
+  }
+}
+    `);
+
+export const useCreateGroupConversationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateGroupConversationMutation, TError, CreateGroupConversationMutationVariables, TContext>) => {
+    
+    return useMutation<CreateGroupConversationMutation, TError, CreateGroupConversationMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateGroupConversation'],
+    mutationFn: (variables?: CreateGroupConversationMutationVariables) => useCustomFetcher<CreateGroupConversationMutation, CreateGroupConversationMutationVariables>(CreateGroupConversationDocument, variables)(),
+    ...options
+  }
+    )};
+
 export const CreatePostDocument = new TypedDocumentString(`
     mutation CreatePost($payload: CreatePostPayload!) {
   createPost(payload: $payload) {
@@ -428,6 +543,25 @@ export const useDeleteCommentMutation = <
       {
     mutationKey: ['DeleteComment'],
     mutationFn: (variables?: DeleteCommentMutationVariables) => useCustomFetcher<DeleteCommentMutation, DeleteCommentMutationVariables>(DeleteCommentDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const DeleteGroupDocument = new TypedDocumentString(`
+    mutation DeleteGroup($conversationId: String!) {
+  deleteGroup(conversationId: $conversationId)
+}
+    `);
+
+export const useDeleteGroupMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteGroupMutation, TError, DeleteGroupMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteGroupMutation, TError, DeleteGroupMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteGroup'],
+    mutationFn: (variables?: DeleteGroupMutationVariables) => useCustomFetcher<DeleteGroupMutation, DeleteGroupMutationVariables>(DeleteGroupDocument, variables)(),
     ...options
   }
     )};
@@ -523,6 +657,25 @@ export const useFollowUserMutation = <
       {
     mutationKey: ['FollowUser'],
     mutationFn: (variables?: FollowUserMutationVariables) => useCustomFetcher<FollowUserMutation, FollowUserMutationVariables>(FollowUserDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const LeaveGroupDocument = new TypedDocumentString(`
+    mutation LeaveGroup($conversationId: String!) {
+  leaveGroup(conversationId: $conversationId)
+}
+    `);
+
+export const useLeaveGroupMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<LeaveGroupMutation, TError, LeaveGroupMutationVariables, TContext>) => {
+    
+    return useMutation<LeaveGroupMutation, TError, LeaveGroupMutationVariables, TContext>(
+      {
+    mutationKey: ['LeaveGroup'],
+    mutationFn: (variables?: LeaveGroupMutationVariables) => useCustomFetcher<LeaveGroupMutation, LeaveGroupMutationVariables>(LeaveGroupDocument, variables)(),
     ...options
   }
     )};
@@ -629,6 +782,47 @@ export const useMarkNotificationsSeenMutation = <
   }
     )};
 
+export const RemoveGroupMemberDocument = new TypedDocumentString(`
+    mutation RemoveGroupMember($conversationId: String!, $userId: String!) {
+  removeGroupMember(conversationId: $conversationId, userId: $userId)
+}
+    `);
+
+export const useRemoveGroupMemberMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<RemoveGroupMemberMutation, TError, RemoveGroupMemberMutationVariables, TContext>) => {
+    
+    return useMutation<RemoveGroupMemberMutation, TError, RemoveGroupMemberMutationVariables, TContext>(
+      {
+    mutationKey: ['RemoveGroupMember'],
+    mutationFn: (variables?: RemoveGroupMemberMutationVariables) => useCustomFetcher<RemoveGroupMemberMutation, RemoveGroupMemberMutationVariables>(RemoveGroupMemberDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const RenameGroupDocument = new TypedDocumentString(`
+    mutation RenameGroup($conversationId: String!, $name: String!) {
+  renameGroup(conversationId: $conversationId, name: $name) {
+    id
+    name
+  }
+}
+    `);
+
+export const useRenameGroupMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<RenameGroupMutation, TError, RenameGroupMutationVariables, TContext>) => {
+    
+    return useMutation<RenameGroupMutation, TError, RenameGroupMutationVariables, TContext>(
+      {
+    mutationKey: ['RenameGroup'],
+    mutationFn: (variables?: RenameGroupMutationVariables) => useCustomFetcher<RenameGroupMutation, RenameGroupMutationVariables>(RenameGroupDocument, variables)(),
+    ...options
+  }
+    )};
+
 export const RepostPostDocument = new TypedDocumentString(`
     mutation RepostPost($postId: String!) {
   repostPost(postId: $postId) {
@@ -693,6 +887,44 @@ export const useSendMessageMutation = <
       {
     mutationKey: ['SendMessage'],
     mutationFn: (variables?: SendMessageMutationVariables) => useCustomFetcher<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const SetMemberRoleDocument = new TypedDocumentString(`
+    mutation SetMemberRole($conversationId: String!, $userId: String!, $role: ConversationRole!) {
+  setMemberRole(conversationId: $conversationId, userId: $userId, role: $role)
+}
+    `);
+
+export const useSetMemberRoleMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<SetMemberRoleMutation, TError, SetMemberRoleMutationVariables, TContext>) => {
+    
+    return useMutation<SetMemberRoleMutation, TError, SetMemberRoleMutationVariables, TContext>(
+      {
+    mutationKey: ['SetMemberRole'],
+    mutationFn: (variables?: SetMemberRoleMutationVariables) => useCustomFetcher<SetMemberRoleMutation, SetMemberRoleMutationVariables>(SetMemberRoleDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const TransferOwnershipDocument = new TypedDocumentString(`
+    mutation TransferOwnership($conversationId: String!, $userId: String!) {
+  transferOwnership(conversationId: $conversationId, userId: $userId)
+}
+    `);
+
+export const useTransferOwnershipMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<TransferOwnershipMutation, TError, TransferOwnershipMutationVariables, TContext>) => {
+    
+    return useMutation<TransferOwnershipMutation, TError, TransferOwnershipMutationVariables, TContext>(
+      {
+    mutationKey: ['TransferOwnership'],
+    mutationFn: (variables?: TransferOwnershipMutationVariables) => useCustomFetcher<TransferOwnershipMutation, TransferOwnershipMutationVariables>(TransferOwnershipDocument, variables)(),
     ...options
   }
     )};
@@ -1022,15 +1254,34 @@ export const GetConversationsDocument = new TypedDocumentString(`
     query GetConversations {
   getConversations {
     id
+    isGroup
+    name
+    myRole
+    memberCount
     unreadCount
     participants {
       id
       username
       profileImgUrl
     }
+    members {
+      role
+      user {
+        id
+        username
+        firstName
+        lastName
+        profileImgUrl
+      }
+    }
     lastMessage {
+      id
       content
       createdAt
+      sender {
+        id
+        username
+      }
     }
   }
 }
@@ -1171,6 +1422,8 @@ export const GetMessagesDocument = new TypedDocumentString(`
     sender {
       id
       username
+      firstName
+      lastName
       profileImgUrl
     }
   }

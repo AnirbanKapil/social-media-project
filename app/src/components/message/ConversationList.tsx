@@ -4,7 +4,9 @@ import { useMemo, useState } from "react";
 import { Loader } from "../loader";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { GetConversationsQuery } from "@/lib/generated";
-import { MessageCircle, Search } from "lucide-react";
+import { MessageCircle, Search, Users } from "lucide-react";
+import NewGroupModal from "./NewGroupModal";
+import { getConversationDisplayName, getInitials } from "./conversationUtils";
 
 type Props = {
   conversations: GetConversationsQuery["getConversations"];
@@ -22,6 +24,7 @@ export default function ConversationList({
   error,
 }: Props) {
   const [search, setSearch] = useState("");
+  const [showNewGroup, setShowNewGroup] = useState(false);
   const { data: currentUser } = useGetCurrentUserQuery();
   const curUserId = currentUser?.currUser?.id;
 
@@ -30,12 +33,17 @@ export default function ConversationList({
     if (!term) return conversations;
 
     return conversations.filter((conversation) => {
-      const otherParticipant = conversation.participants.find(
-        (participant) => participant.id !== curUserId,
-      );
+      const displayName = getConversationDisplayName(
+        conversation,
+        curUserId,
+      ).toLowerCase();
+      const lastMessage = conversation.lastMessage?.content.toLowerCase() ?? "";
+      const sender = conversation.lastMessage?.sender?.username.toLowerCase() ?? "";
+
       return (
-        otherParticipant?.username.toLowerCase().includes(term) ||
-        conversation.lastMessage?.content.toLowerCase().includes(term)
+        displayName.includes(term) ||
+        lastMessage.includes(term) ||
+        sender.includes(term)
       );
     });
   }, [conversations, curUserId, search]);
@@ -48,8 +56,19 @@ export default function ConversationList({
             <h2 className="text-base font-semibold text-white">Inbox</h2>
             <p className="mt-1 text-xs text-slate-500">Keep in touch</p>
           </div>
-          <div className="flex h-8 min-w-8 items-center justify-center rounded-full bg-white/[0.06] px-2 text-xs font-medium text-slate-300">
-            {conversations.length}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowNewGroup(true)}
+              aria-label="Create a new group"
+              title="New group"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/15 text-indigo-300 ring-1 ring-inset ring-indigo-400/20 transition-colors hover:bg-indigo-500/25 hover:text-indigo-200"
+            >
+              <Users size={15} />
+            </button>
+            <div className="flex h-8 min-w-8 items-center justify-center rounded-full bg-white/[0.06] px-2 text-xs font-medium text-slate-300">
+              {conversations.length}
+            </div>
           </div>
         </div>
         <label className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-[#080b12] px-3 py-2.5 text-slate-400 transition-colors focus-within:border-indigo-400/50">
@@ -83,13 +102,20 @@ export default function ConversationList({
           </div>
         ) : (
           filteredConversations.map((conv) => {
-            const otherParticipant = conv.participants.find(
-              (participant) => participant.id !== curUserId,
-            );
-            const username = otherParticipant?.username ?? "Conversation";
-            const initials = username.slice(0, 2).toUpperCase();
+            const displayName = getConversationDisplayName(conv, curUserId);
             const isSelected = selectedConversationId === conv.id;
             const unreadCount = conv.unreadCount;
+            const senderName =
+              conv.isGroup && conv.lastMessage?.sender?.id !== curUserId
+                ? conv.lastMessage?.sender?.username
+                : null;
+            const preview = conv.lastMessage
+              ? senderName
+                ? `${senderName}: ${conv.lastMessage.content}`
+                : conv.lastMessage.content
+              : conv.isGroup
+                ? "No messages yet"
+                : "Start a conversation";
 
             return (
               <button
@@ -104,16 +130,20 @@ export default function ConversationList({
                 }`}
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400/30 to-violet-500/20 text-sm font-semibold text-indigo-100 ring-1 ring-inset ring-white/10">
-                  {initials}
+                  {conv.isGroup ? (
+                    <Users size={19} />
+                  ) : (
+                    getInitials(displayName)
+                  )}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium text-slate-100">{username}</span>
+                  <span className="block truncate text-sm font-medium text-slate-100">{displayName}</span>
                   <span
                     className={`mt-1 block truncate text-xs ${
                       unreadCount > 0 ? "font-medium text-slate-200" : "text-slate-400"
                     }`}
                   >
-                    {conv.lastMessage?.content ?? "Start a conversation"}
+                    {preview}
                   </span>
                 </span>
                 {unreadCount > 0 && (
@@ -129,6 +159,13 @@ export default function ConversationList({
           })
         )}
       </div>
+
+      {showNewGroup && (
+        <NewGroupModal
+          onClose={() => setShowNewGroup(false)}
+          onCreated={(conversationId) => setSelectedConversationId(conversationId)}
+        />
+      )}
     </aside>
   );
 }

@@ -1,6 +1,7 @@
 
 import { gql } from "graphql-tag";
 
+
 export const GetMessagesDocument = gql`
   query GetMessages($conversationId: String!) {
   getMessages(conversationId: $conversationId) {
@@ -10,6 +11,8 @@ export const GetMessagesDocument = gql`
     sender {
       id
       username
+      firstName
+      lastName
       profileImgUrl
     }
   }

@@ -1,6 +1,6 @@
 "use client"
 
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { toDate } from "../notifications/formatTime";
 import { useGetMessagesQuery } from "@/lib/generated";
 import { useGetCurrentUserQuery } from "@/lib/generated";
@@ -9,6 +9,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Loader } from "../loader";
 import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
+import GroupSettingsModal from "./GroupSettingsModal";
+import { getMemberDisplayName } from "./conversationUtils";
 import { GetConversationsQuery } from "@/lib/generated"
 import Link from "next/link";
 import { ArrowLeft, MessageCircle } from "lucide-react";
@@ -48,6 +50,7 @@ export default function ChatWindow({conversationId,conversations,onBack} : Props
   const currentUser = currentUserData?.currUser
   const queryClient = useQueryClient();
   const { mutate: markConversationRead } = useMarkConversationReadMutation();
+  const [showSettings, setShowSettings] = useState(false);
 
   const lastMessageId = data?.getMessages.at(-1)?.id;
 
@@ -95,12 +98,38 @@ export default function ChatWindow({conversationId,conversations,onBack} : Props
   }
 
   const activeConversation = conversations?.find((c)=> c.id === conversationId)
-  
-  const otherParticipant = activeConversation?.participants.find((p)=> p.id !== currentUser?.id)
+
+  if (!activeConversation) {
+    if (conversations.length === 0) {
+      return <div className="flex h-full w-full items-center justify-center"><Loader /></div>;
+    }
+
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center">
+        <p className="text-sm text-slate-400">
+          This conversation is no longer available.
+        </p>
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300 transition-colors hover:bg-white/[0.06]"
+          >
+            Back to messages
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full min-h-0 w-full flex-col bg-[#0d111b]">
-      <ChatHeader username={otherParticipant?.username} onBack={onBack} />
+      <ChatHeader
+        conversation={activeConversation}
+        currentUserId={currentUser?.id}
+        onBack={onBack}
+        onOpenSettings={() => setShowSettings(true)}
+      />
 
       <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">
         {data?.getMessages.length ? (
@@ -123,20 +152,27 @@ export default function ChatWindow({conversationId,conversations,onBack} : Props
                   </div>
                 )}
                 <div className={`mb-4 flex ${isMine ? "justify-end" : "justify-start"}`}>
-                  <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 sm:max-w-[70%] ${
-                      isMine
-                        ? "rounded-br-md bg-indigo-500 text-white"
-                        : "rounded-bl-md border border-white/[0.07] bg-white/[0.055] text-slate-100"
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap break-words text-sm leading-6">{message.content}</p>
-                    <p className={`mt-1.5 text-right text-[11px] ${isMine ? "text-indigo-100/70" : "text-slate-500"}`}>
-                      {messageDate.toLocaleTimeString([], {
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
-                    </p>
+                  <div className="max-w-[85%] sm:max-w-[70%]">
+                    {activeConversation.isGroup && !isMine && (
+                      <p className="mb-1 px-1 text-[11px] font-medium text-slate-400">
+                        {getMemberDisplayName(message.sender)}
+                      </p>
+                    )}
+                    <div
+                      className={`rounded-2xl px-4 py-3 ${
+                        isMine
+                          ? "rounded-br-md bg-indigo-500 text-white"
+                          : "rounded-bl-md border border-white/[0.07] bg-white/[0.055] text-slate-100"
+                      }`}
+                    >
+                      <p className="whitespace-pre-wrap break-words text-sm leading-6">{message.content}</p>
+                      <p className={`mt-1.5 text-right text-[11px] ${isMine ? "text-indigo-100/70" : "text-slate-500"}`}>
+                        {messageDate.toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Fragment>
@@ -156,6 +192,18 @@ export default function ChatWindow({conversationId,conversations,onBack} : Props
       <div className="shrink-0 px-3 pb-4 sm:px-6 sm:pb-5">
         <MessageInput conversationId={conversationId} />
       </div>
+
+      {showSettings && (
+        <GroupSettingsModal
+          conversation={activeConversation}
+          currentUserId={currentUser?.id}
+          onClose={() => setShowSettings(false)}
+          onExited={() => {
+            setShowSettings(false);
+            onBack?.();
+          }}
+        />
+      )}
     </div>
   );
 }
