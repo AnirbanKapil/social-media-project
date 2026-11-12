@@ -6,11 +6,17 @@ import { WhatsHappening } from "@/app/src/components/whatsHappening";
 import { SideBarMenuItems } from "@/app/src/components/sideBarMenu";
 import { MobileNav } from "@/app/src/components/MobileNav";
 import Link from "next/link";
+import { getAuthSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 
 
 
-export default function DashboardLayout({children}: {children: React.ReactNode}) {
+export default async function DashboardLayout({children}: {children: React.ReactNode}) {
+    const session = await getAuthSession();
+    if (!session?.user) {
+        redirect("/api/auth/signin");
+    }
 
     const sideBarItems = SideBarMenuItems();
 

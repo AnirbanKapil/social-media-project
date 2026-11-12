@@ -69,7 +69,9 @@ export default function LoggedOutUserPage() {
                 Safe Exit Complete
               </h2>
               <p className="text-sm text-slate-400 max-w-xs mx-auto leading-relaxed">
-                Your session has been closed securely. All client cache tokens have been cleared.
+                Your session has been closed securely. If you requested account
+                deletion, sign in again within 7 days to cancel and restore your
+                account and posts.
               </p>
             </div>
 
@@ -87,12 +89,12 @@ export default function LoggedOutUserPage() {
               </Link>
 
               {/* Hard reload on landing page ensures everything re-mounts clean */}
-              <a
+              <Link
                 href="/"
                 className="w-full flex items-center justify-center px-4 py-3 rounded-xl text-sm font-medium text-slate-300 bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.08] hover:text-white transition-all duration-200"
               >
                 Go to Homepage
-              </a>
+              </Link>
             </div>
           </div>
         )}

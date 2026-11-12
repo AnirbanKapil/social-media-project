@@ -12,7 +12,7 @@ export const userQueries = {
   if (!session) {
     throw new Error("Not logged in");
   }
-    return prisma.user.findMany();
+    return prisma.user.findMany({ where: { accountStatus: "ACTIVE" } });
   },
   
   currUser: async (_: any, __:any, { prisma, session }: any) => {
@@ -20,7 +20,7 @@ export const userQueries = {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    include: {Posts: true}
+    include: { Posts: { where: { isHidden: false } } }
   });
   if (!user) {
   throw new Error("User not found in DB");
@@ -36,8 +36,8 @@ export const userQueries = {
     };
     const { username } = parseInput(getUserByUsernameSchema, args);
     const user = await prisma.user.findUnique({
-      where: { username },
-      include: {Posts: true}
+      where: { username, accountStatus: "ACTIVE" },
+      include: { Posts: { where: { isHidden: false } } }
     });       
     if (!user) {
       throw new Error("User not found");
@@ -54,6 +54,7 @@ export const userQueries = {
 
     return await prisma.user.findMany({
       where: {
+      accountStatus: "ACTIVE",
       id: {
         not: session.user.id,
       },
@@ -80,6 +81,7 @@ export const userQueries = {
 
     return await prisma.user.findMany({
       where: {
+        accountStatus: "ACTIVE",
         id: {
           not: userId,
         },

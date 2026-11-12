@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { userQueries } from "./queries";
 import cloudinary from "@/lib/cloudinary";
 import { createNotification, deleteNotification } from "../notification/helpers";
+import { requestAccountDeletion } from "@/lib/accountDeletion";
 import {
   followUserSchema,
   parseInput,
@@ -11,6 +12,18 @@ import {
 
 export const userResolvers = {
   User: {
+    username: (parent: { username: string; accountStatus?: string }) =>
+      parent.accountStatus === "DELETED" ? "Deleted account" : parent.username,
+
+    email: (parent: { email: string; accountStatus?: string }) =>
+      parent.accountStatus === "DELETED" ? "" : parent.email,
+
+    posts: async (parent: { id: string }, _args: unknown, ctx: any) =>
+      ctx.prisma.post.findMany({
+        where: { authorId: parent.id, isHidden: false, author: { accountStatus: "ACTIVE" } },
+        orderBy: { createdAt: "desc" },
+      }),
+
     isFollowing: async (parent : any, _args : any, ctx : any) => {
       const currentUserId = ctx.session?.user?.id;
 
@@ -46,6 +59,16 @@ export const userResolvers = {
   },
   
   Mutation: {
+    requestAccountDeletion: async (_parent: unknown, _args: unknown, ctx: any) => {
+      const userId = ctx.session?.user?.id;
+      if (!userId) {
+        throw new Error("Not authenticated");
+      }
+
+      const deletionScheduledAt = await requestAccountDeletion(userId);
+      return deletionScheduledAt.toISOString();
+    },
+
     
     followUser : async (parent : any, args : {to : string}, ctx : any) => {
         

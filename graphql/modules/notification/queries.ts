@@ -50,7 +50,16 @@ export const notificationQueries = {
       where: {
         recipientId: userId,
         ...(unreadOnly ? { readAt: null } : {}),
-        ...cursorFilter,
+        AND: [
+          cursorFilter,
+          { actor: { is: { accountStatus: "ACTIVE" } } },
+          {
+            OR: [
+              { postId: null },
+              { post: { is: { isHidden: false } } },
+            ],
+          },
+        ],
       },
       include: {
         actor: true,
@@ -88,6 +97,15 @@ export const notificationQueries = {
       where: {
         recipientId: userId,
         readAt: null,
+        AND: [
+          { actor: { is: { accountStatus: "ACTIVE" } } },
+          {
+            OR: [
+              { postId: null },
+              { post: { is: { isHidden: false } } },
+            ],
+          },
+        ],
       },
     });
   },
@@ -115,6 +133,15 @@ export const notificationQueries = {
       where: {
         recipientId: userId,
         readAt: null,
+        AND: [
+          { actor: { is: { accountStatus: "ACTIVE" } } },
+          {
+            OR: [
+              { postId: null },
+              { post: { is: { isHidden: false } } },
+            ],
+          },
+        ],
         ...(user.notificationsSeenAt
           ? { createdAt: { gt: user.notificationsSeenAt } }
           : {}),

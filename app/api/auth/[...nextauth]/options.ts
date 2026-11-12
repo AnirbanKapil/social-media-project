@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
 import NextAuth from "next-auth";
 import { credentialsSchema } from "@/lib/validation";
+import { cancelPendingAccountDeletion } from "@/lib/accountDeletion";
 
 
 export const authOptions : NextAuthOptions = {
@@ -45,6 +46,14 @@ export const authOptions : NextAuthOptions = {
         if(!isValid){
           throw new Error("Password incorrect")
         }
+        if (user.accountStatus === "PENDING_DELETION") {
+          const restored = await cancelPendingAccountDeletion(user.id);
+          if (!restored) {
+            throw new Error("The account deletion period has ended");
+          }
+        } else if (user.accountStatus !== "ACTIVE") {
+          throw new Error("This account has been deleted");
+        }
         return {
           id : user.id.toString(),
           email : user.email,
@@ -72,6 +81,18 @@ callbacks : {
       return token;
    },
    async session ({session,token} : any) {
+      const dbUser = typeof token.id === "string"
+        ? await prisma.user.findUnique({
+            where: { id: token.id },
+            select: { accountStatus: true },
+          })
+        : null;
+
+      if (!dbUser || dbUser.accountStatus !== "ACTIVE") {
+        session.user = undefined;
+        return session;
+      }
+
       if(session.user){
         session.user.id = token.id as string
       }
@@ -84,6 +105,15 @@ callbacks : {
        });
 
       if (existingUser) {
+      if (existingUser.accountStatus === "PENDING_DELETION") {
+        const restored = await cancelPendingAccountDeletion(existingUser.id);
+        if (!restored) {
+          return false;
+        }
+      } else if (existingUser.accountStatus !== "ACTIVE") {
+        return false;
+      }
+
       await prisma.user.update({
         where: { email: user.email! },
         data: { profileImgUrl: user.image },
@@ -109,6 +139,7 @@ callbacks : {
         email: user.email!,
         username: finalUsername,
         profileImgUrl: user.image,
+        accountStatus: "ACTIVE",
       },
     });
   }

@@ -60,18 +60,28 @@ export function NavBar ({ showUserSearch = false }: { showUserSearch?: boolean }
                     <SearchUsers />
                 </div>
             )}
-            <div className="col-start-2 row-start-1 md:col-start-3 md:justify-self-end">
+            <div className="col-start-2 row-start-1 flex items-center gap-3 md:col-start-3 md:justify-self-end">
                 {!user ? (<button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120"
                   onClick={()=> {router.push("/api/auth/signin")}} >
                   signIn
                 </button>) 
-                : (<button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120" 
-                onClick={async () => {
-                await signOut({ redirect: false });
-                window.location.href = "/loggedoutuser";
-                }}>
-                  Logout
-                </button>)}
+                : (
+                  <>
+                    <Link
+                      href="/dashboard/settings"
+                      className="rounded-lg bg-slate-700 p-2 transition-colors hover:bg-slate-600"
+                    >
+                      Account
+                    </Link>
+                    <button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120"
+                    onClick={async () => {
+                    await signOut({ redirect: false });
+                    window.location.href = "/loggedoutuser";
+                    }}>
+                      Logout
+                    </button>
+                  </>
+                )}
             </div>
         </div>
       ) 

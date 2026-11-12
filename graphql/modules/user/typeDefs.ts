@@ -32,13 +32,6 @@ export const userTypeDefs  = gql`
     suggestedUsers(limit: Int = 5): [User!]!
   }
 
-  type Post {
-    id: String!
-    content: String!
-    imgURL: String
-    author: User 
-  }
-
   type Follows {
      followerId: String!
      followingId: String!
@@ -51,6 +44,7 @@ export const userTypeDefs  = gql`
     unfollowUser(to : String!): Follows
     updateProfileImage(profileImgUrl: String! profileImgPublicId: String): User
     removeProfileImage: User
+    requestAccountDeletion: String!
   }  
 
 `;

@@ -23,6 +23,11 @@ const handler = startServerAndCreateNextHandler<NextRequest>(server,{
   }
 });
 
-export { handler as GET, handler as POST };
+export function GET(request: NextRequest) {
+  return handler(request);
+}
 
+export function POST(request: NextRequest) {
+  return handler(request);
+}
 

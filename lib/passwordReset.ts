@@ -63,6 +63,18 @@ export async function consumeResetToken(rawToken: string): Promise<string | null
   return userId;
 }
 
+export async function deleteResetTokensForUser(userId: string): Promise<void> {
+  const redis = getRedisClient();
+  const previousHash = await redis.get<string>(userKey(userId));
+  const pipeline = redis.pipeline();
+
+  if (previousHash) {
+    pipeline.del(tokenKey(previousHash));
+  }
+  pipeline.del(userKey(userId));
+  await pipeline.exec();
+}
+
 export async function isRateLimited(identifier: string): Promise<boolean> {
   const redis = getRedisClient();
   const key = `${RATE_LIMIT_PREFIX}${identifier}`;

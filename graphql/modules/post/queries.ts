@@ -1,4 +1,5 @@
 
+import type { Prisma } from "@/app/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import {
   parseInput,
@@ -6,12 +7,25 @@ import {
   postPaginationSchema,
 } from "@/lib/validation";
 
+const visiblePostFilter: Prisma.PostWhereInput = {
+  isHidden: false,
+  author: { accountStatus: "ACTIVE" },
+  OR: [
+    { repostOfId: null },
+    {
+      repostOf: {
+        is: { isHidden: false, author: { accountStatus: "ACTIVE" } },
+      },
+    },
+  ],
+};
+
 export const postQueries = {
     getPostById: async (_parent: unknown, args: { postId: string }) => {
       const { postId } = parseInput(postIdArgsSchema, args);
 
-      return prisma.post.findUnique({
-        where: { id: postId },
+      return prisma.post.findFirst({
+        where: { id: postId, ...visiblePostFilter },
         include: { author: true },
       });
     },
@@ -45,7 +59,7 @@ export const postQueries = {
       }
 
       const rows = await prisma.post.findMany({
-        where: cursorFilter,
+        where: { AND: [visiblePostFilter, cursorFilter] },
         include: { author: true },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: first + 1,
@@ -100,7 +114,7 @@ export const postQueries = {
       };
 
       const rows = await prisma.post.findMany({
-        where: after ? { AND: [cursorFilter, mediaFilter] } : mediaFilter,
+        where: { AND: [visiblePostFilter, mediaFilter, cursorFilter] },
         include: { author: true },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: first + 1,
@@ -154,7 +168,10 @@ export const postQueries = {
       }
 
       const rows = await prisma.bookmark.findMany({
-        where: { userId, ...cursorFilter },
+        where: {
+          userId,
+          AND: [cursorFilter, { post: visiblePostFilter }],
+        },
         include: { post: { include: { author: true } } },
         orderBy: [{ createdAt: "desc" }, { postId: "desc" }],
         take: first + 1,

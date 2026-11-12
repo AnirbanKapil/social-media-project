@@ -55,10 +55,10 @@ export const commentResolvers = {
 
             const post = await commentPrisma.post.findUnique({
                 where: { id: postId },
-                select: { id: true, authorId: true },
+                select: { id: true, authorId: true, isHidden: true },
             });
 
-            if (!post) {
+            if (!post || post.isHidden) {
                 throw new Error("Post not found");
             }
 

@@ -18,6 +18,7 @@ export default withAuth(
                 //  auth related routes
                  if(
                     pathname.startsWith("/api/auth") ||
+                    pathname === "/api/cron/finalize-account-deletions" ||
                     pathname === "/signin" ||
                     pathname === "/signup" ||
                     pathname === "/forgot-password" ||

@@ -15,6 +15,14 @@ export const commentQueries = {
 
         const { postId } = parseInput(getCommentsArgsSchema, args);
         const commentPrisma = ctx.prisma ?? prisma;
+
+        const post = await commentPrisma.post.findFirst({
+            where: { id: postId, isHidden: false },
+            select: { id: true },
+        });
+        if (!post) {
+            return [];
+        }
         
         return commentPrisma.comment.findMany({
             where: {

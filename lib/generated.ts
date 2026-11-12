@@ -17,7 +17,7 @@ export type InputMaybe<T> = Maybe<T>;
             return this.value;
           }
         }
-        
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -101,6 +101,7 @@ export type Mutation = {
   markNotificationsSeen: Scalars['Boolean']['output'];
   removeProfileImage?: Maybe<User>;
   repostPost?: Maybe<Post>;
+  requestAccountDeletion: Scalars['String']['output'];
   sendMessage: Message;
   unbookmarkPost?: Maybe<Post>;
   unfollowUser?: Maybe<Follows>;
@@ -454,6 +455,11 @@ export type RepostPostMutationVariables = Exact<{
 
 export type RepostPostMutation = { repostPost: { id: string, isReposted: boolean, repostsCount: number, author: { id: string } | null } | null };
 
+export type RequestAccountDeletionMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RequestAccountDeletionMutation = { requestAccountDeletion: string };
+
 export type SendMessageMutationVariables = Exact<{
   conversationId: string;
   content: string;
@@ -626,7 +632,7 @@ export const useBookmarkPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<BookmarkPostMutation, TError, BookmarkPostMutationVariables, TContext>) => {
-    
+
     return useMutation<BookmarkPostMutation, TError, BookmarkPostMutationVariables, TContext>(
       {
     mutationKey: ['BookmarkPost'],
@@ -654,7 +660,7 @@ export const useCreateCommentMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<CreateCommentMutation, TError, CreateCommentMutationVariables, TContext>) => {
-    
+
     return useMutation<CreateCommentMutation, TError, CreateCommentMutationVariables, TContext>(
       {
     mutationKey: ['CreateComment'],
@@ -679,7 +685,7 @@ export const useCreateConversationMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<CreateConversationMutation, TError, CreateConversationMutationVariables, TContext>) => {
-    
+
     return useMutation<CreateConversationMutation, TError, CreateConversationMutationVariables, TContext>(
       {
     mutationKey: ['CreateConversation'],
@@ -708,7 +714,7 @@ export const useCreatePostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<CreatePostMutation, TError, CreatePostMutationVariables, TContext>) => {
-    
+
     return useMutation<CreatePostMutation, TError, CreatePostMutationVariables, TContext>(
       {
     mutationKey: ['CreatePost'],
@@ -727,7 +733,7 @@ export const useDeleteCommentMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<DeleteCommentMutation, TError, DeleteCommentMutationVariables, TContext>) => {
-    
+
     return useMutation<DeleteCommentMutation, TError, DeleteCommentMutationVariables, TContext>(
       {
     mutationKey: ['DeleteComment'],
@@ -746,7 +752,7 @@ export const useDeletePostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<DeletePostMutation, TError, DeletePostMutationVariables, TContext>) => {
-    
+
     return useMutation<DeletePostMutation, TError, DeletePostMutationVariables, TContext>(
       {
     mutationKey: ['DeletePost'],
@@ -769,7 +775,7 @@ export const useRemoveProfileImageMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<RemoveProfileImageMutation, TError, RemoveProfileImageMutationVariables, TContext>) => {
-    
+
     return useMutation<RemoveProfileImageMutation, TError, RemoveProfileImageMutationVariables, TContext>(
       {
     mutationKey: ['RemoveProfileImage'],
@@ -799,7 +805,7 @@ export const useEditPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<EditPostMutation, TError, EditPostMutationVariables, TContext>) => {
-    
+
     return useMutation<EditPostMutation, TError, EditPostMutationVariables, TContext>(
       {
     mutationKey: ['EditPost'],
@@ -821,7 +827,7 @@ export const useFollowUserMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<FollowUserMutation, TError, FollowUserMutationVariables, TContext>) => {
-    
+
     return useMutation<FollowUserMutation, TError, FollowUserMutationVariables, TContext>(
       {
     mutationKey: ['FollowUser'],
@@ -847,7 +853,7 @@ export const useLikePostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<LikePostMutation, TError, LikePostMutationVariables, TContext>) => {
-    
+
     return useMutation<LikePostMutation, TError, LikePostMutationVariables, TContext>(
       {
     mutationKey: ['LikePost'],
@@ -866,7 +872,7 @@ export const useMarkAllNotificationsReadMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<MarkAllNotificationsReadMutation, TError, MarkAllNotificationsReadMutationVariables, TContext>) => {
-    
+
     return useMutation<MarkAllNotificationsReadMutation, TError, MarkAllNotificationsReadMutationVariables, TContext>(
       {
     mutationKey: ['MarkAllNotificationsRead'],
@@ -885,7 +891,7 @@ export const useMarkConversationReadMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<MarkConversationReadMutation, TError, MarkConversationReadMutationVariables, TContext>) => {
-    
+
     return useMutation<MarkConversationReadMutation, TError, MarkConversationReadMutationVariables, TContext>(
       {
     mutationKey: ['MarkConversationRead'],
@@ -904,7 +910,7 @@ export const useMarkNotificationReadMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<MarkNotificationReadMutation, TError, MarkNotificationReadMutationVariables, TContext>) => {
-    
+
     return useMutation<MarkNotificationReadMutation, TError, MarkNotificationReadMutationVariables, TContext>(
       {
     mutationKey: ['MarkNotificationRead'],
@@ -923,7 +929,7 @@ export const useMarkNotificationsSeenMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<MarkNotificationsSeenMutation, TError, MarkNotificationsSeenMutationVariables, TContext>) => {
-    
+
     return useMutation<MarkNotificationsSeenMutation, TError, MarkNotificationsSeenMutationVariables, TContext>(
       {
     mutationKey: ['MarkNotificationsSeen'],
@@ -949,11 +955,30 @@ export const useRepostPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<RepostPostMutation, TError, RepostPostMutationVariables, TContext>) => {
-    
+
     return useMutation<RepostPostMutation, TError, RepostPostMutationVariables, TContext>(
       {
     mutationKey: ['RepostPost'],
     mutationFn: (variables?: RepostPostMutationVariables) => useCustomFetcher<RepostPostMutation, RepostPostMutationVariables>(RepostPostDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const RequestAccountDeletionDocument = new TypedDocumentString(`
+    mutation RequestAccountDeletion {
+  requestAccountDeletion
+}
+    `);
+
+export const useRequestAccountDeletionMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<RequestAccountDeletionMutation, TError, RequestAccountDeletionMutationVariables, TContext>) => {
+
+    return useMutation<RequestAccountDeletionMutation, TError, RequestAccountDeletionMutationVariables, TContext>(
+      {
+    mutationKey: ['RequestAccountDeletion'],
+    mutationFn: (variables?: RequestAccountDeletionMutationVariables) => useCustomFetcher<RequestAccountDeletionMutation, RequestAccountDeletionMutationVariables>(RequestAccountDeletionDocument, variables)(),
     ...options
   }
     )};
@@ -972,7 +997,7 @@ export const useSendMessageMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<SendMessageMutation, TError, SendMessageMutationVariables, TContext>) => {
-    
+
     return useMutation<SendMessageMutation, TError, SendMessageMutationVariables, TContext>(
       {
     mutationKey: ['SendMessage'],
@@ -997,7 +1022,7 @@ export const useUnbookmarkPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UnbookmarkPostMutation, TError, UnbookmarkPostMutationVariables, TContext>) => {
-    
+
     return useMutation<UnbookmarkPostMutation, TError, UnbookmarkPostMutationVariables, TContext>(
       {
     mutationKey: ['UnbookmarkPost'],
@@ -1019,7 +1044,7 @@ export const useUnfollowUserMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UnfollowUserMutation, TError, UnfollowUserMutationVariables, TContext>) => {
-    
+
     return useMutation<UnfollowUserMutation, TError, UnfollowUserMutationVariables, TContext>(
       {
     mutationKey: ['UnfollowUser'],
@@ -1045,7 +1070,7 @@ export const useUnlikePostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UnlikePostMutation, TError, UnlikePostMutationVariables, TContext>) => {
-    
+
     return useMutation<UnlikePostMutation, TError, UnlikePostMutationVariables, TContext>(
       {
     mutationKey: ['UnlikePost'],
@@ -1071,7 +1096,7 @@ export const useUnrepostPostMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UnrepostPostMutation, TError, UnrepostPostMutationVariables, TContext>) => {
-    
+
     return useMutation<UnrepostPostMutation, TError, UnrepostPostMutationVariables, TContext>(
       {
     mutationKey: ['UnrepostPost'],
@@ -1097,7 +1122,7 @@ export const useUpdateProfileImageMutation = <
       TError = unknown,
       TContext = unknown
     >(options?: UseMutationOptions<UpdateProfileImageMutation, TError, UpdateProfileImageMutationVariables, TContext>) => {
-    
+
     return useMutation<UpdateProfileImageMutation, TError, UpdateProfileImageMutationVariables, TContext>(
       {
     mutationKey: ['UpdateProfileImage'],
@@ -1162,7 +1187,7 @@ export const useGetAllPostsQuery = <
       variables: GetAllPostsQueryVariables,
       options?: Omit<UseQueryOptions<GetAllPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetAllPostsQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetAllPostsQuery, TError, TData>(
       {
     queryKey: ['GetAllPosts', variables],
@@ -1229,7 +1254,7 @@ export const useGetBookmarkedPostsQuery = <
       variables: GetBookmarkedPostsQueryVariables,
       options?: Omit<UseQueryOptions<GetBookmarkedPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetBookmarkedPostsQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetBookmarkedPostsQuery, TError, TData>(
       {
     queryKey: ['GetBookmarkedPosts', variables],
@@ -1262,7 +1287,7 @@ export const useGetCommentsQuery = <
       variables: GetCommentsQueryVariables,
       options?: Omit<UseQueryOptions<GetCommentsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetCommentsQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetCommentsQuery, TError, TData>(
       {
     queryKey: ['GetComments', variables],
@@ -1298,7 +1323,7 @@ export const useGetConversationsQuery = <
       variables?: GetConversationsQueryVariables,
       options?: Omit<UseQueryOptions<GetConversationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetConversationsQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetConversationsQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetConversations'] : ['GetConversations', variables],
@@ -1364,7 +1389,7 @@ export const useGetCurrentUserQuery = <
       variables?: GetCurrentUserQueryVariables,
       options?: Omit<UseQueryOptions<GetCurrentUserQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetCurrentUserQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetCurrentUserQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetCurrentUser'] : ['GetCurrentUser', variables],
@@ -1403,7 +1428,7 @@ export const useGetMediaPostsQuery = <
       variables: GetMediaPostsQueryVariables,
       options?: Omit<UseQueryOptions<GetMediaPostsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMediaPostsQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetMediaPostsQuery, TError, TData>(
       {
     queryKey: ['GetMediaPosts', variables],
@@ -1436,7 +1461,7 @@ export const useGetMessagesQuery = <
       variables: GetMessagesQueryVariables,
       options?: Omit<UseQueryOptions<GetMessagesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMessagesQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetMessagesQuery, TError, TData>(
       {
     queryKey: ['GetMessages', variables],
@@ -1485,7 +1510,7 @@ export const useGetNotificationsQuery = <
       variables?: GetNotificationsQueryVariables,
       options?: Omit<UseQueryOptions<GetNotificationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetNotificationsQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetNotificationsQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetNotifications'] : ['GetNotifications', variables],
@@ -1548,7 +1573,7 @@ export const useGetPostByIdQuery = <
       variables: GetPostByIdQueryVariables,
       options?: Omit<UseQueryOptions<GetPostByIdQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetPostByIdQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetPostByIdQuery, TError, TData>(
       {
     queryKey: ['GetPostById', variables],
@@ -1578,7 +1603,7 @@ export const useGetSuggestedUsersQuery = <
       variables?: GetSuggestedUsersQueryVariables,
       options?: Omit<UseQueryOptions<GetSuggestedUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetSuggestedUsersQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetSuggestedUsersQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetSuggestedUsers'] : ['GetSuggestedUsers', variables],
@@ -1645,7 +1670,7 @@ export const useGetUserByUsernameQuery = <
       variables: GetUserByUsernameQueryVariables,
       options?: Omit<UseQueryOptions<GetUserByUsernameQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetUserByUsernameQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetUserByUsernameQuery, TError, TData>(
       {
     queryKey: ['GetUserByUsername', variables],
@@ -1674,7 +1699,7 @@ export const useGetUsersQuery = <
       variables?: GetUsersQueryVariables,
       options?: Omit<UseQueryOptions<GetUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetUsersQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetUsersQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetUsers'] : ['GetUsers', variables],
@@ -1702,7 +1727,7 @@ export const useSearchUsersQuery = <
       variables: SearchUsersQueryVariables,
       options?: Omit<UseQueryOptions<SearchUsersQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<SearchUsersQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<SearchUsersQuery, TError, TData>(
       {
     queryKey: ['SearchUsers', variables],
@@ -1726,7 +1751,7 @@ export const useUnreadMessageCountQuery = <
       variables?: UnreadMessageCountQueryVariables,
       options?: Omit<UseQueryOptions<UnreadMessageCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnreadMessageCountQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<UnreadMessageCountQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['UnreadMessageCount'] : ['UnreadMessageCount', variables],
@@ -1750,7 +1775,7 @@ export const useUnreadNotificationCountQuery = <
       variables?: UnreadNotificationCountQueryVariables,
       options?: Omit<UseQueryOptions<UnreadNotificationCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnreadNotificationCountQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<UnreadNotificationCountQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['UnreadNotificationCount'] : ['UnreadNotificationCount', variables],
@@ -1774,7 +1799,7 @@ export const useUnseenNotificationCountQuery = <
       variables?: UnseenNotificationCountQueryVariables,
       options?: Omit<UseQueryOptions<UnseenNotificationCountQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<UnseenNotificationCountQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<UnseenNotificationCountQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['UnseenNotificationCount'] : ['UnseenNotificationCount', variables],
@@ -1801,7 +1826,7 @@ export const useGetMeQuery = <
       variables?: GetMeQueryVariables,
       options?: Omit<UseQueryOptions<GetMeQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMeQuery, TError, TData>['queryKey'] }
     ) => {
-    
+
     return useQuery<GetMeQuery, TError, TData>(
       {
     queryKey: variables === undefined ? ['GetMe'] : ['GetMe', variables],

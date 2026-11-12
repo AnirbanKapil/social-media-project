@@ -34,3 +34,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Account deletion
+
+Account deletion requests hide the user's posts immediately and start a 7-day
+cancellation period. Signing in again before the deadline cancels deletion and
+restores the account and posts. After the deadline, Vercel Cron finalizes the
+deletion and keeps the posts hidden.
+
+Configure a strong `CRON_SECRET` in the deployment environment. The scheduled
+job calls `/api/cron/finalize-account-deletions` daily; the endpoint rejects
+requests without the matching bearer token. Apply the account deletion schema
+migration during deployment with `npx prisma migrate deploy`.

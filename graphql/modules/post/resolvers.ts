@@ -56,7 +56,7 @@ export const postResolvers= {
 
      repostsCount: async(parent : any) => {
         return await prisma.post.count({
-          where: { repostOfId: parent.id }
+          where: { repostOfId: parent.id, isHidden: false }
         });
      },
 
@@ -77,8 +77,12 @@ export const postResolvers= {
         if(!parent.repostOfId){
             return null;
         }
-        return await prisma.post.findUnique({
-          where: { id: parent.repostOfId },
+        return await prisma.post.findFirst({
+          where: {
+            id: parent.repostOfId,
+            isHidden: false,
+            author: { accountStatus: "ACTIVE" },
+          },
           include: { author: true },
         });
      },
@@ -124,9 +128,10 @@ export const postResolvers= {
 
         const { postId } = parseInput(postIdArgsSchema, args);
         
-        const post = await prisma.post.findUnique({
+        const post = await prisma.post.findFirst({
           where : {
              id: postId,
+             isHidden: false,
           }
         });
 
@@ -154,9 +159,10 @@ export const postResolvers= {
 
         const payload = parseInput(editPostSchema, args.payload);
 
-        const post = await prisma.post.findUnique({
+        const post = await prisma.post.findFirst({
           where : {
              id: payload.postId,
+             isHidden: false,
           }
         });
 
@@ -192,6 +198,13 @@ export const postResolvers= {
        const { postId } = parseInput(postIdArgsSchema, args);
        const userId = ctx.session?.user?.id;
 
+       const post = await prisma.post.findFirst({
+        where: { id: postId, isHidden: false },
+       });
+       if (!post) {
+         throw new Error("Post not found");
+       }
+
        const existingLike = await prisma.like.findUnique({
         where: {
           userId_postId: {
@@ -215,12 +228,6 @@ export const postResolvers= {
          },
         });
        
-       const post = await prisma.post.findUnique({
-        where: {
-          id : postId
-        }
-       })
-
        if (!existingLike && post) {
          await createNotification({
            type: "LIKE",
@@ -240,6 +247,12 @@ export const postResolvers= {
 
       const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
+      const post = await prisma.post.findFirst({
+        where: { id: postId, isHidden: false },
+      });
+      if (!post) {
+        throw new Error("Post not found");
+      }
 
       try {
           await prisma.like.delete({
@@ -253,10 +266,6 @@ export const postResolvers= {
       } catch (error) {
         console.log(error)
       }
-      const post = await prisma.post.findUnique({
-      where: { id: postId },
-      });
-
       if (post) {
         await deleteNotification({
           type: "LIKE",
@@ -275,6 +284,12 @@ export const postResolvers= {
       };
       const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
+      const post = await prisma.post.findFirst({
+        where: { id: postId, isHidden: false },
+      });
+      if (!post) {
+        throw new Error("Post not found");
+      }
 
       await prisma.bookmark.upsert({
         where : {
@@ -284,7 +299,7 @@ export const postResolvers= {
         create: { userId, postId },
       });
 
-      return await prisma.post.findUnique({ where: { id: postId } });
+      return post;
     },
 
     unbookmarkPost : async (parent : any, args : {postId : string}, ctx : any) => {
@@ -302,7 +317,9 @@ export const postResolvers= {
         console.log(error)
       }
 
-      return await prisma.post.findUnique({ where: { id: postId } });
+      return await prisma.post.findFirst({
+        where: { id: postId, isHidden: false },
+      });
     },
 
     repostPost : async (parent : any, args : {postId : string}, ctx : any) => {
@@ -312,15 +329,22 @@ export const postResolvers= {
       const { postId } = parseInput(postIdArgsSchema, args);
       const userId = ctx.session?.user?.id;
 
-      const source = await prisma.post.findUnique({ where: { id: postId } });
+      const source = await prisma.post.findFirst({
+        where: { id: postId, isHidden: false },
+      });
       if(!source){
         throw new Error("Post not found");
       };
 
       const targetId = source.repostOfId ?? source.id;
       const original = source.repostOfId
-        ? await prisma.post.findUnique({ where: { id: targetId } })
+        ? await prisma.post.findFirst({
+            where: { id: targetId, isHidden: false },
+          })
         : source;
+      if (!original) {
+        throw new Error("Post not found");
+      }
 
       const existingRepost = await prisma.post.findUnique({
         where : {
@@ -345,7 +369,9 @@ export const postResolvers= {
         });
       }
 
-      return await prisma.post.findUnique({ where: { id: targetId } });
+      return await prisma.post.findFirst({
+        where: { id: targetId, isHidden: false },
+      });
     },
 
     unrepostPost : async (parent : any, args : {postId : string}, ctx : any) => {
@@ -370,7 +396,9 @@ export const postResolvers= {
         });
       }
 
-      return await prisma.post.findUnique({ where: { id: targetId } });
+      return await prisma.post.findFirst({
+        where: { id: targetId, isHidden: false },
+      });
     }
    },
    Query: postQueries

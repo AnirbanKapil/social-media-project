@@ -4,7 +4,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "./graphql/**/*.ts",
+  schema: "./graphql/modules/*/typeDefs.ts",
   documents: [
   "app/**/*.{ts,tsx,graphql}",
   "!node_modules",
