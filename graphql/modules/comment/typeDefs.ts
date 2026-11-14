@@ -9,6 +9,7 @@ export const commentTypeDefs = gql`
     author: User!
     post: Post!
     postOwnerId: String!
+    parentId: String
     createdAt: String!
     updatedAt: String!
   }
@@ -18,7 +19,7 @@ export const commentTypeDefs = gql`
   }
 
   type Mutation {
-    createComment(postId: String!, content: String!): Comment!
+    createComment(postId: String!, content: String!, parentCommentId: String): Comment!
     deleteComment(commentId: String!): Boolean!
   }
 

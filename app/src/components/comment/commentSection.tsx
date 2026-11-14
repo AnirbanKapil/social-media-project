@@ -1,15 +1,17 @@
-import { useGetCommentsQuery } from "@/lib/generated";
+import {
+  useCreateCommentMutation,
+  useDeleteCommentMutation,
+  useGetCommentsQuery,
+  useGetCurrentUserQuery,
+} from "@/lib/generated";
 import { Loader } from "../loader";
-import { useState } from "react";
-import { useCreateCommentMutation } from "@/lib/generated";
-import { useDeleteCommentMutation } from "@/lib/generated";
-import { useGetCurrentUserQuery } from "@/lib/generated";
+import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
 import { z } from "zod";
 import { commentContentSchema } from "@/lib/validation";
 import { useZodForm } from "@/lib/validation/useZodForm";
 import { FieldError } from "@/app/src/components/form/FieldError";
+import { CommentItem, type CommentData } from "./CommentItem";
 
 const commentFormSchema = z.object({ content: commentContentSchema });
 
@@ -21,7 +23,9 @@ export function CommentSection ({postId} : Props) {
     const { data, isLoading } =useGetCommentsQuery({postId,});
     const [content, setContent] = useState("");
     const [error, setError] = useState<string | null>(null);
-    
+    const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
     const createCommentMutation = useCreateCommentMutation();
     const deleteCommentMutation = useDeleteCommentMutation();
     const { data: currentUserData } = useGetCurrentUserQuery({});
@@ -32,6 +36,18 @@ export function CommentSection ({postId} : Props) {
 
     if (isLoading) return <Loader />;
 
+    const comments = data?.getComments ?? [];
+    const topLevelComments = comments.filter((comment) => !comment.parentId);
+    const repliesByParent = new Map<string, CommentData[]>();
+
+    for (const comment of comments) {
+      if (!comment.parentId) continue;
+
+      const replies = repliesByParent.get(comment.parentId) ?? [];
+      replies.push(comment);
+      repliesByParent.set(comment.parentId, replies);
+    }
+
     const handleComment = async () => {
       const data = submit({ content });
       if (!data) return;
@@ -40,8 +56,10 @@ export function CommentSection ({postId} : Props) {
         await createCommentMutation.mutateAsync({
           postId,
           content: data.content,
+          parentCommentId: replyingTo?.id ?? null,
         });
         setContent("");
+        setReplyingTo(null);
         reset();
         await queryClient.invalidateQueries({queryKey: ["GetComments"],});
         await queryClient.invalidateQueries({queryKey: ["GetAllPosts"],});
@@ -52,9 +70,18 @@ export function CommentSection ({postId} : Props) {
       }
     }
 
+    const handleReply = (comment: CommentData) => {
+      setReplyingTo(comment);
+      setError(null);
+      inputRef.current?.focus();
+    }
+
     const handleDeleteComment = async (commentId: string) => {
       try {
         await deleteCommentMutation.mutateAsync({ commentId });
+        if (replyingTo?.id === commentId) {
+          setReplyingTo(null);
+        }
         await queryClient.invalidateQueries({queryKey: ["GetComments", { postId }]});
         await queryClient.invalidateQueries({queryKey: ["GetAllPosts"]});
         await queryClient.invalidateQueries({queryKey: ["GetPostById", { postId }]});
@@ -66,39 +93,59 @@ export function CommentSection ({postId} : Props) {
 
     return(
       <div className="flex h-full flex-col mt-1.5">
-        {data?.getComments.map((comment) => (
-        <div key={comment.id}>
-            <div className="flex gap-3 mb-6">
+        {topLevelComments.map((comment) => {
+          const replies = repliesByParent.get(comment.id) ?? [];
 
-    {comment?.author?.profileImgUrl ? 
-    <Image alt="DP image" src={comment?.author?.profileImgUrl} height={50} width={50} className="rounded-full m-2 w-12 h-12" /> : 
-    <div className="w-10 h-10 mx-2 rounded-full bg-gray-600"></div>}
-    <div className="min-w-0 flex-1">
-        <div className="flex gap-2 items-center mt-2">
-            <p className="font-semibold">
-                {comment?.author?.username}
-            </p>
-            {(comment.author.id === currentUserData?.currUser?.id
-              || comment.postOwnerId === currentUserData?.currUser?.id) && (
-              <button
-                type="button"
-                onClick={() => handleDeleteComment(comment.id)}
-                disabled={deleteCommentMutation.isPending}
-                className="ml-auto text-sm text-red-400 hover:text-red-300 disabled:opacity-50"
-                aria-label={`Delete comment by ${comment.author.username}`}
-              >
-                Delete
-              </button>
-            )}
-         </div>
-           <p>{comment?.content}</p>
-          </div>
-         </div>
-        </div>
-        ))}
+          return (
+            <div key={comment.id}>
+              <div className="mb-4">
+                <CommentItem
+                  comment={comment}
+                  currentUserId={currentUserData?.currUser?.id}
+                  isDeleting={deleteCommentMutation.isPending}
+                  onReply={handleReply}
+                  onDelete={handleDeleteComment}
+                />
+              </div>
+
+              {replies.length > 0 && (
+                <div className="mb-6 ml-8 space-y-4 border-l border-gray-700 pl-4 sm:ml-12">
+                  {replies.map((reply) => (
+                    <CommentItem
+                      key={reply.id}
+                      comment={reply}
+                      currentUserId={currentUserData?.currUser?.id}
+                      isDeleting={deleteCommentMutation.isPending}
+                      isReply
+                      onReply={handleReply}
+                      onDelete={handleDeleteComment}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
         {error && <p role="alert" className="mb-2 text-sm text-red-400">{error}</p>}
+        {replyingTo && (
+          <div className="mb-2 flex items-center justify-between rounded-lg border border-gray-700 bg-gray-900/60 px-3 py-2 text-xs text-gray-300">
+            <span>
+              Replying to{" "}
+              <span className="font-medium text-indigo-300">@{replyingTo.author.username}</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setReplyingTo(null)}
+              className="text-slate-400 transition-colors hover:text-white"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
         <div className="flex gap-3">
         <input value={content}
+         ref={inputRef}
+         placeholder={replyingTo ? `Reply to @${replyingTo.author.username}` : "Add a comment"}
          className={`flex-1 rounded-full border bg-transparent px-4 py-2 outline-none ml-1 ${
            errorFor("content") ? "border-red-500" : "border-gray-600"
          }`}

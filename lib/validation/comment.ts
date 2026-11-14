@@ -15,6 +15,7 @@ export const commentContentSchema = z
 export const createCommentSchema = z.object({
   postId: idSchema,
   content: commentContentSchema,
+  parentCommentId: idSchema.optional().nullable(),
 });
 
 export const deleteCommentArgsSchema = z.object({ commentId: idSchema });

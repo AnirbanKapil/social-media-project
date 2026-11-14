@@ -73,10 +73,11 @@ export type BookmarkPostMutation = { bookmarkPost: { id: string, isBookmarked: b
 export type CreateCommentMutationVariables = Exact<{
   postId: string;
   content: string;
+  parentCommentId?: string | null | undefined;
 }>;
 
 
-export type CreateCommentMutation = { createComment: { content: string, post: { id: string }, author: { username: string, profileImgUrl: string | null } } };
+export type CreateCommentMutation = { createComment: { id: string, content: string, parentId: string | null, post: { id: string }, author: { username: string, profileImgUrl: string | null } } };
 
 export type CreateConversationMutationVariables = Exact<{
   userId: string;
@@ -303,7 +304,7 @@ export type GetCommentsQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsQuery = { getComments: Array<{ id: string, content: string, postOwnerId: string, author: { id: string, username: string, profileImgUrl: string | null } }> };
+export type GetCommentsQuery = { getComments: Array<{ id: string, content: string, postOwnerId: string, parentId: string | null, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } }> };
 
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -477,9 +478,15 @@ export const useBookmarkPostMutation = <
     )};
 
 export const CreateCommentDocument = new TypedDocumentString(`
-    mutation CreateComment($postId: String!, $content: String!) {
-  createComment(postId: $postId, content: $content) {
+    mutation CreateComment($postId: String!, $content: String!, $parentCommentId: String) {
+  createComment(
+    postId: $postId
+    content: $content
+    parentCommentId: $parentCommentId
+  ) {
+    id
     content
+    parentId
     post {
       id
     }
@@ -1314,6 +1321,8 @@ export const GetCommentsDocument = new TypedDocumentString(`
     id
     content
     postOwnerId
+    parentId
+    createdAt
     author {
       id
       username

@@ -61,6 +61,7 @@ enum NotificationType {
   FOLLOW
   LIKE
   COMMENT
+  REPLY
   REPOST
 }
 
@@ -213,10 +214,16 @@ model Comment {
   postId String
   post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
+  parentId String?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("CommentReplies")
+
   notifications Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([postId, parentId, createdAt])
 }
 
 model Bookmark {

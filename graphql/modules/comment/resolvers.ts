@@ -44,13 +44,13 @@ export const commentResolvers = {
 
     Mutation: {
 
-        createComment : async (_parent: unknown, args: {postId : string, content : string}, ctx: CommentResolverContext) => {
+        createComment : async (_parent: unknown, args: {postId : string, content : string, parentCommentId? : string | null}, ctx: CommentResolverContext) => {
             const userId = ctx.session?.user?.id;
             if (!userId) {
              throw new Error("Not authenticated");
             };
 
-            const { postId, content } = parseInput(createCommentSchema, args);
+            const { postId, content, parentCommentId } = parseInput(createCommentSchema, args);
              
             const commentPrisma = ctx.prisma ?? prisma;
 
@@ -70,22 +70,56 @@ export const commentResolvers = {
                 throw new Error("Engage with the thread root.");
             }
 
+            let parent: { id: string; authorId: string; parentId: string | null } | null = null;
+
+            if (parentCommentId) {
+                parent = await commentPrisma.comment.findFirst({
+                    where: {
+                        id: parentCommentId,
+                        postId,
+                    },
+                    select: {
+                        id: true,
+                        authorId: true,
+                        parentId: true,
+                    },
+                });
+
+                if (!parent) {
+                    throw new Error("Parent comment not found");
+                }
+
+                if (parent.parentId) {
+                    throw new Error("Replies can only be one level deep");
+                }
+            }
+
             const comment = await commentPrisma.comment.create({
                 data : {
                     postId,
                     content,
-                    authorId : userId
-                    
+                    authorId : userId,
+                    parentId: parent?.id ?? null,
                 }
              });
 
-            await createNotification({
-                type: "COMMENT",
-                recipientId: post.authorId,
-                actorId: userId,
-                postId: post.id,
-                commentId: comment.id,
-            });
+            if (parent) {
+                await createNotification({
+                    type: "REPLY",
+                    recipientId: parent.authorId,
+                    actorId: userId,
+                    postId: post.id,
+                    commentId: comment.id,
+                });
+            } else {
+                await createNotification({
+                    type: "COMMENT",
+                    recipientId: post.authorId,
+                    actorId: userId,
+                    postId: post.id,
+                    commentId: comment.id,
+                });
+            }
 
             return comment;
         },

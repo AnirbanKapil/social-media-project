@@ -15,6 +15,7 @@ const actionText: Record<string, string> = {
   FOLLOW: "followed you",
   LIKE: "liked your post",
   COMMENT: "commented on your post",
+  REPLY: "replied to your comment",
   REPOST: "reposted your post",
 };
 
@@ -26,18 +27,19 @@ export function NotificationItem({ notification }: { notification: NotificationD
   const displayName = actor.firstName ?? actor.username;
 
   const postId = post?.id;
+  const isCommentNotification =
+    notification.type === "COMMENT" || notification.type === "REPLY";
   const href = notification.type === "FOLLOW" || !postId
     ? `/dashboard/${actor.username}`
-    : notification.type === "COMMENT"
+    : isCommentNotification
       ? `/dashboard/post/${postId}#comments`
       : `/dashboard/post/${postId}`;
 
-  const snippet =
-    notification.type === "COMMENT"
-      ? comment?.content
-      : notification.type === "LIKE" || notification.type === "REPOST"
-        ? post?.content
-        : null;
+  const snippet = isCommentNotification
+    ? comment?.content
+    : notification.type === "LIKE" || notification.type === "REPOST"
+      ? post?.content
+      : null;
 
   const handleClick = () => {
     if (readAt) return;
