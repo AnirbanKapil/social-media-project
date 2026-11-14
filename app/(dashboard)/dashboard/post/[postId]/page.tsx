@@ -131,6 +131,9 @@ export default function PostDetailPage() {
                   This thread has reached the maximum of {MAX_THREAD_PARTS} parts.
                 </p>
               )}
+              <p className="mt-2 text-xs text-slate-500">
+                Only the first post appears in feeds. Follow-up parts stay linked to this post.
+              </p>
             </div>
           )}
 
@@ -164,8 +167,11 @@ export default function PostDetailPage() {
               onClick={() => setShowAddPart(true)}
               className="rounded-lg border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800"
             >
-              Add to thread
+              Start a thread
             </button>
+            <p className="mt-2 text-xs text-slate-500">
+              Only this first post appears in feeds. Parts you add stay linked to it.
+            </p>
           </div>
         )}
         </>

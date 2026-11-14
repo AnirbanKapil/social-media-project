@@ -153,6 +153,9 @@ export default function AddThreadPartModal({ rootId, onClose }: Props) {
         className="mx-4 max-h-[90vh] w-full max-w-[500px] overflow-y-auto rounded-2xl border border-gray-700 bg-black p-6"
       >
         <h2 className="text-xl font-semibold">Add to thread</h2>
+        <p className="mt-1 text-sm text-slate-400">
+          Add a follow-up to your post.
+        </p>
 
         <textarea
           value={content}

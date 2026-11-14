@@ -22,6 +22,8 @@ import { BsThreeDots } from "react-icons/bs";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import DeletePostModal from "./post/DeletePostModal";
 import EditPostModal from "./post/EditPostModal";
+import AddThreadPartModal from "./post/AddThreadPartModal";
+import { MAX_THREAD_PARTS } from "@/lib/validation";
 import { useMemo } from "react";
 import { getFullName } from "@/lib/displayName";
 import { Check, Lock, Users } from "lucide-react";
@@ -103,6 +105,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
     const [showMenu, setShowMenu] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showThreadModal, setShowThreadModal] = useState(false);
     const [shareMsg, setShareMsg] = useState("");
     const [carouselState, setCarouselState] = useState({ postId: targetId, imageIndex: 0 });
     const postImages = useMemo(
@@ -280,9 +283,20 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                                }}
                                className="w-full px-4 py-3 text-left hover:bg-gray-800"
                                >
-                                Edit Post
-                              </button>
-                              <div className="border-t border-gray-700" />
+                                 Edit Post
+                               </button>
+                               {displayThreadPartCount < MAX_THREAD_PARTS && (
+                                 <button
+                                  onClick={() => {
+                                   setShowMenu(false);
+                                   setShowThreadModal(true);
+                                  }}
+                                  className="w-full px-4 py-3 text-left hover:bg-gray-800"
+                                 >
+                                  {displayThreadPartCount > 0 ? "Continue thread" : "Start a thread"}
+                                 </button>
+                               )}
+                               <div className="border-t border-gray-700" />
                               <p className="px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-slate-500">
                                 Visibility
                               </p>
@@ -430,6 +444,12 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                   setShowDeleteModal(false);
                   }}
                 />
+          )}
+          {showThreadModal && (
+            <AddThreadPartModal
+              rootId={id}
+              onClose={() => setShowThreadModal(false)}
+            />
           )}
         </div>
     )

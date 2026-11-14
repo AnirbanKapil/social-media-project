@@ -20,6 +20,7 @@ import {
 import { useZodForm } from "@/lib/validation/useZodForm";
 import { FieldError } from "@/app/src/components/form/FieldError";
 import { useToast } from "@/app/context/toast-provider";
+import { Layers } from "lucide-react";
 
 export function Publish () {
 
@@ -116,7 +117,7 @@ export function Publish () {
                 imageUrls.push(...data.images.map((image: { imageUrl: string }) => image.imageUrl));
             }
 
-            await mutateAsync({payload : {content: data.content, imgURLs: imageUrls, visibility}});
+            const created = await mutateAsync({payload : {content: data.content, imgURLs: imageUrls, visibility}});
             await queryClient.invalidateQueries({queryKey : ["GetAllPosts"]});
             setContent("");
             setVisibility("PUBLIC");
@@ -126,7 +127,13 @@ export function Publish () {
             reset();
             previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
             previewUrlsRef.current.clear();
-            showToast({ title: "Post created", description: "Your post is now live." });
+            showToast({
+                title: "Post created",
+                description: "Add follow-up posts to turn it into a thread.",
+                href: created.createPost
+                    ? `/dashboard/post/${created.createPost.id}`
+                    : undefined,
+            });
         } catch (error) {
             const message = error instanceof Error ? error.message : "Unknown error";
             setUploadError(`Error creating post: ${message}`);
@@ -162,6 +169,13 @@ export function Publish () {
                 placeholder="What's on your mind???">
                 </textarea>
                 <FieldError id="publish-content-error" message={errorFor("content")} />
+                <p className="mx-1 mt-1 flex items-start gap-1.5 text-xs text-slate-500">
+                    <Layers size={13} className="mt-0.5 shrink-0" />
+                    <span>
+                        Tip: Publish this post, then choose{" "}
+                        <span className="text-slate-400">Add to thread</span> to continue it as a thread.
+                    </span>
+                </p>
                 {previewUrls.length > 0 && (
                     <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                         {previewUrls.map((previewUrl, index) => (
