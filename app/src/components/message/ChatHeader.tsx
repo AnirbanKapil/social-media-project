@@ -1,8 +1,10 @@
 
+import Image from "next/image";
 import { ArrowLeft, Settings, UserRound, Users } from "lucide-react";
 import {
   formatMemberCount,
   getConversationDisplayName,
+  getOtherParticipant,
   type ConversationSummary,
 } from "./conversationUtils";
 
@@ -20,6 +22,7 @@ export default function ChatHeader({
   onOpenSettings,
 }: Props) {
   const displayName = getConversationDisplayName(conversation, currentUserId);
+  const otherParticipant = getOtherParticipant(conversation, currentUserId);
   const subtitle = conversation.isGroup
     ? formatMemberCount(conversation.memberCount)
     : "Messages with this person";
@@ -36,9 +39,19 @@ export default function ChatHeader({
           <ArrowLeft size={18} />
         </button>
       )}
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400/30 to-violet-500/20 text-indigo-100 ring-1 ring-inset ring-white/10">
-        {conversation.isGroup ? <Users size={18} /> : <UserRound size={18} />}
-      </div>
+      {!conversation.isGroup && otherParticipant?.profileImgUrl ? (
+        <Image
+          src={otherParticipant.profileImgUrl}
+          alt={displayName}
+          width={40}
+          height={40}
+          className="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-inset ring-white/10"
+        />
+      ) : (
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400/30 to-violet-500/20 text-indigo-100 ring-1 ring-inset ring-white/10">
+          {conversation.isGroup ? <Users size={18} /> : <UserRound size={18} />}
+        </div>
+      )}
       <div className="min-w-0 flex-1">
         <h2 className="truncate text-sm font-semibold text-white">{displayName}</h2>
         <p className="mt-0.5 text-xs text-slate-400">{subtitle}</p>

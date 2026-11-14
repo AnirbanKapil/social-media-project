@@ -16,6 +16,17 @@ export function getMemberDisplayName(user: NamedUser): string {
   return fullName || user.username;
 }
 
+export function getOtherParticipant(
+  conversation: ConversationSummary,
+  currentUserId: string | null | undefined,
+): ConversationSummary["participants"][number] | undefined {
+  if (conversation.isGroup) return undefined;
+
+  return conversation.participants.find(
+    (participant) => participant.id !== currentUserId,
+  );
+}
+
 export function getConversationDisplayName(
   conversation: ConversationSummary,
   currentUserId: string | null | undefined,
@@ -24,11 +35,7 @@ export function getConversationDisplayName(
     return conversation.name?.trim() || "Group chat";
   }
 
-  const otherParticipant = conversation.participants.find(
-    (participant) => participant.id !== currentUserId,
-  );
-
-  return otherParticipant?.username ?? "Conversation";
+  return getOtherParticipant(conversation, currentUserId)?.username ?? "Conversation";
 }
 
 export function getInitials(value: string): string {

@@ -1,12 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { Loader } from "../loader";
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import { GetConversationsQuery } from "@/lib/generated";
 import { MessageCircle, Search, Users } from "lucide-react";
 import NewGroupModal from "./NewGroupModal";
-import { getConversationDisplayName, getInitials } from "./conversationUtils";
+import {
+  getConversationDisplayName,
+  getInitials,
+  getOtherParticipant,
+} from "./conversationUtils";
 
 type Props = {
   conversations: GetConversationsQuery["getConversations"];
@@ -103,6 +108,7 @@ export default function ConversationList({
         ) : (
           filteredConversations.map((conv) => {
             const displayName = getConversationDisplayName(conv, curUserId);
+            const otherParticipant = getOtherParticipant(conv, curUserId);
             const isSelected = selectedConversationId === conv.id;
             const unreadCount = conv.unreadCount;
             const senderName =
@@ -129,13 +135,23 @@ export default function ConversationList({
                     : "hover:bg-white/[0.045]"
                 }`}
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400/30 to-violet-500/20 text-sm font-semibold text-indigo-100 ring-1 ring-inset ring-white/10">
-                  {conv.isGroup ? (
+                {conv.isGroup ? (
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400/30 to-violet-500/20 text-sm font-semibold text-indigo-100 ring-1 ring-inset ring-white/10">
                     <Users size={19} />
-                  ) : (
-                    getInitials(displayName)
-                  )}
-                </span>
+                  </span>
+                ) : otherParticipant?.profileImgUrl ? (
+                  <Image
+                    src={otherParticipant.profileImgUrl}
+                    alt={displayName}
+                    width={44}
+                    height={44}
+                    className="h-11 w-11 shrink-0 rounded-full object-cover ring-1 ring-inset ring-white/10"
+                  />
+                ) : (
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400/30 to-violet-500/20 text-sm font-semibold text-indigo-100 ring-1 ring-inset ring-white/10">
+                    {getInitials(displayName)}
+                  </span>
+                )}
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium text-slate-100">{displayName}</span>
                   <span
