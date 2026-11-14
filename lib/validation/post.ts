@@ -3,6 +3,7 @@ import { idSchema, paginationSchema } from "./common";
 
 export const MAX_POST_LENGTH = 500;
 export const MAX_POST_IMAGES = 10;
+export const MAX_THREAD_PARTS = 10;
 
 export const POST_VISIBILITIES = ["PUBLIC", "FOLLOWERS", "PRIVATE"] as const;
 
@@ -62,6 +63,22 @@ export const createPostSchema = z
     message: POST_CONTENT_OR_IMAGE_MESSAGE,
     path: ["content"],
   });
+
+export const createThreadPartSchema = z
+  .object({
+    content: postContentSchema.optional().default(""),
+    imgURL: optionalImageUrlSchema,
+    imgURLs: imageUrlsSchema.optional(),
+  })
+  .refine(requireContentOrImage, {
+    message: POST_CONTENT_OR_IMAGE_MESSAGE,
+    path: ["content"],
+  });
+
+export const appendThreadPartSchema = z.object({
+  postId: idSchema,
+  payload: createThreadPartSchema,
+});
 
 export const editPostSchema = z
   .object({

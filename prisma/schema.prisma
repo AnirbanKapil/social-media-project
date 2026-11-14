@@ -126,11 +126,17 @@ model Post {
   repostOf   Post?   @relation("Reposts", fields: [repostOfId], references: [id], onDelete: Cascade)
   reposts    Post[]  @relation("Reposts")
 
+  threadRootId   String?
+  threadRoot     Post?   @relation("ThreadParts", fields: [threadRootId], references: [id], onDelete: Cascade)
+  threadParts    Post[]  @relation("ThreadParts")
+  threadPosition Int?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([authorId, repostOfId])
   @@index([visibility, createdAt])
+  @@index([threadRootId, threadPosition])
 }
 
 enum ConversationRole {
