@@ -158,6 +158,7 @@ export default function UsersPage() {
           repostsCount={post?.repostsCount}
           repostOf={post?.repostOf}
           commentsCount={post?.commentsCount}
+          threadPartCount={post?.threadPartCount}
           />
         ))}
       </div>

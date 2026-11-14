@@ -22,9 +22,9 @@ export const commentQueries = {
                 id: postId,
                 ...buildVisiblePostWhere(ctx.session?.user?.id ?? null),
             },
-            select: { id: true },
+            select: { id: true, threadRootId: true },
         });
-        if (!post) {
+        if (!post || post.threadRootId) {
             return [];
         }
         

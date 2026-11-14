@@ -64,6 +64,7 @@ export default function BookmarksPage() {
           repostsCount={post?.repostsCount}
           repostOf={post?.repostOf}
           commentsCount={post?.commentsCount}
+          threadPartCount={post?.threadPartCount}
         />
       ))}
       {posts.length === 0 && (

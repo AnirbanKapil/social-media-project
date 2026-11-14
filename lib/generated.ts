@@ -28,6 +28,12 @@ export type CreatePostPayload = {
   visibility?: PostVisibility | null | undefined;
 };
 
+export type CreateThreadPartPayload = {
+  content?: string | null | undefined;
+  imgURL?: string | null | undefined;
+  imgURLs?: Array<string> | null | undefined;
+};
+
 export type EditPostPayload = {
   content?: string | null | undefined;
   imgURL?: string | null | undefined;
@@ -48,6 +54,14 @@ export type AddGroupMembersMutationVariables = Exact<{
 
 
 export type AddGroupMembersMutation = { addGroupMembers: { id: string, memberCount: number } };
+
+export type AppendThreadPartMutationVariables = Exact<{
+  postId: string;
+  payload: CreateThreadPartPayload;
+}>;
+
+
+export type AppendThreadPartMutation = { appendThreadPart: { id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, threadRootId: string | null, threadPosition: number | null, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } };
 
 export type BookmarkPostMutationVariables = Exact<{
   postId: string;
@@ -111,6 +125,13 @@ export type RemoveProfileImageMutationVariables = Exact<{ [key: string]: never; 
 
 
 export type RemoveProfileImageMutation = { removeProfileImage: { id: string, profileImgUrl: string | null, profileImgPublicId: string | null } | null };
+
+export type DeleteThreadPartMutationVariables = Exact<{
+  postId: string;
+}>;
+
+
+export type DeleteThreadPartMutation = { deleteThreadPart: boolean };
 
 export type EditPostMutationVariables = Exact<{
   payload: EditPostPayload;
@@ -267,7 +288,7 @@ export type GetAllPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllPostsQuery = { getAllPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
+export type GetAllPostsQuery = { getAllPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
 
 export type GetBookmarkedPostsQueryVariables = Exact<{
   first: number;
@@ -275,7 +296,7 @@ export type GetBookmarkedPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetBookmarkedPostsQuery = { getBookmarkedPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
+export type GetBookmarkedPostsQuery = { getBookmarkedPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null }> } };
 
 export type GetCommentsQueryVariables = Exact<{
   postId: string;
@@ -292,7 +313,7 @@ export type GetConversationsQuery = { getConversations: Array<{ id: string, isGr
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
+export type GetCurrentUserQuery = { currUser: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
 
 export type GetMediaPostsQueryVariables = Exact<{
   first: number;
@@ -300,7 +321,7 @@ export type GetMediaPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetMediaPostsQuery = { getMediaPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null }> } };
+export type GetMediaPostsQuery = { getMediaPosts: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, threadRootId: string | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null } | null }> } };
 
 export type GetMessagesQueryVariables = Exact<{
   conversationId: string;
@@ -323,7 +344,7 @@ export type GetPostByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetPostByIdQuery = { getPostById: { id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null };
+export type GetPostByIdQuery = { getPostById: { id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, thread: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null }>, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null };
 
 export type GetSuggestedUsersQueryVariables = Exact<{
   limit?: number | null | undefined;
@@ -337,7 +358,7 @@ export type GetUserByUsernameQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
+export type GetUserByUsernameQuery = { getUserByUsername: { id: string, email: string, username: string, firstName: string | null, lastName: string | null, profileImgUrl: string | null, isFollowing: boolean, followersCount: number, followingCount: number, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, createdAt: string, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, repostOf: { id: string, content: string, visibility: PostVisibility, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null } | null } | null> | null } | null };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -391,6 +412,41 @@ export const useAddGroupMembersMutation = <
       {
     mutationKey: ['AddGroupMembers'],
     mutationFn: (variables?: AddGroupMembersMutationVariables) => useCustomFetcher<AddGroupMembersMutation, AddGroupMembersMutationVariables>(AddGroupMembersDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const AppendThreadPartDocument = new TypedDocumentString(`
+    mutation AppendThreadPart($postId: String!, $payload: CreateThreadPartPayload!) {
+  appendThreadPart(postId: $postId, payload: $payload) {
+    id
+    content
+    visibility
+    imgURL
+    imgURLs
+    threadRootId
+    threadPosition
+    createdAt
+    author {
+      id
+      username
+      profileImgUrl
+      firstName
+      lastName
+    }
+  }
+}
+    `);
+
+export const useAppendThreadPartMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<AppendThreadPartMutation, TError, AppendThreadPartMutationVariables, TContext>) => {
+    
+    return useMutation<AppendThreadPartMutation, TError, AppendThreadPartMutationVariables, TContext>(
+      {
+    mutationKey: ['AppendThreadPart'],
+    mutationFn: (variables?: AppendThreadPartMutationVariables) => useCustomFetcher<AppendThreadPartMutation, AppendThreadPartMutationVariables>(AppendThreadPartDocument, variables)(),
     ...options
   }
     )};
@@ -604,6 +660,25 @@ export const useRemoveProfileImageMutation = <
       {
     mutationKey: ['RemoveProfileImage'],
     mutationFn: (variables?: RemoveProfileImageMutationVariables) => useCustomFetcher<RemoveProfileImageMutation, RemoveProfileImageMutationVariables>(RemoveProfileImageDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const DeleteThreadPartDocument = new TypedDocumentString(`
+    mutation DeleteThreadPart($postId: String!) {
+  deleteThreadPart(postId: $postId)
+}
+    `);
+
+export const useDeleteThreadPartMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteThreadPartMutation, TError, DeleteThreadPartMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteThreadPartMutation, TError, DeleteThreadPartMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteThreadPart'],
+    mutationFn: (variables?: DeleteThreadPartMutationVariables) => useCustomFetcher<DeleteThreadPartMutation, DeleteThreadPartMutationVariables>(DeleteThreadPartDocument, variables)(),
     ...options
   }
     )};
@@ -1095,6 +1170,10 @@ export const GetAllPostsDocument = new TypedDocumentString(`
       repostsCount
       repostOfId
       commentsCount
+      threadRootId
+      threadPosition
+      threadPartCount
+      isThreadPart
       createdAt
       author {
         id
@@ -1114,6 +1193,10 @@ export const GetAllPostsDocument = new TypedDocumentString(`
         isReposted
         repostsCount
         commentsCount
+        threadRootId
+        threadPosition
+        threadPartCount
+        isThreadPart
         createdAt
         author {
           id
@@ -1164,6 +1247,10 @@ export const GetBookmarkedPostsDocument = new TypedDocumentString(`
       repostsCount
       repostOfId
       commentsCount
+      threadRootId
+      threadPosition
+      threadPartCount
+      isThreadPart
       createdAt
       author {
         id
@@ -1183,6 +1270,10 @@ export const GetBookmarkedPostsDocument = new TypedDocumentString(`
         isReposted
         repostsCount
         commentsCount
+        threadRootId
+        threadPosition
+        threadPartCount
+        isThreadPart
         createdAt
         author {
           id
@@ -1330,6 +1421,10 @@ export const GetCurrentUserDocument = new TypedDocumentString(`
       repostsCount
       repostOfId
       commentsCount
+      threadRootId
+      threadPosition
+      threadPartCount
+      isThreadPart
       repostOf {
         id
         content
@@ -1341,6 +1436,10 @@ export const GetCurrentUserDocument = new TypedDocumentString(`
         isReposted
         repostsCount
         commentsCount
+        threadRootId
+        threadPosition
+        threadPartCount
+        isThreadPart
         createdAt
         author {
           id
@@ -1382,6 +1481,9 @@ export const GetMediaPostsDocument = new TypedDocumentString(`
       visibility
       imgURL
       imgURLs
+      threadRootId
+      threadPartCount
+      isThreadPart
       createdAt
       author {
         id
@@ -1513,6 +1615,35 @@ export const GetPostByIdDocument = new TypedDocumentString(`
     repostsCount
     repostOfId
     commentsCount
+    threadRootId
+    threadPosition
+    threadPartCount
+    isThreadPart
+    thread {
+      id
+      content
+      visibility
+      imgURL
+      imgURLs
+      createdAt
+      threadRootId
+      threadPosition
+      threadPartCount
+      isThreadPart
+      likesCount
+      isLiked
+      isBookmarked
+      isReposted
+      repostsCount
+      commentsCount
+      author {
+        id
+        username
+        profileImgUrl
+        firstName
+        lastName
+      }
+    }
     author {
       id
       username
@@ -1531,6 +1662,10 @@ export const GetPostByIdDocument = new TypedDocumentString(`
       isReposted
       repostsCount
       commentsCount
+      threadRootId
+      threadPosition
+      threadPartCount
+      isThreadPart
       createdAt
       author {
         id
@@ -1618,6 +1753,10 @@ export const GetUserByUsernameDocument = new TypedDocumentString(`
       repostsCount
       repostOfId
       commentsCount
+      threadRootId
+      threadPosition
+      threadPartCount
+      isThreadPart
       repostOf {
         id
         content
@@ -1629,6 +1768,10 @@ export const GetUserByUsernameDocument = new TypedDocumentString(`
         isReposted
         repostsCount
         commentsCount
+        threadRootId
+        threadPosition
+        threadPartCount
+        isThreadPart
         createdAt
         author {
           id

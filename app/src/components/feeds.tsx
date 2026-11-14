@@ -48,6 +48,7 @@ type RepostOriginal = {
   isReposted: boolean;
   repostsCount: number;
   commentsCount: number;
+  threadPartCount?: number;
   author?: {
     id: string;
     username: string;
@@ -57,12 +58,12 @@ type RepostOriginal = {
   } | null;
 };
 
-export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, isLiked, id, commentsCount,firstName, lastName, isDetailPage = false, isBookmarked, isReposted, repostsCount, repostOf, visibility = "PUBLIC"} : 
+export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, isLiked, id, commentsCount,firstName, lastName, isDetailPage = false, isBookmarked, isReposted, repostsCount, repostOf, threadPartCount, visibility = "PUBLIC"} : 
     {content : string, userImg? : string | null,
      user : string, imgSrcs : string[], firstName?: string, lastName?: string 
       created : string, likesCount : number | undefined, isLiked : boolean | undefined, id: string, commentsCount: number | undefined
       isDetailPage?: boolean, isBookmarked?: boolean, isReposted?: boolean, repostsCount?: number,
-      repostOf?: RepostOriginal | null, visibility?: PostVisibility
+      repostOf?: RepostOriginal | null, threadPartCount?: number, visibility?: PostVisibility
     }) {
     
     const { data } = useGetCurrentUserQuery({});
@@ -97,6 +98,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
     const displayIsReposted = original ? original.isReposted : isReposted;
     const displayRepostsCount = original ? original.repostsCount : repostsCount;
     const displayCommentsCount = original ? original.commentsCount : commentsCount;
+    const displayThreadPartCount = (original ? original.threadPartCount : threadPartCount) ?? 0;
     
     const [showMenu, setShowMenu] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -314,6 +316,11 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
                        }
                     </div>
                   </div>
+                    {displayThreadPartCount > 0 && (
+                      <span className="mt-2 inline-flex items-center rounded-full border border-gray-700 px-2 py-0.5 text-xs text-slate-400">
+                        Thread · {displayThreadPartCount} {displayThreadPartCount === 1 ? "part" : "parts"}
+                      </span>
+                    )}
                     {isDetailPage ? (
                       <p className="mt-2">{displayContent}</p>
                     ) : (

@@ -23,6 +23,12 @@ export const postTypeDefs = gql`
     visibility: PostVisibility
   }
 
+  input CreateThreadPartPayload {
+    content: String
+    imgURL: String
+    imgURLs: [String!]
+  }
+
   type Post {
     id: String!
     content: String!
@@ -41,6 +47,11 @@ export const postTypeDefs = gql`
     isReposted: Boolean!
     repostOfId: String
     repostOf: Post
+    threadRootId: String
+    threadPosition: Int
+    threadPartCount: Int!
+    isThreadPart: Boolean!
+    thread: [Post!]!
   }
 
   type Like {
@@ -62,6 +73,8 @@ export const postTypeDefs = gql`
     unbookmarkPost(postId: String!): Post
     repostPost(postId: String!): Post
     unrepostPost(postId: String!): Post
+    appendThreadPart(postId: String!, payload: CreateThreadPartPayload!): Post!
+    deleteThreadPart(postId: String!): Boolean!
     deletePost(postId: String!): Boolean!
     editPost(payload: EditPostPayload!): Post!
     updatePostVisibility(postId: String!, visibility: PostVisibility!): Post!

@@ -5,7 +5,7 @@ import {
   postIdArgsSchema,
   postPaginationSchema,
 } from "@/lib/validation";
-import { buildVisiblePostWhere } from "./visibility";
+import { buildThreadRootWhere, buildVisiblePostWhere } from "./visibility";
 
 type PostQueryContext = {
   session?: { user?: { id: string } | null } | null;
@@ -25,7 +25,10 @@ export const postQueries = {
 
       return prisma.post.findFirst({
         where: { id: postId, ...buildVisiblePostWhere(getViewerId(ctx)) },
-        include: { author: true },
+        include: {
+          author: true,
+          _count: { select: { threadParts: true } },
+        },
       });
     },
 
@@ -60,9 +63,16 @@ export const postQueries = {
 
       const rows = await prisma.post.findMany({
         where: {
-          AND: [buildVisiblePostWhere(getViewerId(ctx)), cursorFilter],
+          AND: [
+            buildVisiblePostWhere(getViewerId(ctx)),
+            buildThreadRootWhere(),
+            cursorFilter,
+          ],
         },
-        include: { author: true },
+        include: {
+          author: true,
+          _count: { select: { threadParts: true } },
+        },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: first + 1,
       });
@@ -118,9 +128,17 @@ export const postQueries = {
 
       const rows = await prisma.post.findMany({
         where: {
-          AND: [buildVisiblePostWhere(getViewerId(ctx)), mediaFilter, cursorFilter],
+          AND: [
+            buildVisiblePostWhere(getViewerId(ctx)),
+            buildThreadRootWhere(),
+            mediaFilter,
+            cursorFilter,
+          ],
         },
-        include: { author: true },
+        include: {
+          author: true,
+          _count: { select: { threadParts: true } },
+        },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: first + 1,
       });
@@ -175,9 +193,19 @@ export const postQueries = {
       const rows = await prisma.bookmark.findMany({
         where: {
           userId,
-          AND: [cursorFilter, { post: buildVisiblePostWhere(userId) }],
+          AND: [
+            cursorFilter,
+            { post: { ...buildVisiblePostWhere(userId), ...buildThreadRootWhere() } },
+          ],
         },
-        include: { post: { include: { author: true } } },
+        include: {
+          post: {
+            include: {
+              author: true,
+              _count: { select: { threadParts: true } },
+            },
+          },
+        },
         orderBy: [{ createdAt: "desc" }, { postId: "desc" }],
         take: first + 1,
       });

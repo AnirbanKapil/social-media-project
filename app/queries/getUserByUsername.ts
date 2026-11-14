@@ -27,6 +27,10 @@ export const GetUserByUsernameDocument = gql`
           repostsCount
           repostOfId
           commentsCount
+          threadRootId
+          threadPosition
+          threadPartCount
+          isThreadPart
           repostOf {
             id
             content
@@ -38,6 +42,10 @@ export const GetUserByUsernameDocument = gql`
             isReposted
             repostsCount
             commentsCount
+            threadRootId
+            threadPosition
+            threadPartCount
+            isThreadPart
             createdAt
             author {
               id

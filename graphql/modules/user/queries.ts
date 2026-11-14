@@ -5,7 +5,7 @@ import {
   searchUsersSchema,
   suggestedUsersSchema,
 } from "@/lib/validation";
-import { buildVisiblePostWhere } from "../post/visibility";
+import { buildThreadRootWhere, buildVisiblePostWhere } from "../post/visibility";
 
 export const userQueries = {
   
@@ -21,7 +21,12 @@ export const userQueries = {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    include: { Posts: { where: { isHidden: false } } }
+    include: {
+      Posts: {
+        where: { isHidden: false, ...buildThreadRootWhere() },
+        include: { _count: { select: { threadParts: true } } },
+      },
+    },
   });
   if (!user) {
   throw new Error("User not found in DB");
@@ -40,7 +45,11 @@ export const userQueries = {
       where: { username, accountStatus: "ACTIVE" },
       include: {
         Posts: {
-          where: buildVisiblePostWhere(session.user.id),
+          where: {
+            ...buildVisiblePostWhere(session.user.id),
+            ...buildThreadRootWhere(),
+          },
+          include: { _count: { select: { threadParts: true } } },
           orderBy: { createdAt: "desc" },
         },
       }

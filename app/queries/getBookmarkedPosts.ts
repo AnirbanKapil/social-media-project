@@ -17,6 +17,10 @@ export const GetBookmarkedPostsDocument = gql`
         repostsCount
         repostOfId
         commentsCount
+        threadRootId
+        threadPosition
+        threadPartCount
+        isThreadPart
         createdAt
         author {
           id
@@ -36,6 +40,10 @@ export const GetBookmarkedPostsDocument = gql`
           isReposted
           repostsCount
           commentsCount
+          threadRootId
+          threadPosition
+          threadPartCount
+          isThreadPart
           createdAt
           author {
             id

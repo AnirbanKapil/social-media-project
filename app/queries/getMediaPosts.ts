@@ -10,6 +10,9 @@ export const GetMediaPostsDocument = gql`
         visibility
         imgURL
         imgURLs
+        threadRootId
+        threadPartCount
+        isThreadPart
         createdAt
         author {
           id

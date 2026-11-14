@@ -8,7 +8,7 @@ import {
   parseInput,
   updateProfileImageSchema,
 } from "@/lib/validation";
-import { buildVisiblePostWhere } from "../post/visibility";
+import { buildThreadRootWhere, buildVisiblePostWhere } from "../post/visibility";
 
 
 export const userResolvers = {
@@ -24,6 +24,10 @@ export const userResolvers = {
         where: {
           authorId: parent.id,
           ...buildVisiblePostWhere(ctx.session?.user?.id ?? null),
+          ...buildThreadRootWhere(),
+        },
+        include: {
+          _count: { select: { threadParts: true } },
         },
         orderBy: { createdAt: "desc" },
       }),

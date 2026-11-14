@@ -34,6 +34,14 @@ export function buildVisibilityWhere(
 }
 
 /**
+ * Restricts feed/profile queries to thread roots and standalone posts.
+ * Parts of a thread are only loaded through the thread's root.
+ */
+export function buildThreadRootWhere(): Prisma.PostWhereInput {
+  return { threadRootId: null };
+}
+
+/**
  * Full visibility filter for feeds/queries: hides deleted/hidden authors and
  * ensures reposts only surface when the original post is visible too.
  */

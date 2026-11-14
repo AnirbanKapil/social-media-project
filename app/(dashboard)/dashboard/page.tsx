@@ -58,6 +58,7 @@ export default function FeedsPage () {
                         repostsCount={post?.repostsCount}
                         repostOf={post?.repostOf}
                         commentsCount={post?.commentsCount}
+                        threadPartCount={post?.threadPartCount}
                         />
                      ))}
                      {posts.length === 0 && <p className="p-4 text-center text-gray-400">No posts yet.</p>}

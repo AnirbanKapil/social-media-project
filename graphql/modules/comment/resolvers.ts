@@ -59,11 +59,15 @@ export const commentResolvers = {
                     id: postId,
                     ...buildVisiblePostWhere(userId),
                 },
-                select: { id: true, authorId: true, isHidden: true },
+                select: { id: true, authorId: true, isHidden: true, threadRootId: true },
             });
 
             if (!post) {
                 throw new Error("Post not found");
+            }
+
+            if (post.threadRootId) {
+                throw new Error("Engage with the thread root.");
             }
 
             const comment = await commentPrisma.comment.create({
