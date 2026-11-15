@@ -11,6 +11,11 @@ import { useZodForm } from '@/lib/validation/useZodForm';
 function SignInContent() {
   const searchParams = useSearchParams();
   const rawError = searchParams.get('error');
+  const rawCallbackUrl = searchParams.get('callbackUrl');
+  const callbackUrl =
+    rawCallbackUrl && rawCallbackUrl.startsWith('/') && !rawCallbackUrl.startsWith('//')
+      ? rawCallbackUrl
+      : '/dashboard';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,7 +35,7 @@ function SignInContent() {
       await signIn('credentials', {
         email: data.email,
         password: data.password,
-        callbackUrl: '/dashboard',
+        callbackUrl,
       });
     } finally {
       setLoading(false);
@@ -50,7 +55,7 @@ function SignInContent() {
           </div>
         )}
         <button
-          onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+          onClick={() => signIn('google', { callbackUrl })}
           className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-200 cursor-pointer transition-colors"
         >
           <span>Sign in with Google</span>

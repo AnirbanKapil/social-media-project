@@ -45,6 +45,41 @@ body {
   }
 }
 
+@keyframes splash-auto-hide {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+#landing-splash {
+  animation: splash-auto-hide 0.4s ease-out 2.2s forwards;
+}
+
+[data-splash-seen="1"] #landing-splash {
+  display: none;
+}
+
+@keyframes splash-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.splash-bar {
+  transform-origin: left;
+  animation: splash-bar 1.8s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-bar {
+    animation: none;
+  }
+}
+
 /* Thin scrollbar */
 .thin-scrollbar::-webkit-scrollbar {
   width: 6px;

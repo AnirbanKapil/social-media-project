@@ -11,6 +11,9 @@ import { useRef } from 'react';
 import Image from 'next/image';
 import { LandingHeader } from '../components/LandingHeader';
 import Link from 'next/link';
+import writingDeskImg from '../../../public/landing/writing-desk.webp';
+import coffeeNotebookImg from '../../../public/landing/coffee-notebook.webp';
+import sunsetBoatImg from '../../../public/landing/sunset-boat.jpg';
 
 const fadeIn = () => ({
   initial: false as const,
@@ -212,20 +215,23 @@ export default function LandingPage() {
                       <Image
                         width={120}
                         height={120}
-                        src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=400&fit=crop"
+                        src={writingDeskImg}
                         alt="Writing desk with notebook"
                         className="w-full h-full object-cover"
-                        loading="lazy"
+                        placeholder="blur"
+                        sizes="120px"
+                        priority
                       />
                     </div>
                     <div className="aspect-square bg-[#1e1e2e] rounded-md overflow-hidden">
                       <Image
                         width={120}
                         height={120}
-                        src="https://images.unsplash.com/photo-1517842645767-c639042777db?w=400&h=400&fit=crop"
+                        src={coffeeNotebookImg}
                         alt="Coffee cup next to notebook"
                         className="w-full h-full object-cover"
-                        loading="lazy"
+                        placeholder="blur"
+                        sizes="120px"
                       />
                     </div>
                   </div>
@@ -255,12 +261,13 @@ export default function LandingPage() {
                   </p>
                   <div className="w-full h-20 bg-[#1e1e2e] rounded-md flex items-center justify-center mb-2">
                    <Image
-                        width={120}
-                        height={120}
-                        src="https://images.stockcake.com/public/e/c/1/ec11e70a-9553-4f41-9cb7-cb34769f74ad_large/sunset-fishing-boat-stockcake.jpg"
-                        alt="sunset and mountains"
+                        width={260}
+                        height={80}
+                        src={sunsetBoatImg}
+                        alt="Sunset over the water with a fishing boat"
                         className="w-full h-full object-cover"
-                        loading="lazy"
+                        placeholder="blur"
+                        sizes="260px"
                       />
                   </div>
                   <div className="flex items-center gap-4 text-[10px] text-[#555566]">
