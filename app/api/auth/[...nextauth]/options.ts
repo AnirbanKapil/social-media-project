@@ -148,8 +148,8 @@ callbacks : {
 
 },
 pages: {
-  error: "/api/auth/signin",
-  signIn: "api/auth/signin"
+  error: "/signin",
+  signIn: "/signin"
 },
 session : {
         strategy : "jwt",

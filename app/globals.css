@@ -25,6 +25,26 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@keyframes landing-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.landing-spin {
+  animation: landing-spin 4s linear infinite;
+}
+
+.landing-phone:hover .landing-spin {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-spin {
+    animation: none;
+  }
+}
+
 /* Thin scrollbar */
 .thin-scrollbar::-webkit-scrollbar {
   width: 6px;

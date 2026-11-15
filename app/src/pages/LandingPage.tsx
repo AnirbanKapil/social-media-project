@@ -1,71 +1,21 @@
 'use client';
 
-import { motion, useScroll, useTransform, useReducedMotion, useMotionValue, useAnimationFrame } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import {
   Heart,
   MessageCircle,
-  Share2,
   Image as ImageIcon,
   ArrowRight
 } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
-import { NavBar } from '../components/navbar';
+import { LandingHeader } from '../components/LandingHeader';
 import Link from 'next/link';
 
-const fadeIn = (delay = 0) => ({
-  initial: { opacity: 0, y: 30 },
+const fadeIn = () => ({
+  initial: false as const,
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] }
 });
-
-const InkwellLogo = ({ className = "w-10 h-10", ariaLabel = "Inkwell logo" }: { className?: string; ariaLabel?: string }) => (
-  <svg
-    viewBox="0 0 100 100"
-    className={className}
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-label={ariaLabel}
-    role="img"
-  >
-    <motion.path
-      d="M50 10 C30 10, 15 25, 15 45 C15 65, 30 80, 50 80 C70 80, 85 65, 85 45 C85 25, 70 10, 50 10Z"
-      stroke="currentColor"
-      strokeWidth="3"
-      fill="none"
-      initial={{ pathLength: 0 }}
-      animate={{ pathLength: 1 }}
-      transition={{ duration: 2, ease: "easeInOut" }}
-    />
-    <motion.path
-      d="M50 80 L50 95"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      initial={{ pathLength: 0 }}
-      animate={{ pathLength: 1 }}
-      transition={{ duration: 1, delay: 1.5 }}
-    />
-    <motion.path
-      d="M35 95 L65 95"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      initial={{ pathLength: 0 }}
-      animate={{ pathLength: 1 }}
-      transition={{ duration: 1, delay: 2 }}
-    />
-    <motion.path
-      d="M50 35 L50 55 M40 45 L60 45"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: 2.5 }}
-    />
-  </svg>
-);
 
 export default function LandingPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -79,21 +29,9 @@ export default function LandingPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
-  // ─── PHONE HOVER & SPINNER STATE ───
-  const [isPhoneHovered, setIsPhoneHovered] = useState(false);
-  const rotation = useMotionValue(0);
-
-  // Continuously rotate the border 360° over 4s when not hovered
-  useAnimationFrame((_, delta) => {
-    if (!isPhoneHovered && !reducedMotion) {
-      // delta is in ms. 360° per 4000ms
-      rotation.set(rotation.get() + (delta * 0.09));
-    }
-  });
-
   return (
     <div>
-     <NavBar />  
+     <LandingHeader />  
      <div ref={containerRef} className="relative min-h-screen bg-[#0a0a0f] text-[#f0f0f5] overflow-x-hidden selection:bg-indigo-500/30 selection:text-white flex items-center justify-center px-6 py-16">
       
       {/* ─── CENTRAL BRIGHT GLOW ─── */}
@@ -116,7 +54,7 @@ export default function LandingPage() {
           <motion.div style={!reducedMotion ? { y: heroY, opacity: heroOpacity } : {}}>
             {/* Brand */}
             <motion.div
-              {...fadeIn(0)}
+              {...fadeIn()}
               className="flex items-center gap-2.5 mb-10"
             >
               <svg viewBox="0 0 100 100" className="w-10 h-10 text-indigo-400" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -125,43 +63,39 @@ export default function LandingPage() {
                     stroke="currentColor"
                     strokeWidth="3"
                     fill="none"
-                    initial={{ pathLength: 0 }}
+                    initial={false}
                     animate={{ pathLength: 1 }}
-                    transition={{ duration: 2, ease: "easeInOut" }}
                   />
                   <motion.path
                     d="M50 80 L50 95"
                     stroke="currentColor"
                     strokeWidth="3"
                     strokeLinecap="round"
-                    initial={{ pathLength: 0 }}
+                    initial={false}
                     animate={{ pathLength: 1 }}
-                    transition={{ duration: 1, delay: 1.5 }}
                   />
                   <motion.path
                     d="M35 95 L65 95"
                     stroke="currentColor"
                     strokeWidth="3"
                     strokeLinecap="round"
-                    initial={{ pathLength: 0 }}
+                    initial={false}
                     animate={{ pathLength: 1 }}
-                    transition={{ duration: 1, delay: 2 }}
                   />
                   <motion.path
                     d="M50 35 L50 55 M40 45 L60 45"
                     stroke="currentColor"
                     strokeWidth="3"
                     strokeLinecap="round"
-                    initial={{ opacity: 0, scale: 0 }}
+                    initial={false}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 2.5 }}
                   />
                 </svg>
               <span className="text-lg font-medium tracking-tight">Inkwell</span>
             </motion.div>
 
             <motion.h1
-              {...fadeIn(0.1)}
+              {...fadeIn()}
               className="text-4xl sm:text-5xl lg:text-[52px] font-medium tracking-tight mb-5 leading-[1.1]"
             >
               Share your story
@@ -170,20 +104,20 @@ export default function LandingPage() {
             </motion.h1>
 
             <motion.p
-              {...fadeIn(0.2)}
+              {...fadeIn()}
               className="text-base text-[#888899] max-w-md mb-8 leading-relaxed"
             >
               A quiet space for loud thoughts. Post photos, write threads, and connect with people who get it.
             </motion.p>
 
             <motion.div
-              {...fadeIn(0.3)}
+              {...fadeIn()}
               className="flex flex-col sm:flex-row items-start sm:items-center gap-3"
             >
-              <Link href="/dashboard"><button className="group px-6 py-3 bg-[#f0f0f5] hover:bg-white text-[#0a0a0f] font-medium rounded-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2 text-sm">
+              <Link href="/dashboard" className="group px-6 py-3 bg-[#f0f0f5] hover:bg-white text-[#0a0a0f] font-medium rounded-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2 text-sm">
                 Get started
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-              </button></Link>
+              </Link>
               <button className="px-6 py-3 bg-transparent text-[#f0f0f5] font-medium rounded-lg border border-[#333340] hover:border-[#555566] transition-all text-sm">
                 Learn more
               </button>
@@ -191,7 +125,7 @@ export default function LandingPage() {
 
             {/* Features row */}
             <motion.div
-              {...fadeIn(0.4)}
+              {...fadeIn()}
               className="mt-12 flex gap-8"
             >
               <div>
@@ -220,39 +154,30 @@ export default function LandingPage() {
 
           {/* Right: Phone Mockup */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={false}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
             className="relative flex justify-center lg:justify-end"
           >
             {/* ─── HOVER INTERACTIVE WRAPPER ─── */}
             <motion.div
-              className="relative cursor-pointer"
-              onHoverStart={() => setIsPhoneHovered(true)}
-              onHoverEnd={() => setIsPhoneHovered(false)}
+              className="landing-phone relative cursor-pointer"
               whileHover={{ y: -12, scale: 1.04 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              {/* Rotating gradient border */}
-              {!reducedMotion && (
-                <motion.div
-                  className="absolute -inset-[2px] rounded-[30px] z-0"
-                  style={{
-                    background: 'conic-gradient(from 0deg, #6366f1, #a855f7, #ec4899, #f59e0b, #3b82f6, #6366f1)',
-                    rotate: rotation,
-                  }}
-                />
-              )}
+              {/* Rotating gradient border (CSS-driven, paused on hover) */}
+              <div
+                className="landing-spin absolute -inset-[2px] rounded-[30px] z-0"
+                style={{
+                  background: 'conic-gradient(from 0deg, #6366f1, #a855f7, #ec4899, #f59e0b, #3b82f6, #6366f1)',
+                }}
+              />
               {/* Blurred glow behind the border */}
-              {!reducedMotion && (
-                <motion.div
-                  className="absolute -inset-[4px] rounded-[32px] z-[-1] opacity-60 blur-lg"
-                  style={{
-                    background: 'conic-gradient(from 0deg, #6366f1, #a855f7, #ec4899, #f59e0b, #3b82f6, #6366f1)',
-                    rotate: rotation,
-                  }}
-                />
-              )}
+              <div
+                className="landing-spin absolute -inset-[4px] rounded-[32px] z-[-1] opacity-60 blur-lg"
+                style={{
+                  background: 'conic-gradient(from 0deg, #6366f1, #a855f7, #ec4899, #f59e0b, #3b82f6, #6366f1)',
+                }}
+              />
 
               {/* Phone inner */}
               <div className="relative w-[260px] bg-[#12121a] rounded-[28px] border-2 border-[#1a1a24] p-4 shadow-2xl z-10">

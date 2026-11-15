@@ -88,7 +88,7 @@ export default function SignUp() {
         description: "Redirecting you to the sign in page...",
       });
       setTimeout(() => {
-        router.push("/api/auth/signin");
+        router.push("/signin");
       }, 1500);
     } catch (error) {
       const payload = axios.isAxiosError(error) ? error.response?.data : null;
@@ -364,7 +364,7 @@ export default function SignUp() {
         <div className="mt-1 flex flex-col items-center gap-1.5 border-t border-white/10 pt-5 text-sm text-[#888899]">
           <p>Already have an account?</p>
           <Link
-            href="/api/auth/signin"
+            href="/signin"
             className="font-medium text-indigo-400 transition hover:text-indigo-300"
           >
             Sign in

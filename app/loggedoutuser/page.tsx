@@ -81,7 +81,7 @@ export default function LoggedOutUserPage() {
             {/* Action Buttons */}
             <div className="space-y-3 pt-2">
               <Link
-                href="/api/auth/signin"
+                href="/signin"
                 className="group relative w-full flex items-center justify-center px-4 py-3 rounded-xl text-sm font-semibold text-black bg-white hover:bg-slate-100 shadow-[0_4px_20px_rgba(255,255,255,0.15)] transition-all duration-200 active:scale-[0.98]"
               >
                 Sign In Again

@@ -80,7 +80,7 @@ export default function ForgotPasswordPage() {
             Didn&apos;t receive it? Check your spam folder or try again.
           </p>
           <Link
-            href="/api/auth/signin"
+            href="/signin"
             className="mt-2 flex items-center gap-2 text-sm font-medium text-indigo-400 transition hover:text-indigo-300"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -171,7 +171,7 @@ export default function ForgotPasswordPage() {
 
         <div className="mt-1 flex justify-center border-t border-white/10 pt-5">
           <Link
-            href="/api/auth/signin"
+            href="/signin"
             className="flex items-center gap-2 text-sm font-medium text-indigo-400 transition hover:text-indigo-300"
           >
             <ArrowLeft className="h-4 w-4" />

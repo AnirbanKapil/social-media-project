@@ -2,17 +2,16 @@
 
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { FieldError } from '@/app/src/components/form/FieldError';
 import { credentialsSchema } from '@/lib/validation';
 import { useZodForm } from '@/lib/validation/useZodForm';
 
-export default function SignInPage() {
+function SignInContent() {
   const searchParams = useSearchParams();
   const rawError = searchParams.get('error');
-  
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -125,10 +124,36 @@ export default function SignInPage() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <div className='flex justify-center text-gray-500'>
-          <Link href="/"><p className='hover:cursor-pointer'>Back to HomePage</p></Link>
+
+        <div className="flex flex-col items-center gap-2 border-t border-white/10 pt-4 text-sm text-gray-500">
+          <p>
+            Don&apos;t have an account?{' '}
+            <Link
+              href="/signup"
+              className="font-medium text-blue-600 transition-colors hover:text-blue-500 hover:underline"
+            >
+              Create one
+            </Link>
+          </p>
+          <Link href="/">
+            <p className="hover:cursor-pointer">Back to HomePage</p>
+          </Link>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-black text-gray-400">
+          Loading...
+        </div>
+      }
+    >
+      <SignInContent />
+    </Suspense>
   );
 }

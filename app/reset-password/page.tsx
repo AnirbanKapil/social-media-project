@@ -32,7 +32,7 @@ export default async function ResetPasswordPage({
             Request a new link
           </Link>
           <Link
-            href="/api/auth/signin"
+            href="/signin"
             className="text-[#888899] transition hover:text-[#b0b0c0]"
           >
             Back to sign in

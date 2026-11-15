@@ -104,7 +104,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
             password.
           </p>
           <Link
-            href="/api/auth/signin"
+            href="/signin"
             className="mt-2 flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:from-indigo-400 hover:to-purple-400"
           >
             Go to sign in
@@ -136,7 +136,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
             Request a new link
           </Link>
           <Link
-            href="/api/auth/signin"
+            href="/signin"
             className="text-[#888899] transition hover:text-[#b0b0c0]"
           >
             Back to sign in
@@ -280,7 +280,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
         <div className="mt-1 flex justify-center border-t border-white/10 pt-5">
           <Link
-            href="/api/auth/signin"
+            href="/signin"
             className="flex items-center gap-2 text-sm font-medium text-indigo-400 transition hover:text-indigo-300"
           >
             <ArrowLeft className="h-4 w-4" />

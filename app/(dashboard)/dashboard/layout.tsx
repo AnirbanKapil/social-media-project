@@ -5,6 +5,7 @@ import { NavBar } from "@/app/src/components/navbar";
 import { WhatsHappening } from "@/app/src/components/whatsHappening";
 import { SideBarMenuItems } from "@/app/src/components/sideBarMenu";
 import { MobileNav } from "@/app/src/components/MobileNav";
+import { AppProviders } from "@/app/context/provider";
 import Link from "next/link";
 import { getAuthSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -15,12 +16,13 @@ import { redirect } from "next/navigation";
 export default async function DashboardLayout({children}: {children: React.ReactNode}) {
     const session = await getAuthSession();
     if (!session?.user) {
-        redirect("/api/auth/signin");
+        redirect("/signin");
     }
 
     const sideBarItems = SideBarMenuItems();
 
      return (
+     <AppProviders>
      <div>
         <NavBar showUserSearch />
         <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-0 px-2 pb-16 sm:px-4 lg:grid-cols-12 lg:px-8 lg:pb-0">
@@ -45,5 +47,6 @@ export default async function DashboardLayout({children}: {children: React.React
         </div>
         <MobileNav />
      </div>    
+     </AppProviders>
     )
 }

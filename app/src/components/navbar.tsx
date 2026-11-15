@@ -1,6 +1,5 @@
 "use client"
 import { signOut } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import { motion } from 'framer-motion'
 import { useGetCurrentUserQuery } from "@/lib/generated";
 import Link from "next/link";
@@ -8,7 +7,6 @@ import SearchUsers from "./search/SearchUsers";
 
 
 export function NavBar ({ showUserSearch = false }: { showUserSearch?: boolean }) {
-    const router = useRouter();
     const { data } = useGetCurrentUserQuery({});
     const user = data?.currUser
       return(
@@ -61,10 +59,9 @@ export function NavBar ({ showUserSearch = false }: { showUserSearch?: boolean }
                 </div>
             )}
             <div className="col-start-2 row-start-1 flex items-center gap-3 md:col-start-3 md:justify-self-end">
-                {!user ? (<button className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120"
-                  onClick={()=> {router.push("/api/auth/signin")}} >
+                {!user ? (<Link href="/signin" className="bg-blue-600 rounded-lg p-2 hover:bg-blue-700 transition-colors duration-300 cursor-pointer hover:scale-120">
                   signIn
-                </button>) 
+                </Link>) 
                 : (
                   <>
                     <Link
