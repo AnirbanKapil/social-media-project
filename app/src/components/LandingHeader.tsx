@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-export function LandingHeader() {
+type LandingHeaderProps = {
+  isAuthenticated: boolean;
+};
+
+export function LandingHeader({ isAuthenticated }: LandingHeaderProps) {
   return (
     <header className="relative z-20 mx-4 my-3 flex items-center justify-between bg-[#0a0a0f]/80 px-4 py-2 text-[#f0f0f5] md:mx-12 lg:mx-48">
       <Link href="/" className="flex items-center gap-2.5">
@@ -29,18 +33,29 @@ export function LandingHeader() {
       </Link>
 
       <nav className="flex items-center gap-3">
-        <Link
-          href="/signin"
-          className="rounded-lg border border-[#333340] px-4 py-2 text-sm font-medium text-[#f0f0f5] transition-colors hover:border-[#555566]"
-        >
-          Sign in
-        </Link>
-        <Link
-          href="/dashboard"
-          className="rounded-lg bg-[#f0f0f5] px-4 py-2 text-sm font-medium text-[#0a0a0f] transition-all hover:scale-105 hover:bg-white active:scale-95"
-        >
-          Get started
-        </Link>
+        {isAuthenticated ? (
+          <Link
+            href="/dashboard"
+            className="rounded-lg bg-[#f0f0f5] px-4 py-2 text-sm font-medium text-[#0a0a0f] transition-all hover:scale-105 hover:bg-white active:scale-95"
+          >
+            Go to dashboard
+          </Link>
+        ) : (
+          <>
+            <Link
+              href="/signin"
+              className="rounded-lg border border-[#333340] px-4 py-2 text-sm font-medium text-[#f0f0f5] transition-colors hover:border-[#555566]"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/dashboard"
+              className="rounded-lg bg-[#f0f0f5] px-4 py-2 text-sm font-medium text-[#0a0a0f] transition-all hover:scale-105 hover:bg-white active:scale-95"
+            >
+              Get started
+            </Link>
+          </>
+        )}
       </nav>
     </header>
   );

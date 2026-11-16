@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "./context/toast-provider";
 
@@ -30,6 +31,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <Script id="splash-guard" strategy="beforeInteractive">
+          {`try{if(sessionStorage.getItem("inkwell:splash-seen")==="1"){document.documentElement.dataset.splashSeen="1"}}catch(e){}`}
+        </Script>
         <ToastProvider>{children}</ToastProvider>
       </body>
       

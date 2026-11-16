@@ -1,6 +1,8 @@
 
 import LandingPage from "./src/pages/LandingPage";
 import { LandingSplash } from "./src/components/landing/LandingSplash";
+import { LandingHeader } from "./src/components/LandingHeader";
+import { getAuthSession } from "@/lib/auth";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,13 +23,13 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
-const splashGuardScript = `try{if(sessionStorage.getItem("inkwell:splash-seen")==="1"){document.documentElement.dataset.splashSeen="1"}}catch(e){}`;
+export default async function Page() {
+  const session = await getAuthSession();
 
-export default function Page() {
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: splashGuardScript }} />
       <LandingSplash />
+      <LandingHeader isAuthenticated={Boolean(session?.user)} />
       <LandingPage />
     </>
   );

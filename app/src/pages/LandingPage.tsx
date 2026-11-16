@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { useRef } from 'react';
 import Image from 'next/image';
-import { LandingHeader } from '../components/LandingHeader';
 import Link from 'next/link';
 import writingDeskImg from '../../../public/landing/writing-desk.webp';
 import coffeeNotebookImg from '../../../public/landing/coffee-notebook.webp';
@@ -34,7 +33,6 @@ export default function LandingPage() {
 
   return (
     <div>
-     <LandingHeader />  
      <div ref={containerRef} className="relative min-h-screen bg-[#0a0a0f] text-[#f0f0f5] overflow-x-hidden selection:bg-indigo-500/30 selection:text-white flex items-center justify-center px-6 py-16">
       
       {/* ─── CENTRAL BRIGHT GLOW ─── */}
