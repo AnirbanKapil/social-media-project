@@ -90,6 +90,71 @@ export const postQueries = {
       return { posts, nextCursor, hasMore };
     },
 
+    getPopularThreads: async (
+      _parent: unknown,
+      args: { first?: number; after?: string | null },
+      ctx: PostQueryContext,
+    ) => {
+      const { first, after } = parseInput(postPaginationSchema, args);
+
+      let cursorFilter = {};
+      if (after) {
+        try {
+          const cursor = JSON.parse(Buffer.from(after, "base64url").toString("utf8")) as {
+            likeCount?: number;
+            id?: string;
+          };
+          if (
+            typeof cursor.id !== "string" ||
+            !cursor.id ||
+            typeof cursor.likeCount !== "number" ||
+            !Number.isFinite(cursor.likeCount) ||
+            cursor.likeCount < 0
+          ) {
+            throw new Error("Invalid cursor");
+          }
+          cursorFilter = {
+            OR: [
+              { likeCount: { lt: cursor.likeCount } },
+              { AND: [{ likeCount: cursor.likeCount }, { id: { lt: cursor.id } }] },
+            ],
+          };
+        } catch {
+          throw new Error("Invalid popular threads cursor");
+        }
+      }
+
+      const rows = await prisma.post.findMany({
+        where: {
+          AND: [
+            buildVisiblePostWhere(getViewerId(ctx)),
+            buildThreadRootWhere(),
+            { repostOfId: null },
+            { threadParts: { some: {} } },
+            cursorFilter,
+          ],
+        },
+        include: {
+          author: true,
+          _count: { select: { threadParts: true } },
+        },
+        orderBy: [{ likeCount: "desc" }, { id: "desc" }],
+        take: first + 1,
+      });
+
+      const hasMore = rows.length > first;
+      const posts = hasMore ? rows.slice(0, first) : rows;
+      const lastPost = posts.at(-1);
+      const nextCursor = hasMore && lastPost
+        ? Buffer.from(JSON.stringify({
+            likeCount: lastPost.likeCount,
+            id: lastPost.id,
+          })).toString("base64url")
+        : null;
+
+      return { posts, nextCursor, hasMore };
+    },
+
     getMediaPosts: async (
       _parent: unknown,
       args: { first?: number; after?: string | null },

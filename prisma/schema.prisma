@@ -111,6 +111,7 @@ model Post {
   imgURLs String[] @default([])
   isHidden Boolean @default(false)
   visibility PostVisibility @default(PUBLIC)
+  likeCount Int @default(0)
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
@@ -138,6 +139,7 @@ model Post {
   @@unique([authorId, repostOfId])
   @@index([visibility, createdAt])
   @@index([threadRootId, threadPosition])
+  @@index([likeCount, id])
 }
 
 enum ConversationRole {

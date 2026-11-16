@@ -82,6 +82,7 @@ export const postTypeDefs = gql`
 
   type Query {
     getAllPosts(first: Int = 10, after: String): PostPage!
+    getPopularThreads(first: Int = 10, after: String): PostPage!
     getMediaPosts(first: Int = 10, after: String): PostPage!
     getBookmarkedPosts(first: Int = 10, after: String): PostPage!
     getPostById(postId: String!): Post

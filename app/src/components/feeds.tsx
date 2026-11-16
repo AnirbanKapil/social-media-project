@@ -136,6 +136,7 @@ export function Feeds ({content, userImg, user, imgSrcs, created, likesCount, is
         queryClient.invalidateQueries({queryKey: ["GetPostById", { postId: targetId }]});
         queryClient.invalidateQueries({queryKey: ["GetBookmarkedPosts"]});
         queryClient.invalidateQueries({queryKey: ["GetMediaPosts"]});
+        queryClient.invalidateQueries({queryKey: ["GetPopularThreads"]});
     };
 
     const handleLikeToggle = async () => {

@@ -95,7 +95,31 @@ export async function finalizeAccountDeletion(userId: string): Promise<boolean> 
   }
 
   await prisma.$transaction(async (tx) => {
+    const likedPosts = await tx.like.findMany({
+      where: { userId },
+      select: { postId: true },
+    });
+
     await tx.like.deleteMany({ where: { userId } });
+
+    if (likedPosts.length > 0) {
+      const likeCounts = await tx.like.groupBy({
+        by: ["postId"],
+        where: { postId: { in: likedPosts.map((like) => like.postId) } },
+        _count: { _all: true },
+      });
+      const countByPost = new Map(
+        likeCounts.map((row) => [row.postId, row._count._all]),
+      );
+
+      for (const { postId } of likedPosts) {
+        await tx.post.update({
+          where: { id: postId },
+          data: { likeCount: countByPost.get(postId) ?? 0 },
+        });
+      }
+    }
+
     await tx.bookmark.deleteMany({ where: { userId } });
     await tx.follows.deleteMany({
       where: { OR: [{ followerId: userId }, { followingId: userId }] },

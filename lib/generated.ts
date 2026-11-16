@@ -340,6 +340,14 @@ export type GetNotificationsQueryVariables = Exact<{
 
 export type GetNotificationsQuery = { getNotifications: { nextCursor: string | null, hasMore: boolean, notifications: Array<{ id: string, type: string, readAt: string | null, createdAt: string, actor: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null }, post: { id: string, content: string, createdAt: string } | null, comment: { id: string, content: string } | null }> } };
 
+export type GetPopularThreadsQueryVariables = Exact<{
+  first: number;
+  after?: string | null | undefined;
+}>;
+
+
+export type GetPopularThreadsQuery = { getPopularThreads: { nextCursor: string | null, hasMore: boolean, posts: Array<{ id: string, content: string, visibility: PostVisibility, imgURL: string | null, imgURLs: Array<string>, likesCount: number, isLiked: boolean, isBookmarked: boolean, isReposted: boolean, repostsCount: number, repostOfId: string | null, commentsCount: number, threadRootId: string | null, threadPosition: number | null, threadPartCount: number, isThreadPart: boolean, createdAt: string, author: { id: string, username: string, profileImgUrl: string | null, firstName: string | null, lastName: string | null } | null }> } };
+
 export type GetPostByIdQueryVariables = Exact<{
   postId: string;
 }>;
@@ -1607,6 +1615,59 @@ export const useGetNotificationsQuery = <
     )};
 
 useGetNotificationsQuery.getKey = (variables?: GetNotificationsQueryVariables) => variables === undefined ? ['GetNotifications'] : ['GetNotifications', variables];
+
+export const GetPopularThreadsDocument = new TypedDocumentString(`
+    query GetPopularThreads($first: Int!, $after: String) {
+  getPopularThreads(first: $first, after: $after) {
+    posts {
+      id
+      content
+      visibility
+      imgURL
+      imgURLs
+      likesCount
+      isLiked
+      isBookmarked
+      isReposted
+      repostsCount
+      repostOfId
+      commentsCount
+      threadRootId
+      threadPosition
+      threadPartCount
+      isThreadPart
+      createdAt
+      author {
+        id
+        username
+        profileImgUrl
+        firstName
+        lastName
+      }
+    }
+    nextCursor
+    hasMore
+  }
+}
+    `);
+
+export const useGetPopularThreadsQuery = <
+      TData = GetPopularThreadsQuery,
+      TError = unknown
+    >(
+      variables: GetPopularThreadsQueryVariables,
+      options?: Omit<UseQueryOptions<GetPopularThreadsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetPopularThreadsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetPopularThreadsQuery, TError, TData>(
+      {
+    queryKey: ['GetPopularThreads', variables],
+    queryFn: useCustomFetcher<GetPopularThreadsQuery, GetPopularThreadsQueryVariables>(GetPopularThreadsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetPopularThreadsQuery.getKey = (variables: GetPopularThreadsQueryVariables) => ['GetPopularThreads', variables];
 
 export const GetPostByIdDocument = new TypedDocumentString(`
     query GetPostById($postId: String!) {

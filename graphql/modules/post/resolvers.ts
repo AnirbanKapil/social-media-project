@@ -21,6 +21,9 @@ export const postResolvers= {
        parent.imgURLs?.length ? parent.imgURLs : parent.imgURL ? [parent.imgURL] : [],
 
      likesCount: async(parent : any) => {
+       if (typeof parent.likeCount === "number") {
+         return parent.likeCount;
+       }
        return await prisma.like.count({
         where: {
           postId: parent.id
@@ -460,31 +463,39 @@ export const postResolvers= {
         },
        });
 
-       await prisma.like.upsert({
-        where : {
-          userId_postId: {
-          userId,
-          postId,
-          },
-         },
-         update: {},
-         create: {
-         userId,
-         postId,
-         },
-        });
-       
-       if (!existingLike && post) {
+       if (!existingLike) {
+         await prisma.$transaction([
+           prisma.like.upsert({
+             where: {
+               userId_postId: {
+                 userId,
+                 postId,
+               },
+             },
+             update: {},
+             create: {
+               userId,
+               postId,
+             },
+           }),
+           prisma.post.update({
+             where: { id: postId },
+             data: { likeCount: { increment: 1 } },
+           }),
+         ]);
+
          await createNotification({
            type: "LIKE",
            recipientId: post.authorId,
            actorId: userId,
            postId: post.id,
          });
+
+         return { ...post, likeCount: (post.likeCount ?? 0) + 1 };
        }
         
        return post;
-    },
+     },
     
     unlikePost : async (parent : any, args : {postId : string}, ctx : any) => {
       if(!ctx.session?.user){
@@ -503,17 +514,20 @@ export const postResolvers= {
         throw new Error("Engage with the thread root.");
       }
 
+      let removedLikes = 0;
       try {
-          await prisma.like.delete({
-          where: {
-            userId_postId: {
-            userId,
-            postId,
-          }, 
-          }
-        });
+          const removed = await prisma.like.deleteMany({
+            where: { userId, postId },
+          });
+          removedLikes = removed.count;
       } catch (error) {
         console.log(error)
+      }
+      if (removedLikes > 0) {
+        await prisma.post.updateMany({
+          where: { id: postId, likeCount: { gt: 0 } },
+          data: { likeCount: { decrement: 1 } },
+        });
       }
       if (post) {
         await deleteNotification({
