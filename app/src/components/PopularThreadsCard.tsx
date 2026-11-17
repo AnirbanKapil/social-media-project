@@ -16,7 +16,7 @@ export function PopularThreadsCard() {
   const threads = data?.getPopularThreads.posts ?? [];
 
   return (
-    <div className="mt-4">
+    <div>
       <h3 className="mb-2 flex items-center gap-2 text-lg font-bold text-slate-700">
         <TrendingUp size={18} />
         Popular threads

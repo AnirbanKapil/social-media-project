@@ -36,7 +36,7 @@ export function WhoToFollow() {
   );
 
   return (
-    <div className="mt-4">
+    <div>
       <h3 className="mb-2 text-lg font-bold text-slate-700">Who to follow</h3>
 
       {isLoading && <p className="text-sm text-gray-500">Loading suggestions...</p>}
